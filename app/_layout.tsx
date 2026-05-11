@@ -1,24 +1,26 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import 'react-native-reanimated';
+import { StyleSheet, Text, View } from 'react-native'
+import React from 'react'
+import { Stack } from 'expo-router'
 
-import { useColorScheme } from '@/hooks/use-color-scheme';
 
+// Ensure splash (index) is the initial screen, not the first modal in the stack
 export const unstable_settings = {
-  anchor: '(tabs)',
-};
-
-export default function RootLayout() {
-  const colorScheme = useColorScheme();
-
-  return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
-  );
+  initialRouteName: 'index',
 }
+
+const StackLayout = () => {
+  return (
+    <Stack screenOptions={{headerShown:false}}>
+      <Stack.Screen name="index" />
+    </Stack>
+  )
+}
+const RootLayout = () => {
+  return (    
+        <StackLayout />  
+  )
+}
+
+export default RootLayout
+
+const styles = StyleSheet.create({})

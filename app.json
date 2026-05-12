@@ -17,7 +17,6 @@
     },
     "web": {
       "output": "static"
-    
     },
     "plugins": [
       "expo-router",
@@ -32,7 +31,8 @@
             "backgroundColor": "#000000"
           }
         }
-      ]
+      ],
+      "expo-font"
     ],
     "experiments": {
       "typedRoutes": true,

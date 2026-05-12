@@ -1,26 +1,17 @@
-import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
-import { Stack } from 'expo-router'
+import { Stack } from 'expo-router';
+import * as SplashScreen from 'expo-splash-screen';
 
+SplashScreen.preventAutoHideAsync();
 
-// Ensure splash (index) is the initial screen, not the first modal in the stack
 export const unstable_settings = {
   initialRouteName: 'index',
-}
+};
 
-const StackLayout = () => {
+export default function RootLayout() {
   return (
-    <Stack screenOptions={{headerShown:false}}>
+    <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="index" />
+      <Stack.Screen name="onboarding" />
     </Stack>
-  )
+  );
 }
-const RootLayout = () => {
-  return (    
-        <StackLayout />  
-  )
-}
-
-export default RootLayout
-
-const styles = StyleSheet.create({})

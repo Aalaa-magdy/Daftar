@@ -5,17 +5,10 @@ import SoloLogo from '@/assets/images/SoloLogo.svg';
 const patternSource = require('@/assets/images/background-pattern-decorative.png');
 import { 
   Tektur_400Regular,
-  Tektur_500Medium,
-  Tektur_600SemiBold,
-  Tektur_700Bold,
-  Tektur_800ExtraBold,
-  Tektur_900Black,
   useFonts
 } from '@expo-google-fonts/tektur';
 
 import {
-  Changa_400Regular,
-  Changa_700Bold,
   Changa_500Medium
 } from '@expo-google-fonts/changa';
 import Pagination from '../components/Pagination';
@@ -23,8 +16,10 @@ import React from 'react';
 import OnboardingItem from '../components/OnboardingItem';
 import OnboardingButton from '../components/OnboardingButton';
 import { onboardingData, type OnboardingItemType } from '../data/onboardingData';
+import { useRouter } from 'expo-router';
 
 const OnboardingScreen = () => {
+  const router = useRouter();
   const [currentStep, setCurrentStep] = React.useState(0);
   const flatListRef = React.useRef<FlatList<OnboardingItemType>>(null);
   const { width, height } = useWindowDimensions();
@@ -32,13 +27,6 @@ const OnboardingScreen = () => {
 
   let [fontsLoaded] = useFonts({
     Tektur_400Regular,
-    Tektur_500Medium,
-    Tektur_600SemiBold,
-    Tektur_700Bold,
-    Tektur_800ExtraBold,
-    Tektur_900Black,
-    Changa_400Regular,
-    Changa_700Bold,
     Changa_500Medium
   });
 
@@ -53,6 +41,7 @@ const OnboardingScreen = () => {
 
   const handleNext = React.useCallback(() => {
     if (currentStep >= onboardingData.length - 1) {
+      router.push('/lastOnboarding');
       return;
     }
 
@@ -151,10 +140,8 @@ const styles = StyleSheet.create({
       height: 55,  // Fixed height
       flexDirection: 'row',
       justifyContent: 'flex-start',
-      alignItems: 'center',  // Vertically centers content
-      gap: 4,
-      
-       
+      alignItems: 'center',
+      paddingHorizontal:2,  // Vertically centers content
    },
  
    logoText: {
@@ -162,6 +149,7 @@ const styles = StyleSheet.create({
       fontFamily: 'Tektur_400Regular',
       fontSize: 25, 
       fontWeight: '400',
+      paddingHorizontal:2,
    },
    pagination: {
       width: '100%',

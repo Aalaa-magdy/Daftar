@@ -4,7 +4,8 @@
 export const colors = {
   primary: '#1B5E20',
   white: '#FFFFFF',
-  black: '#000000',
+  secondary:'#E8EFE9',
+  black: '#081B0A',
   text: '#000000',
   textSecondary: '#717680',
   textGray:'#535862',

@@ -5,8 +5,20 @@ interface Props {
   title: string,
   subtitle: string,
 }
-
+import {
+  Changa_400Regular,
+  Changa_500Medium,
+  useFonts
+} from '@expo-google-fonts/changa';
 const Header = ({ title, subtitle }: Props) => {
+  const [fontsLoaded] = useFonts({
+    Changa_400Regular,
+    Changa_500Medium
+  });
+
+  if (!fontsLoaded) {
+    return null;
+  }
   return (
     <View style={styles.content}> 
       <View style={styles.logo}>

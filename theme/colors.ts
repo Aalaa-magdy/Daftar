@@ -10,6 +10,8 @@ export const colors = {
   text: '#000000',
   textSecondary: '#717680',
   textGray:'#535862',
+  /** Muted caption (e.g. “Already have an account?”) — matches input placeholder tone */
+  captionMuted: '#A4A7AE',
   textMuted: '#999999',
   border: '#E5E5E5',
   buttonSecondaryBg: '#F0F0F0',

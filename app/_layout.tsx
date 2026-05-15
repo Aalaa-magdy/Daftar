@@ -12,6 +12,9 @@ export default function RootLayout() {
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="index" />
       <Stack.Screen name="onboarding" />
+      <Stack.Screen name="lastOnboarding" />
+      <Stack.Screen name="signup" />
+      <Stack.Screen name="sign-in" />
     </Stack>
   );
 }

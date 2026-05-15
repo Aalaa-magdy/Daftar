@@ -127,7 +127,8 @@ const styles = StyleSheet.create({
    header: {  
       height: 230,
       flexDirection: 'row',
-      justifyContent: 'flex-end',   
+      justifyContent: 'flex-end',  
+      backgroundColor:"transparent"
    },
    content:{
       flex: 1,

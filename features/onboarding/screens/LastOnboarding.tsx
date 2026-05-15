@@ -9,11 +9,14 @@ import {
 import Header from "@/components/ui/Header";
 import Button from "@/components/ui/Button";
 import GoogleButton from "@/components/ui/GoogleButton";
+import TextLinkButton from "@/components/ui/TextLinkButton";
 import {
   Changa_400Regular,
   Changa_500Medium
 } from '@expo-google-fonts/changa';
+import { useRouter } from "expo-router";
 const LastOnboarding = () => {
+  const router = useRouter()
   const [fontsLoaded] = useFonts({
     Changa_400Regular,
     Changa_500Medium
@@ -22,7 +25,7 @@ const LastOnboarding = () => {
   if (!fontsLoaded) {
     return null;
   }
-
+ 
   return (
     <SafeAreaView style={styles.container}>
       <ImageBackground source={patternSource} style={styles.backgroundImage} resizeMode="cover" />
@@ -33,7 +36,7 @@ const LastOnboarding = () => {
         />
 
         <View style={styles.actions}>
-          <Button title={"Sign up"} />
+          <Button title={"Sign up"} onPress={()=>router.push('/signup')} />
           <GoogleButton title={"up"} />
 
           <TouchableOpacity
@@ -44,9 +47,7 @@ const LastOnboarding = () => {
             <Text style={styles.secondaryButtonText}>Sign in</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity accessibilityRole="button" activeOpacity={0.8}>
-            <Text style={styles.guestButtonText}>Continue as Guest</Text>
-          </TouchableOpacity>
+          <TextLinkButton title="Continue as Guest" variant="block" />
         </View>
       </View>
     </SafeAreaView>
@@ -92,14 +93,6 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     fontFamily: 'Changa_500Medium',
     color: colors.primary,
-  },
-  guestButtonText: {
-    fontSize: 16,
-    lineHeight: 24,
-    fontFamily: 'Changa_500Medium',
-    color: colors.primary,
-    textAlign: 'center',
-    textDecorationLine: 'underline',
   },
 })
 

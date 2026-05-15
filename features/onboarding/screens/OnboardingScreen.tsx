@@ -20,15 +20,17 @@ import { useRouter } from 'expo-router';
 
 const OnboardingScreen = () => {
   const router = useRouter();
+   let [fontsLoaded] = useFonts({
+    Tektur_400Regular,
+    Changa_500Medium
+  });
+
   const [currentStep, setCurrentStep] = React.useState(0);
   const flatListRef = React.useRef<FlatList<OnboardingItemType>>(null);
   const { width, height } = useWindowDimensions();
   const contentWidth = Math.max(width - 40, 0);
 
-  let [fontsLoaded] = useFonts({
-    Tektur_400Regular,
-    Changa_500Medium
-  });
+ 
 
   const handleScrollEnd = React.useCallback(
     (event: NativeSyntheticEvent<NativeScrollEvent>) => {
@@ -57,6 +59,9 @@ const OnboardingScreen = () => {
     ),
     [contentWidth]
   );
+    if (!fontsLoaded) {
+      return null;
+    }
   
   return (
     <SafeAreaView style={styles.container}>
@@ -69,7 +74,7 @@ const OnboardingScreen = () => {
        <View style={styles.content}> 
        <View style={styles.logoSection}>  
                     <SoloLogo />
-                     <Text style={styles.logoText}> Daftar</Text>     
+                     <Text style={styles.logoText}>Daftar</Text>     
        </View>
        <View style={styles.pagination}>
            <Pagination currentStep={currentStep} totalSteps={onboardingData.length} />
@@ -141,7 +146,8 @@ const styles = StyleSheet.create({
       flexDirection: 'row',
       justifyContent: 'flex-start',
       alignItems: 'center',
-      paddingHorizontal:2,  // Vertically centers content
+      paddingHorizontal:2,
+      gap:4  // Vertically centers content
    },
  
    logoText: {
@@ -150,6 +156,7 @@ const styles = StyleSheet.create({
       fontSize: 25, 
       fontWeight: '400',
       paddingHorizontal:2,
+      lineHeight:40
    },
    pagination: {
       width: '100%',

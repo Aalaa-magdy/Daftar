@@ -33,8 +33,9 @@ const styles = StyleSheet.create({
     primaryButtonText: {
         fontSize: 16,
         fontFamily: 'Changa_500Medium',
-        lineHeight: 24,
+        lineHeight: 40,
         color: colors.white,
+        
     }
 })
 

@@ -3,7 +3,11 @@ import React from 'react'
 import { Text, TouchableOpacity, StyleSheet, View } from 'react-native'
 import { onboardingData } from '../data/onboardingData'
 import Button from '@/components/ui/Button';
-
+import {
+  Changa_400Regular,
+  Changa_500Medium,
+  useFonts
+} from '@expo-google-fonts/changa';
 
 interface Props {
     currentStep: number;
@@ -12,6 +16,14 @@ interface Props {
 }
 
 const OnboardingButton = ({ currentStep, onPress, isLastStep }: Props) => {
+   const [fontsLoaded] = useFonts({
+      Changa_400Regular,
+      Changa_500Medium
+    });
+  
+    if (!fontsLoaded) {
+      return null;
+    }
   const buttonText = onboardingData[currentStep]?.buttonText ?? 'Continue';
 
   return (

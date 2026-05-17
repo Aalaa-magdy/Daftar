@@ -1,6 +1,6 @@
 import { colors } from '@/theme/colors';
 import React, { useState } from 'react';
-import { TextInput, View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 /** Leading/trailing icons + placeholder (unfocused) — tweak only here. */
 const INPUT_MUTED = '#A4A7AE';
@@ -100,7 +100,8 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '500',
     color: colors.text,
-    marginBottom: 8,
+    marginBottom: 6,
+    lineHeight:29,
   },
   inputWrapper: {
     width: '100%',

@@ -1,6 +1,14 @@
 import { colors } from '@/theme/colors';
 import React, { useState } from 'react';
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import {
+  StyleProp,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+  ViewStyle,
+} from 'react-native';
 
 /** Leading/trailing icons + placeholder (unfocused) — tweak only here. */
 const INPUT_MUTED = '#A4A7AE';
@@ -23,6 +31,7 @@ interface InputProps {
   icon?: React.ReactNode;
   rightIcon?: React.ReactNode;
   onRightIconPress?: () => void;
+  containerStyle?: StyleProp<ViewStyle>;
 }
 
 const Input: React.FC<InputProps> = ({
@@ -36,6 +45,7 @@ const Input: React.FC<InputProps> = ({
   icon,
   rightIcon,
   onRightIconPress,
+  containerStyle,
 }) => {
   const [isFocused, setIsFocused] = useState(false);
   const hasText = Boolean(value && value.length > 0);
@@ -44,7 +54,7 @@ const Input: React.FC<InputProps> = ({
   const useMutedTextColor = !isFocused && !hasText;
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, containerStyle]}>
       {label && <Text style={styles.label}>{label}</Text>}
 
       <View
@@ -80,6 +90,8 @@ const Input: React.FC<InputProps> = ({
             style={styles.rightIcon}
             onPress={onRightIconPress}
             disabled={!onRightIconPress}
+            accessibilityRole="button"
+            accessibilityLabel="Toggle password visibility"
           >
             {withInputMutedIconColor(rightIcon)}
           </TouchableOpacity>

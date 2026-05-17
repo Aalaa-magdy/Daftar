@@ -2,6 +2,7 @@ import Button from "@/components/ui/Button";
 import GoogleButton from "@/components/ui/GoogleButton";
 import Header from "@/components/ui/Header";
 import Input from "@/components/ui/Input";
+import PasswordInput from "@/components/ui/PasswordInput";
 import TextLinkButton from "@/components/ui/TextLinkButton";
 import { colors } from "@/theme/colors";
 import {
@@ -74,22 +75,30 @@ const Signin = () => {
                 />
               </View>
 
-              <View>
+              <View style={styles.passwordField}>
                 <Text style={styles.label}>
                   Password <Text style={styles.star}>*</Text>
                 </Text>
-                <Input
+                <PasswordInput
                   placeholder="........"
-                  secureTextEntry
                   icon={fieldIcon(LockPasswordIcon)}
+                  containerStyle={styles.passwordInput}
                 />
+                <View style={styles.forgetPasswordRow}>
+                  <TextLinkButton
+                    title="Forget Password?"
+                    variant="inline"
+                    onPress={() => router.push("/forgetpassword" as Href)}
+                  />
+                </View>
               </View>
             </View>
           </View>
 
           <View style={styles.bottomActions}>
             <Button title={"Create account"} />
-            <GoogleButton title={"up"} />
+            <GoogleButton title={"in"} />
+
 
             <View style={styles.footerAuth}>
               <Text style={styles.footerAuthMuted}>
@@ -129,6 +138,18 @@ const styles = StyleSheet.create({
   actions: {
     marginTop: 32,
     gap: 16,
+  },
+  passwordField: {
+    width: '100%',
+  },
+  passwordInput: {
+    marginBottom: 4,
+  },
+  forgetPasswordRow: {
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    marginBottom: 8,
   },
   bottomActions: {
     gap: 16,

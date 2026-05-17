@@ -2,6 +2,7 @@ import Button from "@/components/ui/Button";
 import GoogleButton from "@/components/ui/GoogleButton";
 import Header from "@/components/ui/Header";
 import Input from "@/components/ui/Input";
+import PasswordInput from "@/components/ui/PasswordInput";
 import TextLinkButton from "@/components/ui/TextLinkButton";
 import { colors } from "@/theme/colors";
 import {
@@ -94,9 +95,8 @@ const Signup = () => {
                 <Text style={styles.label}>
                   Password <Text style={styles.star}>*</Text>
                 </Text>
-                <Input
+                <PasswordInput
                   placeholder="........"
-                  secureTextEntry
                   icon={fieldIcon(LockPasswordIcon)}
                 />
               </View>
@@ -104,9 +104,8 @@ const Signup = () => {
                 <Text style={styles.label}>
                   Confirm Password <Text style={styles.star}>*</Text>
                 </Text>
-                <Input
+                <PasswordInput
                   placeholder="........."
-                  secureTextEntry
                   icon={fieldIcon(LockPasswordIcon)}
                 />
               </View>

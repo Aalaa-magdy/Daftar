@@ -30,3 +30,5 @@ export const passwordData: PasswordDataType[] = [
         icon:SquareLockPasswordIcon
     },
 ];
+
+export default passwordData

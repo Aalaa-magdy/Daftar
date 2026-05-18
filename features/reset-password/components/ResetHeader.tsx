@@ -1,6 +1,6 @@
 import { colors } from "@/theme/colors"
-import { StyleSheet, Text, View } from "react-native"
-import SoloLogo from "@/assets/images/SoloLogo.svg";
+import { ImageBackground, StyleSheet, Text, View } from "react-native"
+const patternSource = require('@/assets/images/background-pattern-decorative.png');
 interface Props {
   title: string,
   subtitle: string,
@@ -22,52 +22,30 @@ const ResetHeader = ({ title, subtitle ,icon}: Props) => {
   }
   return (
     <View style={styles.content}> 
-      <View style={styles.logo}>
-         <View>
-            icon
-         </View>
-      </View>
-      <View style={styles.description}>
-        <Text style={styles.title}>
-          {title}
-        </Text>
-        <Text style={styles.subTitle}>
-          {subtitle}
-        </Text>
-      </View>
+        <ImageBackground source={patternSource} style={styles.backgroundImage} resizeMode="cover" />
     </View>
   )
 }
 
 const styles = StyleSheet.create({
+   container: {
+    flex: 1,
+    backgroundColor: colors.background,
+  },
   content: {
-    alignItems: 'center',
-    paddingTop: 25,
-    gap: 20,
-  },
-  logo: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  description: {
-    gap: 12,
-    alignItems: 'center',
+    flex: 1,
     paddingHorizontal: 20,
+    justifyContent: 'flex-start',
+    paddingBottom: 32,
   },
-  title: {
-    fontSize: 23,
-    lineHeight: 40,
-    fontFamily: 'Changa_500Medium',
-    textAlign: 'center',
-    color: colors.black,
+   backgroundImage: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    width: '100%',
+    height: '48%',
   },
-  subTitle: {
-    fontSize: 16,
-    lineHeight: 24,
-    color: colors.textGray,
-    fontFamily: 'Changa_400Regular',
-    textAlign: 'center',
-  }
 })
 
 export default ResetHeader

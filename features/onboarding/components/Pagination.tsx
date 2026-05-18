@@ -7,7 +7,7 @@ interface Props {
   totalSteps: number;
 }
 
-const TRACK_W = 44;
+const TRACK_W = 44; 
 
 const Pagination: React.FC<Props> = ({ currentStep, totalSteps }) => {
   const steps = Array.from({ length: totalSteps }, (_, index) => index);

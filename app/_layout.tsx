@@ -14,7 +14,8 @@ export default function RootLayout() {
       <Stack.Screen name="onboarding" />
       <Stack.Screen name="lastOnboarding" />
       <Stack.Screen name="signup" />
-      <Stack.Screen name="sign-in" />
+      <Stack.Screen name="signin" />
+      <Stack.Screen name="reset-password" />
     </Stack>
   );
 }

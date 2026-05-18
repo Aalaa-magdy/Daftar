@@ -26,14 +26,14 @@ const OnboardingButton = ({ currentStep, onPress, isLastStep }: Props) => {
     }
   const buttonText = onboardingData[currentStep]?.buttonText ?? 'Continue';
 
-  return (
+  return ( 
     <View style={styles.container}>
       {
         isLastStep ? (
           <Button title={buttonText} onPress={onPress} />):(
-         <TouchableOpacity activeOpacity={0.8} onPress={onPress}>
-              <Text style={styles.continueButton}>{buttonText}</Text>
-         </TouchableOpacity> )
+          <TouchableOpacity activeOpacity={0.8} onPress={onPress}>
+               <Text style={styles.continueButton}>{buttonText}</Text>
+          </TouchableOpacity> )
         }
 
     </View>

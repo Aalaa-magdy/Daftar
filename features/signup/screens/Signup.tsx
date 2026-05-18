@@ -140,9 +140,8 @@ const styles = StyleSheet.create({
   },
 
   content: {
-    flexGrow: 1,
     paddingHorizontal: 16,
-    paddingBottom: 140,
+    paddingBottom: 32,
   },
 
   backgroundImage: {

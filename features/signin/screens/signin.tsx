@@ -96,7 +96,7 @@ const Signin = () => {
           </View>
 
           <View style={styles.bottomActions}>
-            <Button title={"Create account"} />
+            <Button title={"Sign in"} />
             <GoogleButton title={"in"} />
 
 

@@ -36,14 +36,11 @@ const ResetPassword = () => {
   }
    
   return (
-    <ScrollView 
+    <View
       style={styles.container}
-      contentContainerStyle={styles.scrollContent}
-      showsVerticalScrollIndicator={false}
     >
       <View style={styles.content}>
-        {/* Your main content goes here */}
-        <Text>Your form content here...</Text>
+        <ResetHeader currentStep={currentStep} />
       </View>
       
       <View style={styles.paginationContainer}>
@@ -52,28 +49,20 @@ const ResetPassword = () => {
           totalSteps={passwordData.length}
         />
       </View>
-    </ScrollView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
- 
-
     backgroundColor: colors.background,
     
   },
-  scrollContent: {
-    flexGrow: 1,
-  
-  
-  },
   content: {
     flex: 1,
-    paddingHorizontal: 16,
     justifyContent: "center",
-    paddingBottom: 20,
+   
   },
   paginationContainer: {
     width: '100%',

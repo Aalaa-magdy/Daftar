@@ -53,3 +53,9 @@ declare module "@hugeicons/core-free-icons/NewReleasesIcon"{
   const icon:IconSvgElement;
   export default icon;
 }
+declare module "@hugeicons/core-free-icons/ArrowLeft02Icon"{
+  import type { IconSvgElement } from '@hugeicons/react-native';
+
+  const icon:IconSvgElement;
+  export default icon;
+}

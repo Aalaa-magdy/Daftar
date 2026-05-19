@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
     height: 16,
     alignItems: 'center',
     justifyContent: 'flex-start',
-    gap: 8,
+    gap: 16,
   },
   step: {
     width: TRACK_W,

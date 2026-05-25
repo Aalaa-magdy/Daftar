@@ -23,6 +23,8 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useRouter } from 'expo-router';
+
 
 const patternSource = require('@/assets/images/background-pattern-decorative.png');
 
@@ -31,6 +33,7 @@ const fieldIcon = (icon: IconSvgElement) => (
 );
 
 function formatPayday(date: Date): string {
+ 
   const day = String(date.getDate()).padStart(2, '0');
   const month = String(date.getMonth() + 1).padStart(2, '0');
   const year = date.getFullYear();
@@ -38,6 +41,7 @@ function formatPayday(date: Date): string {
 }
 
 const SetSalary = () => {
+   const router = useRouter()
   const [fontsLoaded] = useFonts({
     Changa_400Regular,
     Changa_500Medium,
@@ -120,6 +124,7 @@ const SetSalary = () => {
               disabled={!isFormComplete}
               onPress={() => {
                 if (!isFormComplete) return;
+                router.push("/home")
                 // TODO: persist salary + payday and navigate onward
               }}
             />

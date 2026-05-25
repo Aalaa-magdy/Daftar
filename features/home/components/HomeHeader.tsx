@@ -49,11 +49,11 @@ const HomeHeader = () => {
 const styles = StyleSheet.create({
     container: {
         marginTop: 15,
-        paddingHorizontal: 16,
+        paddingHorizontal: 5,
         paddingVertical: 16,
         flexDirection: "row",
         alignItems: "center",
-        justifyContent: "space-between", // Changed from "space-around" to "space-between"
+        justifyContent: "space-around", // Changed from "space-around" to "space-between"
         width: "100%", // Ensure container takes full width
     },
     header: {
@@ -67,6 +67,7 @@ const styles = StyleSheet.create({
         height: 40,
         borderRadius: 20,
         overflow: "hidden", 
+        marginLeft: 10,
     },
     image: {
         width: 40,

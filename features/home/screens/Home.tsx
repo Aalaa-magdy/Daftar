@@ -1,15 +1,26 @@
-import { View } from "react-native"
-import HomeHeader from "../components/HomeHeader"
-import HomeInfo from "../components/HomeInfo"
-
+import { StyleSheet, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import HomeHeader from '../components/HomeHeader';
+import HomeInfo from '../components/HomeInfo';
 
 const Home = () => {
   return (
-    <View >
-         <HomeHeader />
-         <HomeInfo />
-    </View>
-  )
-}
+    <SafeAreaView style={styles.safe} edges={['top', 'left', 'right']}>
+      <View style={styles.content}>
+        <HomeHeader />
+        <HomeInfo />
+      </View>
+    </SafeAreaView>
+  );
+};
 
-export default Home
+const styles = StyleSheet.create({
+  safe: {
+    flex: 1,
+  },
+  content: {
+    flex: 1,
+  },
+});
+
+export default Home;

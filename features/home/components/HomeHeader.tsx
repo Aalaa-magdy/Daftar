@@ -1,28 +1,21 @@
-import { Image, ImageBackground, StyleSheet, Text, View } from "react-native"
-import { useFonts } from 'expo-font';
-import { 
-  Tektur_400Regular,
-  useFonts as useTekturFonts
-} from '@expo-google-fonts/tektur';
 import {
-  Changa_500Medium
+  Changa_400Regular,
+  Changa_500Medium,
+  useFonts,
 } from '@expo-google-fonts/changa';
-import { colors } from "@/theme/colors";
-import SoloLogo from "@/assets/images/SoloLogo.svg";
+import { colors } from '@/theme/colors';
+import SoloLogo from '@/assets/images/SoloLogo.svg';
+import { Image, StyleSheet, Text, View } from 'react-native';
 
 const profile = require('@/assets/images/profile.jpg');
 
 const HomeHeader = () => {
-  let [tekturFontsLoaded] = useTekturFonts({
-    Tektur_400Regular,
-  });
-  
-  let [changaFontsLoaded] = useFonts({
+  const [fontsLoaded] = useFonts({
+    Changa_400Regular,
     Changa_500Medium,
   });
 
-  // Wait for fonts to load
-  if (!tekturFontsLoaded || !changaFontsLoaded) {
+  if (!fontsLoaded) {
     return null;
   }
 
@@ -30,21 +23,17 @@ const HomeHeader = () => {
     <View style={styles.container}>
       <View style={styles.header}>
         <View style={styles.imageWrapper}>
-          <ImageBackground 
-            source={profile}    
-            style={styles.image}
-            imageStyle={{ borderRadius: 20 }}
-          />
+          <Image source={profile} style={styles.image} />
         </View>
         <View style={styles.profileInfo}>
           <Text style={styles.welcome}>Welcome Back,</Text>
           <Text style={styles.name}>Salma Gamal</Text>
         </View>
       </View>
-      <SoloLogo width={80} height={40} /> {/* Adjust size as needed */}
+      <SoloLogo width={80} height={40} />
     </View>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
     container: {
@@ -72,6 +61,7 @@ const styles = StyleSheet.create({
     image: {
         width: 40,
         height: 40,
+        borderRadius: 20,
     },
     profileInfo: {
         justifyContent: "center", 

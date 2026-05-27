@@ -36,7 +36,7 @@ const TransactionCard = ({ type } : Props) => {
       </View>
      <View>
        <View style={styles.card}>
-        {type === "expense" && (
+        {type === "expense" ? (
           <View style={styles.iconWrapper}>
             <HugeiconsIcon
               icon={Calendar03Icon}
@@ -44,8 +44,9 @@ const TransactionCard = ({ type } : Props) => {
               color={"#9176F9"}
             />
           </View>
-        )}
-        <View style={styles.firstRow}>
+        ) : null}
+        <View style={styles.info}>
+         <View style={styles.firstRow}>
           <Text style={[
             styles.title, 
             type === "income" ? styles.incomeTitle : styles.expenseTitle
@@ -55,6 +56,14 @@ const TransactionCard = ({ type } : Props) => {
           {
             type==="income" ? <Text style={[styles.money,styles.incomeMoney]}>+3000</Text >:<Text style={[styles.money,styles.expenseMoney]}>+4000</Text>
           }
+         </View> 
+         <View>
+            {
+                type ==="expense" ? <Text>React Native Course</Text> : null
+            }
+         </View>
+        
+        
         </View>
        </View>
       </View>
@@ -64,9 +73,10 @@ const TransactionCard = ({ type } : Props) => {
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 10,
-    paddingVertical: 8,
     width: "94%",
+
+    paddingHorizontal: 10,
+    paddingVertical: 12,
     gap: 12,
   },
   content: {
@@ -110,11 +120,13 @@ const styles = StyleSheet.create({
     fontSize: 18,
     lineHeight: 24,
   },
+  info:{
+     flex:1,
+  },
   firstRow:{
-    flex:1,
     flexDirection:"row",
     justifyContent:"space-between",
-    overflow:"hidden",
+    alignItems:"center",
   },
   money:{
     fontFamily:"Changa_500Medium",

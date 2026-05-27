@@ -1,6 +1,7 @@
 import { HugeiconsIcon } from "@hugeicons/react-native"
 import { StyleSheet, Text, View } from "react-native"
 import Calendar03Icon from "@hugeicons/core-free-icons/Calendar03Icon"
+import RepeatIcon from "@hugeicons/core-free-icons/RepeatIcon"
 import { colors } from "@/theme/colors"
 import {
   Changa_400Regular,
@@ -54,7 +55,7 @@ const TransactionCard = ({ type } : Props) => {
             Shopping
           </Text>
           {
-            type==="income" ? <Text style={[styles.money,styles.incomeMoney]}>+3000</Text >:<Text style={[styles.money,styles.expenseMoney]}>+4000</Text>
+            type==="income" ? <Text style={[styles.money,styles.incomeMoney]}>+3000 EGP</Text >:<Text style={[styles.money,styles.expenseMoney]}>-4000 EGP</Text>
           }
          </View> 
          <View style={styles.section}>
@@ -68,9 +69,16 @@ const TransactionCard = ({ type } : Props) => {
                   color={colors.textSecondary}/>
                   <Text style={styles.date}>27 May</Text>
             </View>
+            {
+                type ==="income"   ?  <View style={[styles.content,{marginTop:3}]}>
+                 <HugeiconsIcon
+                  icon={RepeatIcon}
+                  size={16}
+                  color={colors.textSecondary}/>
+                  <Text style={ styles.date}>Monthly</Text>
+               </View> : null
+            }
          </View>
-        
-        
         </View>
        </View>
       </View>
@@ -81,9 +89,7 @@ const TransactionCard = ({ type } : Props) => {
 const styles = StyleSheet.create({
   container: {
     width: "94%",
-
-    paddingHorizontal: 10,
-    paddingVertical: 12,
+    paddingHorizontal:10,
     gap: 12,
   },
   content: {
@@ -96,11 +102,12 @@ const styles = StyleSheet.create({
     fontFamily: "Changa_400Regular",
     fontSize: 14,
     lineHeight: 20,
+    marginRight:10,
   },
   card: {
     flexDirection: "row",
     backgroundColor: colors.white,
-    padding: 12,
+    padding: 10,
     gap: 12,
     borderWidth: 1,
     borderColor: colors.white,
@@ -116,8 +123,7 @@ const styles = StyleSheet.create({
     marginTop:2,
   },
   title: {
-    fontFamily: "Changa_500Medium",
-    
+    fontFamily: "Changa_500Medium", 
   },
   expenseTitle: {
     fontSize: 16,
@@ -126,6 +132,7 @@ const styles = StyleSheet.create({
   incomeTitle: {
     fontSize: 18,
     lineHeight: 24,
+    marginBottom:5
   },
   info:{
      flex:1,
@@ -141,10 +148,10 @@ const styles = StyleSheet.create({
     lineHeight:24,
   },
   expenseMoney:{
-    color:"red"
+    color:colors.red
   },
   incomeMoney:{
-    color:"green"
+    color:colors.green
   },
   section:{
     flexDirection:"row",
@@ -156,7 +163,8 @@ const styles = StyleSheet.create({
     fontSize:14,
     lineHeight:20,
     marginRight:20
-  }
+  },
+  
 })
 
 export default TransactionCard

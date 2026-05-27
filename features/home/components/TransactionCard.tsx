@@ -57,10 +57,17 @@ const TransactionCard = ({ type } : Props) => {
             type==="income" ? <Text style={[styles.money,styles.incomeMoney]}>+3000</Text >:<Text style={[styles.money,styles.expenseMoney]}>+4000</Text>
           }
          </View> 
-         <View>
+         <View style={styles.section}>
             {
-                type ==="expense" ? <Text>React Native Course</Text> : null
+                type ==="expense" ? <Text style={styles.expenseCategory}>React Native Course</Text> : null
             }
+            <View style={styles.content}>
+                 <HugeiconsIcon
+                  icon={Calendar03Icon}
+                  size={16}
+                  color={colors.textSecondary}/>
+                  <Text style={styles.date}>27 May</Text>
+            </View>
          </View>
         
         
@@ -81,7 +88,7 @@ const styles = StyleSheet.create({
   },
   content: {
     flexDirection: "row",
-    gap: 8,
+    gap: 5,
     alignItems: "center",
   },
   date: {
@@ -101,7 +108,7 @@ const styles = StyleSheet.create({
     alignItems: "center", // Added to align items vertically
   },
   iconWrapper: {
-    padding: 4,
+    padding: 8,
     backgroundColor: "#ede9fa",
     borderWidth: 2,
     borderColor: "#ede9fa",
@@ -138,6 +145,17 @@ const styles = StyleSheet.create({
   },
   incomeMoney:{
     color:"green"
+  },
+  section:{
+    flexDirection:"row",
+    padding:2,
+  },
+  expenseCategory:{
+    fontFamily:"Changa_400Regular",
+    color:colors.textSecondary,
+    fontSize:14,
+    lineHeight:20,
+    marginRight:20
   }
 })
 

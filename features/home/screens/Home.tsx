@@ -1,4 +1,4 @@
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import HomeHeader from '../components/HomeHeader';
 import HomeInfo from '../components/HomeInfo';
@@ -11,6 +11,7 @@ import {
 import { HugeiconsIcon } from '@hugeicons/react-native';
 import Add01Icon from '@hugeicons/core-free-icons/Add01Icon';
 import TextLinkButton from '@/components/ui/TextLinkButton';
+import TransactionCard from '../components/TransactionCard';
 
 const Home = () => {
   const [fontsLoaded] = useFonts({
@@ -44,6 +45,10 @@ const Home = () => {
             <TextLinkButton title="View All" />
           </View>
         </View>
+        {/* <FlatList> */}
+              <TransactionCard type="expense" />
+               <TransactionCard type="income" />
+        {/* </FlatList> */}
       </View>
     </SafeAreaView>
   );

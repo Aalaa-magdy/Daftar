@@ -1,4 +1,4 @@
-import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import HomeHeader from '../components/HomeHeader';
 import HomeInfo from '../components/HomeInfo';
@@ -26,7 +26,11 @@ const Home = () => {
 
   return (
     <SafeAreaView style={styles.safe} edges={['top', 'left', 'right']}>
-      <View style={styles.content}>
+      <ScrollView
+        style={styles.scroll}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
         <HomeHeader />
         <HomeInfo />
         <View style={styles.buttons}>
@@ -46,12 +50,10 @@ const Home = () => {
             <TextLinkButton title="View All" />
           </View>
         </View>
-        {/* <FlatList> */}
-              <TransactionCard type="expense" />
-               <TransactionCard type="income" />
-        {/* </FlatList> */}
-        <Navbar />
-      </View>
+        <TransactionCard type="expense" />
+        <TransactionCard type="income" />
+      </ScrollView>
+      <Navbar activeTab="home" />
     </SafeAreaView>
   );
 };
@@ -60,11 +62,13 @@ const styles = StyleSheet.create({
   safe: {
     flex: 1,
   },
-  content: {
+  scroll: {
     flex: 1,
+  },
+  scrollContent: {
     alignItems: 'center',
     gap: 8,
-  
+    paddingBottom: 16,
   },
   buttons: {
     flexDirection: 'row',

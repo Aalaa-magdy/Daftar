@@ -61,8 +61,8 @@ const Home = () => {
             <TextLinkButton title="View All" />
           </View>
         </View>
-        <TransactionCard type="expense" />
-        <TransactionCard type="income" />
+        <TransactionCard id="expense-1" type="expense" />
+        <TransactionCard id="income-1" type="income" />
       </ScrollView>
       <Navbar activeTab="home" />
     </SafeAreaView>

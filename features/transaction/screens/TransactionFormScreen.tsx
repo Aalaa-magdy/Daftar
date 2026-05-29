@@ -7,7 +7,6 @@ import {
   Changa_500Medium,
   useFonts,
 } from '@expo-google-fonts/changa';
-import ArrowDown01Icon from '@hugeicons/core-free-icons/ArrowDown01Icon';
 import ArrowUpLeft01Icon from '@hugeicons/core-free-icons/ArrowUpLeft01Icon';
 import Calendar03Icon from '@hugeicons/core-free-icons/Calendar03Icon';
 import MoneyBag01Icon from '@hugeicons/core-free-icons/MoneyBag01Icon';
@@ -26,7 +25,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import CategoryGrid from '../components/CategoryGrid';
 import FormField from '../components/FormField';
-import OptionPicker from '../components/OptionPicker';
+import SelectField from '../components/SelectField';
 import TransactionHeader from '../components/TransactionHeader';
 import TransactionTypeToggle from '../components/TransactionTypeToggle';
 import { INCOME_TYPES, REPEAT_OPTIONS } from '../data/form-options';
@@ -37,7 +36,7 @@ import type { TransactionKind } from '../types';
 type PickerKey = 'incomeType' | 'repeat' | null;
 
 const fieldIcon = (icon: IconSvgElement) => (
-  <HugeiconsIcon icon={icon} size={22} />
+  <HugeiconsIcon icon={icon} size={22} color={colors.captionMuted} />
 );
 
 const TransactionFormScreen = () => {
@@ -99,6 +98,10 @@ const TransactionFormScreen = () => {
     return null;
   }
 
+  const togglePicker = (key: Exclude<PickerKey, null>) => {
+    setActivePicker((current) => (current === key ? null : key));
+  };
+
   const handleSubmit = () => {
     if (!isFormComplete) return;
     // TODO: persist — create when !isEdit, update when isEdit (id)
@@ -129,20 +132,15 @@ const TransactionFormScreen = () => {
         {kind === 'income' ? (
           <>
             <FormField label="Income Type" required>
-              <TouchableOpacity
-                activeOpacity={0.85}
-                onPress={() => setActivePicker('incomeType')}
-              >
-                <View pointerEvents="none">
-                  <Input
-                    placeholder="Choose income type"
-                    value={incomeType}
-                    icon={fieldIcon(ArrowUpLeft01Icon)}
-                    rightIcon={fieldIcon(ArrowDown01Icon)}
-                    containerStyle={styles.fieldInput}
-                  />
-                </View>
-              </TouchableOpacity>
+              <SelectField
+                value={incomeType}
+                placeholder="Choose income type"
+                options={INCOME_TYPES}
+                onSelect={setIncomeType}
+                icon={fieldIcon(ArrowUpLeft01Icon)}
+                open={activePicker === 'incomeType'}
+                onToggle={() => togglePicker('incomeType')}
+              />
             </FormField>
 
             <FormField label="Amount" required>
@@ -163,7 +161,10 @@ const TransactionFormScreen = () => {
             >
               <TouchableOpacity
                 activeOpacity={0.85}
-                onPress={() => setShowDatePicker(true)}
+                onPress={() => {
+                  setActivePicker(null);
+                  setShowDatePicker(true);
+                }}
               >
                 <View pointerEvents="none">
                   <Input
@@ -177,20 +178,15 @@ const TransactionFormScreen = () => {
             </FormField>
 
             <FormField label="Repeat" required>
-              <TouchableOpacity
-                activeOpacity={0.85}
-                onPress={() => setActivePicker('repeat')}
-              >
-                <View pointerEvents="none">
-                  <Input
-                    placeholder="Monthly"
-                    value={repeat}
-                    icon={fieldIcon(RepeatIcon)}
-                    rightIcon={fieldIcon(ArrowDown01Icon)}
-                    containerStyle={styles.fieldInput}
-                  />
-                </View>
-              </TouchableOpacity>
+              <SelectField
+                value={repeat}
+                placeholder="Monthly"
+                options={REPEAT_OPTIONS}
+                onSelect={setRepeat}
+                icon={fieldIcon(RepeatIcon)}
+                open={activePicker === 'repeat'}
+                onToggle={() => togglePicker('repeat')}
+              />
             </FormField>
           </>
         ) : (
@@ -216,7 +212,10 @@ const TransactionFormScreen = () => {
             <FormField label="Date" required>
               <TouchableOpacity
                 activeOpacity={0.85}
-                onPress={() => setShowDatePicker(true)}
+                onPress={() => {
+                  setActivePicker(null);
+                  setShowDatePicker(true);
+                }}
               >
                 <View pointerEvents="none">
                   <Input
@@ -249,22 +248,6 @@ const TransactionFormScreen = () => {
           />
         </View>
       </ScrollView>
-
-      <OptionPicker
-        visible={activePicker === 'incomeType'}
-        title="Income Type"
-        options={INCOME_TYPES}
-        onSelect={setIncomeType}
-        onClose={() => setActivePicker(null)}
-      />
-
-      <OptionPicker
-        visible={activePicker === 'repeat'}
-        title="Repeat"
-        options={REPEAT_OPTIONS}
-        onSelect={setRepeat}
-        onClose={() => setActivePicker(null)}
-      />
 
       <Modal
         visible={showDatePicker}

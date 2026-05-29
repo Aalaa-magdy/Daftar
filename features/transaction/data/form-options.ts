@@ -32,10 +32,9 @@ export const EXPENSE_CATEGORIES: ExpenseCategory[] = [
 
 export const INCOME_TYPES = [
   'Part Time',
-  'Salary',
   'Freelance',
-  'Investment',
+  'Bonus',
   'Other',
 ] as const;
 
-export const REPEAT_OPTIONS = ['Monthly', 'Weekly', 'Yearly', 'Never'] as const;
+export const REPEAT_OPTIONS = ['Monthly', 'One-time'] as const;

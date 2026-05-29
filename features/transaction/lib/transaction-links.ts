@@ -11,9 +11,9 @@ export function addTransactionHref(type: TransactionKind): Href {
   };
 }
 
-export function editTransactionHref(id: string): Href {
+export function editTransactionHref(id: string, type: TransactionKind): Href {
   return {
     pathname: '/transaction/[id]',
-    params: { id },
+    params: { id, type },
   };
 }

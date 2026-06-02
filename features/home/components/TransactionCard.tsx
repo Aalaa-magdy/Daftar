@@ -2,23 +2,71 @@ import { editTransactionHref } from '@/features/transaction/lib/transaction-link
 import type { TransactionKind } from '@/features/transaction/types';
 import { colors } from '@/theme/colors';
 import Calendar03Icon from '@hugeicons/core-free-icons/Calendar03Icon';
-import Time04Icon from '@hugeicons/core-free-icons/Time04Icon';
 import RepeatIcon from '@hugeicons/core-free-icons/RepeatIcon';
-import { HugeiconsIcon } from '@hugeicons/react-native';
+import Time04Icon from '@hugeicons/core-free-icons/Time04Icon';
+import { HugeiconsIcon, type IconSvgElement } from '@hugeicons/react-native';
 import {
   Changa_400Regular,
   Changa_500Medium,
   useFonts,
 } from '@expo-google-fonts/changa';
 import { useRouter } from 'expo-router';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  type StyleProp,
+  type ViewStyle,
+} from 'react-native';
 
 interface Props {
   id: string;
   type: TransactionKind;
+  title?: string;
+  amount?: number;
+  time?: string;
+  note?: string;
+  repeat?: string;
+  categoryIcon?: IconSvgElement;
+  categoryIconColor?: string;
+  iconBackgroundColor?: string;
+  dateLabel?: string;
+  showDateHeader?: boolean;
 }
 
-const TransactionCard = ({ id, type }: Props) => {
+function formatAmount(value: number, type: TransactionKind) {
+  const formatted = value.toLocaleString('en-US');
+  return `${type === 'income' ? '+' : '-'}${formatted} EGP`;
+}
+
+export const TransactionDateHeader = ({
+  dateLabel,
+  style,
+}: {
+  dateLabel: string;
+  style?: StyleProp<ViewStyle>;
+}) => (
+  <View style={[styles.dateHeader, style]}>
+    <HugeiconsIcon icon={Calendar03Icon} size={20} color={colors.textSecondary} />
+    <Text style={styles.date}>{dateLabel}</Text>
+  </View>
+);
+
+const TransactionCard = ({
+  id,
+  type,
+  title = 'Shopping',
+  amount = type === 'income' ? 3000 : 4000,
+  time = '4:45',
+  note,
+  repeat = 'Monthly',
+  categoryIcon = Calendar03Icon,
+  categoryIconColor = '#9176F9',
+  iconBackgroundColor = '#ede9fa',
+  dateLabel = '01 June 2025',
+  showDateHeader = true,
+}: Props) => {
   const router = useRouter();
   const [fontsLoaded] = useFonts({
     Changa_400Regular,
@@ -30,30 +78,27 @@ const TransactionCard = ({ id, type }: Props) => {
   }
 
   const isIncome = type === 'income';
+  const expenseNote = note ?? (type === 'expense' ? 'React Native Course' : undefined);
 
   return (
     <View style={styles.container}>
-      <View style={styles.content}>
-        <View>
-          <HugeiconsIcon
-            icon={Calendar03Icon}
-            size={20}
-            color={colors.textSecondary}
-          />
-        </View>
-        <Text style={styles.date}>01 June 2025</Text>
-      </View>
+      {showDateHeader ? <TransactionDateHeader dateLabel={dateLabel} /> : null}
       <TouchableOpacity
         activeOpacity={0.85}
         onPress={() => router.push(editTransactionHref(id, type))}
       >
         <View style={styles.card}>
-          {!isIncome ? (
-            <View style={styles.iconWrapper}>
+          {!isIncome && categoryIcon ? (
+            <View
+              style={[
+                styles.iconWrapper,
+                { backgroundColor: iconBackgroundColor, borderColor: iconBackgroundColor },
+              ]}
+            >
               <HugeiconsIcon
-                icon={Calendar03Icon}
+                icon={categoryIcon}
                 size={24}
-                color="#9176F9"
+                color={categoryIconColor}
               />
             </View>
           ) : null}
@@ -65,35 +110,37 @@ const TransactionCard = ({ id, type }: Props) => {
                   isIncome ? styles.incomeTitle : styles.expenseTitle,
                 ]}
               >
-                Shopping
+                {title}
               </Text>
-              {isIncome ? (
-                <Text style={[styles.money, styles.incomeMoney]}>+3000 EGP</Text>
-              ) : (
-                <Text style={[styles.money, styles.expenseMoney]}>-4000 EGP</Text>
-              )}
+              <Text
+                style={[
+                  styles.money,
+                  isIncome ? styles.incomeMoney : styles.expenseMoney,
+                ]}
+              >
+                {formatAmount(amount, type)}
+              </Text>
             </View>
             <View style={styles.section}>
-         
               <View style={styles.metaRow}>
                 <HugeiconsIcon
                   icon={Time04Icon}
                   size={16}
                   color={colors.textSecondary}
                 />
-                <Text style={styles.metaText}>4:45</Text>
+                <Text style={styles.metaText}>{time}</Text>
               </View>
-                   {!isIncome ? (
-                <Text style={styles.expenseCategory}>React Native Course</Text>
+              {!isIncome && expenseNote ? (
+                <Text style={styles.expenseCategory}>{expenseNote}</Text>
               ) : null}
-              {isIncome ? (
+              {isIncome && repeat ? (
                 <View style={[styles.metaRow, styles.metaRowSpaced]}>
                   <HugeiconsIcon
                     icon={RepeatIcon}
                     size={16}
                     color={colors.textSecondary}
                   />
-                  <Text style={styles.metaText}>Monthly</Text>
+                  <Text style={styles.metaText}>{repeat}</Text>
                 </View>
               ) : null}
             </View>
@@ -111,17 +158,17 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     gap: 12,
   },
-  content: {
+  dateHeader: {
     flexDirection: 'row',
-    gap: 5,
+    gap: 2,
     alignItems: 'center',
+    alignSelf: 'flex-start',
   },
   date: {
     color: colors.textSecondary,
     fontFamily: 'Changa_400Regular',
     fontSize: 14,
     lineHeight: 20,
-    marginRight: 10,
   },
   card: {
     flexDirection: 'row',
@@ -135,9 +182,7 @@ const styles = StyleSheet.create({
   },
   iconWrapper: {
     padding: 8,
-    backgroundColor: '#ede9fa',
     borderWidth: 2,
-    borderColor: '#ede9fa',
     borderRadius: 8,
     marginTop: 2,
   },

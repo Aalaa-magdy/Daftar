@@ -240,6 +240,13 @@ declare module '@hugeicons/core-free-icons/Edit02Icon' {
   export default icon;
 }
 
+declare module '@hugeicons/core-free-icons/FilterIcon' {
+  import type { IconSvgElement } from '@hugeicons/react-native';
+
+  const icon: IconSvgElement;
+  export default icon;
+}
+
 declare module '@hugeicons/core-free-icons/Home01Icon' {
   import type { IconSvgElement } from '@hugeicons/react-native';
 

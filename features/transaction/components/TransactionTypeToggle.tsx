@@ -2,33 +2,65 @@ import { colors } from '@/theme/colors';
 import type { TransactionKind } from '../types';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-interface Props {
-  value: TransactionKind;
-  onChange: (kind: TransactionKind) => void;
-}
+export type TransactionFilter = TransactionKind | 'all';
 
-const TransactionTypeToggle = ({ value, onChange }: Props) => (
-  <View style={styles.track}>
-    <TouchableOpacity
-      style={[styles.tab, value === 'expense' && styles.tabActive]}
-      onPress={() => onChange('expense')}
-      activeOpacity={0.85}
-    >
-      <Text style={[styles.tabText, value === 'expense' && styles.tabTextActive]}>
-        Expense
-      </Text>
-    </TouchableOpacity>
-    <TouchableOpacity
-      style={[styles.tab, value === 'income' && styles.tabActive]}
-      onPress={() => onChange('income')}
-      activeOpacity={0.85}
-    >
-      <Text style={[styles.tabText, value === 'income' && styles.tabTextActive]}>
-        Income
-      </Text>
-    </TouchableOpacity>
-  </View>
-);
+type BaseProps = {
+  includeAll?: false;
+  value: TransactionKind;
+  onChange: (value: TransactionKind) => void;
+};
+
+type FilterProps = {
+  includeAll: true;
+  value: TransactionFilter;
+  onChange: (value: TransactionFilter) => void;
+};
+
+type Props = BaseProps | FilterProps;
+
+const TransactionTypeToggle = (props: Props) => {
+  const includeAll = props.includeAll === true;
+
+  return (
+    <View style={styles.track}>
+      {includeAll ? (
+        <TouchableOpacity
+          style={[styles.tab, props.value === 'all' && styles.tabActive]}
+          onPress={() => props.onChange('all')}
+          activeOpacity={0.85}
+        >
+          <Text
+            style={[styles.tabText, props.value === 'all' && styles.tabTextActive]}
+          >
+            All
+          </Text>
+        </TouchableOpacity>
+      ) : null}
+      <TouchableOpacity
+        style={[styles.tab, props.value === 'expense' && styles.tabActive]}
+        onPress={() => props.onChange('expense')}
+        activeOpacity={0.85}
+      >
+        <Text
+          style={[styles.tabText, props.value === 'expense' && styles.tabTextActive]}
+        >
+          Expense
+        </Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={[styles.tab, props.value === 'income' && styles.tabActive]}
+        onPress={() => props.onChange('income')}
+        activeOpacity={0.85}
+      >
+        <Text
+          style={[styles.tabText, props.value === 'income' && styles.tabTextActive]}
+        >
+          Income
+        </Text>
+      </TouchableOpacity>
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   track: {

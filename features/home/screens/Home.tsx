@@ -15,9 +15,11 @@ import Add01Icon from '@hugeicons/core-free-icons/Add01Icon';
 import TextLinkButton from '@/components/ui/TextLinkButton';
 import TransactionCard from '../components/TransactionCard';
 import Navbar from '../components/Navbar';
+import { useNavbarNavigation } from '../hooks/useNavbarNavigation';
 
 const Home = () => {
   const router = useRouter();
+  const { onTabPress, onAddPress } = useNavbarNavigation('home');
   const [fontsLoaded] = useFonts({
     Changa_400Regular,
     Changa_500Medium,
@@ -58,13 +60,21 @@ const Home = () => {
         <View style={styles.intro}>
           <Text style={styles.introText}>History</Text>
           <View style={styles.viewAllButton}>
-            <TextLinkButton title="View All" />
+            <TextLinkButton
+              title="View All"
+              variant="inline"
+              onPress={() => router.push('/history')}
+            />
           </View>
         </View>
         <TransactionCard id="expense-1" type="expense" />
         <TransactionCard id="income-1" type="income" />
       </ScrollView>
-      <Navbar activeTab="home" />
+      <Navbar
+        activeTab="home"
+        onTabPress={onTabPress}
+        onAddPress={onAddPress}
+      />
     </SafeAreaView>
   );
 };

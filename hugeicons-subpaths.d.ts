@@ -225,3 +225,9 @@ declare module '@hugeicons/core-free-icons/Home01Icon' {
   const icon: IconSvgElement;
   export default icon;
 }
+declare module '@hugeicons/core-free-icons/Time04Icon' {
+  import type { IconSvgElement } from '@hugeicons/react-native';
+
+  const icon: IconSvgElement;
+  export default icon;
+}

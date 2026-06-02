@@ -2,6 +2,7 @@ import { editTransactionHref } from '@/features/transaction/lib/transaction-link
 import type { TransactionKind } from '@/features/transaction/types';
 import { colors } from '@/theme/colors';
 import Calendar03Icon from '@hugeicons/core-free-icons/Calendar03Icon';
+import Time04Icon from '@hugeicons/core-free-icons/Time04Icon';
 import RepeatIcon from '@hugeicons/core-free-icons/RepeatIcon';
 import { HugeiconsIcon } from '@hugeicons/react-native';
 import {
@@ -73,17 +74,18 @@ const TransactionCard = ({ id, type }: Props) => {
               )}
             </View>
             <View style={styles.section}>
-              {!isIncome ? (
-                <Text style={styles.expenseCategory}>React Native Course</Text>
-              ) : null}
+         
               <View style={styles.metaRow}>
                 <HugeiconsIcon
-                  icon={Calendar03Icon}
+                  icon={Time04Icon}
                   size={16}
                   color={colors.textSecondary}
                 />
-                <Text style={styles.metaText}>27 May</Text>
+                <Text style={styles.metaText}>4:45</Text>
               </View>
+                   {!isIncome ? (
+                <Text style={styles.expenseCategory}>React Native Course</Text>
+              ) : null}
               {isIncome ? (
                 <View style={[styles.metaRow, styles.metaRowSpaced]}>
                   <HugeiconsIcon

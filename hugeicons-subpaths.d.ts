@@ -259,3 +259,241 @@ declare module '@hugeicons/core-free-icons/Time04Icon' {
   const icon: IconSvgElement;
   export default icon;
 }
+
+declare module '@hugeicons/core-free-icons/Agreement01Icon' {
+  import type { IconSvgElement } from '@hugeicons/react-native';
+
+  const icon: IconSvgElement;
+  export default icon;
+}
+
+declare module '@hugeicons/core-free-icons/Airplane01Icon' {
+  import type { IconSvgElement } from '@hugeicons/react-native';
+
+  const icon: IconSvgElement;
+  export default icon;
+}
+
+declare module '@hugeicons/core-free-icons/Baby01Icon' {
+  import type { IconSvgElement } from '@hugeicons/react-native';
+
+  const icon: IconSvgElement;
+  export default icon;
+}
+
+declare module '@hugeicons/core-free-icons/BankIcon' {
+  import type { IconSvgElement } from '@hugeicons/react-native';
+
+  const icon: IconSvgElement;
+  export default icon;
+}
+
+declare module '@hugeicons/core-free-icons/Book01Icon' {
+  import type { IconSvgElement } from '@hugeicons/react-native';
+
+  const icon: IconSvgElement;
+  export default icon;
+}
+
+declare module '@hugeicons/core-free-icons/Briefcase01Icon' {
+  import type { IconSvgElement } from '@hugeicons/react-native';
+
+  const icon: IconSvgElement;
+  export default icon;
+}
+
+declare module '@hugeicons/core-free-icons/Bus01Icon' {
+  import type { IconSvgElement } from '@hugeicons/react-native';
+
+  const icon: IconSvgElement;
+  export default icon;
+}
+
+declare module '@hugeicons/core-free-icons/Camera01Icon' {
+  import type { IconSvgElement } from '@hugeicons/react-native';
+
+  const icon: IconSvgElement;
+  export default icon;
+}
+
+declare module '@hugeicons/core-free-icons/ChefHatIcon' {
+  import type { IconSvgElement } from '@hugeicons/react-native';
+
+  const icon: IconSvgElement;
+  export default icon;
+}
+
+declare module '@hugeicons/core-free-icons/Coffee01Icon' {
+  import type { IconSvgElement } from '@hugeicons/react-native';
+
+  const icon: IconSvgElement;
+  export default icon;
+}
+
+declare module '@hugeicons/core-free-icons/Cupcake01Icon' {
+  import type { IconSvgElement } from '@hugeicons/react-native';
+
+  const icon: IconSvgElement;
+  export default icon;
+}
+
+declare module '@hugeicons/core-free-icons/DeliveryTruck01Icon' {
+  import type { IconSvgElement } from '@hugeicons/react-native';
+
+  const icon: IconSvgElement;
+  export default icon;
+}
+
+declare module '@hugeicons/core-free-icons/DentalToothIcon' {
+  import type { IconSvgElement } from '@hugeicons/react-native';
+
+  const icon: IconSvgElement;
+  export default icon;
+}
+
+declare module '@hugeicons/core-free-icons/Dress01Icon' {
+  import type { IconSvgElement } from '@hugeicons/react-native';
+
+  const icon: IconSvgElement;
+  export default icon;
+}
+
+declare module '@hugeicons/core-free-icons/Dumbbell01Icon' {
+  import type { IconSvgElement } from '@hugeicons/react-native';
+
+  const icon: IconSvgElement;
+  export default icon;
+}
+
+declare module '@hugeicons/core-free-icons/FavouriteIcon' {
+  import type { IconSvgElement } from '@hugeicons/react-native';
+
+  const icon: IconSvgElement;
+  export default icon;
+}
+
+declare module '@hugeicons/core-free-icons/Film01Icon' {
+  import type { IconSvgElement } from '@hugeicons/react-native';
+
+  const icon: IconSvgElement;
+  export default icon;
+}
+
+declare module '@hugeicons/core-free-icons/FlowerIcon' {
+  import type { IconSvgElement } from '@hugeicons/react-native';
+
+  const icon: IconSvgElement;
+  export default icon;
+}
+
+declare module '@hugeicons/core-free-icons/GiftIcon' {
+  import type { IconSvgElement } from '@hugeicons/react-native';
+
+  const icon: IconSvgElement;
+  export default icon;
+}
+
+declare module '@hugeicons/core-free-icons/GraduationScrollIcon' {
+  import type { IconSvgElement } from '@hugeicons/react-native';
+
+  const icon: IconSvgElement;
+  export default icon;
+}
+
+declare module '@hugeicons/core-free-icons/HeadphonesIcon' {
+  import type { IconSvgElement } from '@hugeicons/react-native';
+
+  const icon: IconSvgElement;
+  export default icon;
+}
+
+declare module '@hugeicons/core-free-icons/HomeWifiIcon' {
+  import type { IconSvgElement } from '@hugeicons/react-native';
+
+  const icon: IconSvgElement;
+  export default icon;
+}
+
+declare module '@hugeicons/core-free-icons/IslandIcon' {
+  import type { IconSvgElement } from '@hugeicons/react-native';
+
+  const icon: IconSvgElement;
+  export default icon;
+}
+
+declare module '@hugeicons/core-free-icons/LaptopIcon' {
+  import type { IconSvgElement } from '@hugeicons/react-native';
+
+  const icon: IconSvgElement;
+  export default icon;
+}
+
+declare module '@hugeicons/core-free-icons/Message01Icon' {
+  import type { IconSvgElement } from '@hugeicons/react-native';
+
+  const icon: IconSvgElement;
+  export default icon;
+}
+
+declare module '@hugeicons/core-free-icons/MusicNote01Icon' {
+  import type { IconSvgElement } from '@hugeicons/react-native';
+
+  const icon: IconSvgElement;
+  export default icon;
+}
+
+declare module '@hugeicons/core-free-icons/Pizza01Icon' {
+  import type { IconSvgElement } from '@hugeicons/react-native';
+
+  const icon: IconSvgElement;
+  export default icon;
+}
+
+declare module '@hugeicons/core-free-icons/Plant01Icon' {
+  import type { IconSvgElement } from '@hugeicons/react-native';
+
+  const icon: IconSvgElement;
+  export default icon;
+}
+
+declare module '@hugeicons/core-free-icons/Robot01Icon' {
+  import type { IconSvgElement } from '@hugeicons/react-native';
+
+  const icon: IconSvgElement;
+  export default icon;
+}
+
+declare module '@hugeicons/core-free-icons/ShoppingCart01Icon' {
+  import type { IconSvgElement } from '@hugeicons/react-native';
+
+  const icon: IconSvgElement;
+  export default icon;
+}
+
+declare module '@hugeicons/core-free-icons/SourceCodeIcon' {
+  import type { IconSvgElement } from '@hugeicons/react-native';
+
+  const icon: IconSvgElement;
+  export default icon;
+}
+
+declare module '@hugeicons/core-free-icons/StethoscopeIcon' {
+  import type { IconSvgElement } from '@hugeicons/react-native';
+
+  const icon: IconSvgElement;
+  export default icon;
+}
+
+declare module '@hugeicons/core-free-icons/TennisBallIcon' {
+  import type { IconSvgElement } from '@hugeicons/react-native';
+
+  const icon: IconSvgElement;
+  export default icon;
+}
+
+declare module '@hugeicons/core-free-icons/Wrench01Icon' {
+  import type { IconSvgElement } from '@hugeicons/react-native';
+
+  const icon: IconSvgElement;
+  export default icon;
+}

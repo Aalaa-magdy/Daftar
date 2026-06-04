@@ -6,12 +6,12 @@ import {
   Changa_500Medium,
   useFonts,
 } from '@expo-google-fonts/changa';
-import GridViewIcon from '@hugeicons/core-free-icons/GridViewIcon';
 import { HugeiconsIcon, type IconSvgElement } from '@hugeicons/react-native';
 import { useEffect, useMemo, useState } from 'react';
 import {
   Modal,
   Pressable,
+  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -22,6 +22,10 @@ import {
   type CategoryDialogueMode,
   type ExpenseCategory,
 } from '../data/form-options';
+import {
+  CATEGORY_PICKER_ICONS,
+  DEFAULT_CATEGORY_ICON,
+} from '../data/category-icons';
 import FormField from './FormField';
 
 interface Props {
@@ -36,6 +40,8 @@ interface Props {
   }) => void;
 }
 
+const ICON_COLUMNS = 8;
+
 const CategoryDialogue = ({
   visible,
   mode,
@@ -47,6 +53,9 @@ const CategoryDialogue = ({
   const [selectedColor, setSelectedColor] = useState<string>(
     CATEGORY_COLOR_OPTIONS[0]
   );
+  const [selectedIcon, setSelectedIcon] =
+    useState<IconSvgElement>(DEFAULT_CATEGORY_ICON);
+  const [showIconPicker, setShowIconPicker] = useState(false);
   const [fontsLoaded] = useFonts({
     Changa_400Regular,
     Changa_500Medium,
@@ -54,19 +63,23 @@ const CategoryDialogue = ({
 
   const isEdit = mode === 'edit';
   const title = isEdit ? 'Edit Category' : 'Add Category';
-  const nameIcon = category?.icon ?? GridViewIcon;
 
   useEffect(() => {
-    if (!visible) return;
+    if (!visible) {
+      setShowIconPicker(false);
+      return;
+    }
 
     if (isEdit && category) {
       setName(category.label);
       setSelectedColor(category.color);
+      setSelectedIcon(category.icon);
       return;
     }
 
     setName('');
     setSelectedColor(CATEGORY_COLOR_OPTIONS[0]);
+    setSelectedIcon(DEFAULT_CATEGORY_ICON);
   }, [visible, isEdit, category]);
 
   const canSave = useMemo(() => name.trim().length > 0, [name]);
@@ -80,9 +93,14 @@ const CategoryDialogue = ({
     onSave?.({
       name: name.trim(),
       color: selectedColor,
-      icon: category?.icon ?? GridViewIcon,
+      icon: selectedIcon,
     });
     onClose();
+  };
+
+  const handleSelectIcon = (icon: IconSvgElement) => {
+    setSelectedIcon(icon);
+    setShowIconPicker(false);
   };
 
   return (
@@ -106,9 +124,11 @@ const CategoryDialogue = ({
               onChangeText={setName}
               icon={
                 <HugeiconsIcon
-                  icon={nameIcon}
+                  icon={selectedIcon}
                   size={22}
-                  color={isEdit && category ? category.color : colors.captionMuted}
+                  color={
+                    name.trim().length > 0 ? selectedColor : colors.captionMuted
+                  }
                 />
               }
               containerStyle={styles.fieldInput}
@@ -116,16 +136,63 @@ const CategoryDialogue = ({
           </FormField>
 
           <FormField label="Icon" required>
-            <TouchableOpacity activeOpacity={0.85}>
-              <View pointerEvents="none">
-                <Input
-                  placeholder="Choose Icon"
-                  value=""
-                  icon={<HugeiconsIcon icon={GridViewIcon} size={22} />}
-                  containerStyle={styles.fieldInput}
-                />
-              </View>
-            </TouchableOpacity>
+            <View style={styles.iconFieldWrap}>
+              {showIconPicker ? (
+                <View style={styles.iconPicker}>
+                  <ScrollView
+                    nestedScrollEnabled
+                    showsVerticalScrollIndicator={false}
+                    bounces={false}
+                    style={styles.iconPickerScroll}
+                    contentContainerStyle={styles.iconPickerContent}
+                  >
+                    <View style={styles.iconGrid}>
+                      {CATEGORY_PICKER_ICONS.map((icon, index) => {
+                        const isSelected = selectedIcon === icon;
+
+                        return (
+                          <TouchableOpacity
+                            key={`category-icon-${index}`}
+                            style={styles.iconCell}
+                            onPress={() => handleSelectIcon(icon)}
+                            activeOpacity={0.7}
+                          >
+                            <HugeiconsIcon
+                              icon={icon}
+                              size={22}
+                              color={
+                                isSelected ? colors.primary : colors.textSecondary
+                              }
+                              strokeWidth={isSelected ? 2 : 1.5}
+                            />
+                          </TouchableOpacity>
+                        );
+                      })}
+                    </View>
+                  </ScrollView>
+                </View>
+              ) : null}
+
+              <TouchableOpacity
+                activeOpacity={0.85}
+                onPress={() => setShowIconPicker((current) => !current)}
+              >
+                <View pointerEvents="none">
+                  <Input
+                    placeholder="Choose Icon"
+                    value=""
+                    icon={
+                      <HugeiconsIcon
+                        icon={selectedIcon}
+                        size={22}
+                        color={colors.primary}
+                      />
+                    }
+                    containerStyle={styles.fieldInput}
+                  />
+                </View>
+              </TouchableOpacity>
+            </View>
           </FormField>
 
           <FormField label="Color" required>
@@ -141,7 +208,10 @@ const CategoryDialogue = ({
                       { backgroundColor: color },
                       isSelected && styles.colorSwatchSelected,
                     ]}
-                    onPress={() => setSelectedColor(color)}
+                    onPress={() => {
+                      setSelectedColor(color);
+                      setShowIconPicker(false);
+                    }}
                     activeOpacity={0.85}
                   />
                 );
@@ -207,6 +277,47 @@ const styles = StyleSheet.create({
   },
   fieldInput: {
     marginBottom: 0,
+  },
+  iconFieldWrap: {
+    position: 'relative',
+    zIndex: 20,
+  },
+  iconPicker: {
+    position: 'absolute',
+    bottom: '100%',
+    left: 0,
+    right: 0,
+    marginBottom: 8,
+    backgroundColor: colors.white,
+    borderRadius: 12,
+    paddingHorizontal: 10,
+    paddingTop: 10,
+    paddingBottom: 12,
+    zIndex: 2,
+    borderWidth: 1,
+    borderColor: colors.border,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.12,
+    shadowRadius: 12,
+    elevation: 8,
+    overflow: 'hidden',
+  },
+  iconPickerScroll: {
+    maxHeight: 264,
+  },
+  iconPickerContent: {
+    paddingBottom: 4,
+  },
+  iconGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
+  iconCell: {
+    width: `${100 / ICON_COLUMNS}%`,
+    height: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   colors: {
     flexDirection: 'row',

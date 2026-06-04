@@ -11,6 +11,7 @@ export type HistoryTransaction = {
   date: Date;
   note?: string;
   repeat?: string;
+  categoryId?: string;
   categoryIcon?: IconSvgElement;
   categoryIconColor?: string;
   iconBackgroundColor?: string;
@@ -21,6 +22,7 @@ const category = (id: string) => {
   if (!match) return {};
 
   return {
+    categoryId: id,
     categoryIcon: match.icon,
     categoryIconColor: match.color,
     iconBackgroundColor: `${match.color}1A`,

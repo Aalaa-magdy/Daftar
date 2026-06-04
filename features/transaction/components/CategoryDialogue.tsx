@@ -251,7 +251,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(8, 27, 10, 0.25)',
   },
   sheet: {
-    backgroundColor: colors.white,
+    backgroundColor: colors.backgroundColor,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     paddingHorizontal: 20,
@@ -288,7 +288,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     marginBottom: 8,
-    backgroundColor: colors.white,
+    backgroundColor: colors.backgroundColor,
     borderRadius: 12,
     paddingHorizontal: 10,
     paddingTop: 10,
@@ -346,7 +346,7 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: colors.white,
+    backgroundColor: colors.backgroundColor,
   },
   cancelText: {
     fontFamily: 'Changa_500Medium',

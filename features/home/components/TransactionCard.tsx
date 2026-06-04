@@ -33,6 +33,7 @@ interface Props {
   iconBackgroundColor?: string;
   dateLabel?: string;
   showDateHeader?: boolean;
+  containerStyle?: StyleProp<ViewStyle>;
 }
 
 function formatAmount(value: number, type: TransactionKind) {
@@ -66,6 +67,7 @@ const TransactionCard = ({
   iconBackgroundColor = '#ede9fa',
   dateLabel = '01 June 2025',
   showDateHeader = true,
+  containerStyle,
 }: Props) => {
   const router = useRouter();
   const [fontsLoaded] = useFonts({
@@ -81,7 +83,7 @@ const TransactionCard = ({
   const expenseNote = note ?? (type === 'expense' ? 'React Native Course' : undefined);
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, containerStyle]}>
       {showDateHeader ? <TransactionDateHeader dateLabel={dateLabel} /> : null}
       <TouchableOpacity
         activeOpacity={0.85}

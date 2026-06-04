@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
   },
   sheet: {
     maxHeight: '85%',
-    backgroundColor: colors.white,
+    backgroundColor: colors.backgroundColor,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     paddingHorizontal: 20,
@@ -230,7 +230,7 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: colors.white,
+    backgroundColor: colors.backgroundColor,
   },
   cancelText: {
     fontFamily: 'Changa_500Medium',

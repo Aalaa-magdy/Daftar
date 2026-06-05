@@ -24,6 +24,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import FormField from '@/features/transaction/components/FormField';
 import TransactionHeader from '@/features/transaction/components/TransactionHeader';
+import DeleteAccountDialogue from '../components/DeleteAccountDialogue';
 import { PROFILE_USER } from '../data/profile-menu';
 
 const fieldIcon = (icon: IconSvgElement) => (
@@ -34,6 +35,7 @@ const EditProfileScreen = () => {
   const router = useRouter();
   const [name, setName] = useState(PROFILE_USER.name);
   const [email, setEmail] = useState(PROFILE_USER.email);
+  const [deleteVisible, setDeleteVisible] = useState(false);
 
   const [fontsLoaded] = useFonts({
     Changa_400Regular,
@@ -53,6 +55,11 @@ const EditProfileScreen = () => {
 
   const handleSave = () => {
     goToVerifyEmail();
+  };
+
+  const handleDeleteAccount = () => {
+    setDeleteVisible(false);
+    router.replace('/signin');
   };
 
   return (
@@ -124,6 +131,7 @@ const EditProfileScreen = () => {
           activeOpacity={0.7}
           accessibilityRole="button"
           accessibilityLabel="Delete account"
+          onPress={() => setDeleteVisible(true)}
         >
           <HugeiconsIcon icon={Delete02Icon} size={20} color={colors.red} />
           <Text style={styles.deleteAccountText}>Delete Account</Text>
@@ -131,6 +139,12 @@ const EditProfileScreen = () => {
 
         <Button title="Save Changes" onPress={handleSave} />
       </ScrollView>
+
+      <DeleteAccountDialogue
+        visible={deleteVisible}
+        onClose={() => setDeleteVisible(false)}
+        onConfirm={handleDeleteAccount}
+      />
     </SafeAreaView>
   );
 };

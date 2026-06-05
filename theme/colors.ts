@@ -13,7 +13,7 @@ export const colors = {
   textSecondary: '#717680',
   textGray:'#535862',
   green:"#17B26A",
-  red:"#F04438",
+  red:"#D92D20",
   /** Muted caption (e.g. “Already have an account?”) — matches input placeholder tone */
   captionMuted: '#A4A7AE',
   textMuted: '#999999',

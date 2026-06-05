@@ -11,19 +11,16 @@ interface Props {
 }
 
 const ProfileMenuItem = ({ label, icon, onPress, showDivider = true }: Props) => (
-  <View>
-    <TouchableOpacity
-      style={styles.row}
-      activeOpacity={0.7}
-      onPress={onPress}
-      accessibilityRole="button"
-    >
-      <HugeiconsIcon icon={icon} size={22} color={colors.textSecondary} />
-      <Text style={styles.label}>{label}</Text>
-      <HugeiconsIcon icon={ArrowRight01Icon} size={20} color={colors.textSecondary} />
-    </TouchableOpacity>
-    {showDivider ? <View style={styles.divider} /> : null}
-  </View>
+  <TouchableOpacity
+    style={[styles.row, showDivider && styles.rowDivider]}
+    activeOpacity={0.7}
+    onPress={onPress}
+    accessibilityRole="button"
+  >
+    <HugeiconsIcon icon={icon} size={22} color={colors.textSecondary} />
+    <Text style={styles.label}>{label}</Text>
+    <HugeiconsIcon icon={ArrowRight01Icon} size={20} color={colors.textSecondary} />
+  </TouchableOpacity>
 );
 
 const styles = StyleSheet.create({
@@ -33,6 +30,11 @@ const styles = StyleSheet.create({
     gap: 12,
     paddingVertical: 16,
     paddingHorizontal: 16,
+    width: '100%',
+  },
+  rowDivider: {
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
   },
   label: {
     flex: 1,
@@ -40,11 +42,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 22,
     color: colors.black,
-  },
-  divider: {
-    height: 1,
-    backgroundColor: colors.border,
-    marginLeft: 50,
   },
 });
 

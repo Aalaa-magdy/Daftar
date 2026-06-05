@@ -40,6 +40,12 @@ const Profile = () => {
     router.replace('/signin');
   };
 
+  const handleMenuPress = (itemId: string) => {
+    if (itemId === 'edit-profile') {
+      router.push('/edit-profile');
+    }
+  };
+
   return (
     <SafeAreaView style={styles.safe} edges={['top', 'left', 'right']}>
       <ScrollView
@@ -52,7 +58,11 @@ const Profile = () => {
         <ProfileUserCard />
 
         {PROFILE_MENU_SECTIONS.map((section) => (
-          <ProfileMenuSection key={section.id} section={section} />
+          <ProfileMenuSection
+            key={section.id}
+            section={section}
+            onItemPress={handleMenuPress}
+          />
         ))}
 
         <TouchableOpacity
@@ -101,10 +111,12 @@ const styles = StyleSheet.create({
   },
   title: {
     fontFamily: 'Changa_500Medium',
-    fontSize: 22,
+    fontSize: 18,
     lineHeight: 28,
     color: colors.black,
     marginBottom: 4,
+    marginLeft: 4,
+    marginTop: 10,
   },
   logoutButton: {
     flexDirection: 'row',

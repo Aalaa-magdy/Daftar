@@ -24,6 +24,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import CategoryGrid from '../components/CategoryGrid';
+import DeleteDialogue from '../components/DeleteDialogue';
 import FormField from '../components/FormField';
 import SelectField from '../components/SelectField';
 import TransactionHeader from '../components/TransactionHeader';
@@ -51,6 +52,7 @@ const TransactionFormScreen = () => {
   const [repeat, setRepeat] = useState('Monthly');
   const [note, setNote] = useState('');
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [showDeleteDialogue, setShowDeleteDialogue] = useState(false);
   const [activePicker, setActivePicker] = useState<PickerKey>(null);
 
   const [fontsLoaded] = useFonts({
@@ -110,6 +112,7 @@ const TransactionFormScreen = () => {
 
   const handleDelete = () => {
     // TODO: delete transaction by id
+    setShowDeleteDialogue(false);
     router.back();
   };
 
@@ -124,7 +127,7 @@ const TransactionFormScreen = () => {
         <TransactionHeader
           title={title}
           onBack={() => router.back()}
-          onDelete={isEdit ? handleDelete : undefined}
+          onDelete={isEdit ? () => setShowDeleteDialogue(true) : undefined}
         />
 
         <TransactionTypeToggle value={kind} onChange={setKind} />
@@ -268,6 +271,13 @@ const TransactionFormScreen = () => {
           </View>
         </View>
       </Modal>
+
+      <DeleteDialogue
+        visible={showDeleteDialogue}
+        kind={kind}
+        onClose={() => setShowDeleteDialogue(false)}
+        onConfirm={handleDelete}
+      />
     </SafeAreaView>
   );
 };

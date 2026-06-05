@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 20,
     color: colors.textSecondary,
-    paddingHorizontal: 4,
+    paddingHorizontal: 2,
   },
   card: {
     backgroundColor: colors.white,

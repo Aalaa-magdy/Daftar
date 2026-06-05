@@ -6,7 +6,7 @@ import {
   Changa_500Medium,
   useFonts,
 } from '@expo-google-fonts/changa';
-import Logout02Icon from '@hugeicons/core-free-icons/Logout02Icon';
+import Logout03Icon from '@hugeicons/core-free-icons/Logout03Icon';
 import { HugeiconsIcon } from '@hugeicons/react-native';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
@@ -63,7 +63,7 @@ const Profile = () => {
           accessibilityLabel="Log out"
         >
           <Text style={styles.logoutText}>Log out</Text>
-          <HugeiconsIcon icon={Logout02Icon} size={20} color={colors.red} />
+          <HugeiconsIcon icon={Logout03Icon} size={20} color={colors.red} />
         </TouchableOpacity>
       </ScrollView>
 
@@ -89,9 +89,12 @@ const styles = StyleSheet.create({
   },
   scroll: {
     flex: 1,
+    backgroundColor: colors.backgroundColor,
   },
   scrollContent: {
-    paddingHorizontal: 20,
+    flexGrow: 1,
+    backgroundColor: colors.backgroundColor,
+    paddingHorizontal: 10,
     paddingTop: 8,
     paddingBottom: 96,
     gap: 20,

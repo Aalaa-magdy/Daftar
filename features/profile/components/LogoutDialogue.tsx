@@ -4,7 +4,7 @@ import {
   Changa_500Medium,
   useFonts,
 } from '@expo-google-fonts/changa';
-import Logout02Icon from '@hugeicons/core-free-icons/Logout02Icon';
+import Logout03Icon from '@hugeicons/core-free-icons/Logout03Icon';
 import { HugeiconsIcon } from '@hugeicons/react-native';
 import {
   Modal,
@@ -44,7 +44,7 @@ const LogoutDialogue = ({ visible, onClose, onConfirm }: Props) => {
           <View style={styles.handle} />
 
           <View style={styles.iconWrap}>
-            <HugeiconsIcon icon={Logout02Icon} size={28} color={colors.red} />
+            <HugeiconsIcon icon={Logout03Icon} size={28} color={colors.red} />
           </View>
 
           <Text style={styles.message}>Are you sure you want to log out?</Text>

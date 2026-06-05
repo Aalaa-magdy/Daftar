@@ -540,6 +540,20 @@ declare module '@hugeicons/core-free-icons/ShieldUserIcon' {
   export default icon;
 }
 
+declare module '@hugeicons/core-free-icons/FileSecurityIcon' {
+  import type { IconSvgElement } from '@hugeicons/react-native';
+
+  const icon: IconSvgElement;
+  export default icon;
+}
+
+declare module '@hugeicons/core-free-icons/Logout03Icon' {
+  import type { IconSvgElement } from '@hugeicons/react-native';
+
+  const icon: IconSvgElement;
+  export default icon;
+}
+
 declare module '@hugeicons/core-free-icons/Logout02Icon' {
   import type { IconSvgElement } from '@hugeicons/react-native';
 
@@ -548,6 +562,20 @@ declare module '@hugeicons/core-free-icons/Logout02Icon' {
 }
 
 declare module '@hugeicons/core-free-icons/ArrowRight01Icon' {
+  import type { IconSvgElement } from '@hugeicons/react-native';
+
+  const icon: IconSvgElement;
+  export default icon;
+}
+
+declare module '@hugeicons/core-free-icons/File02Icon' {
+  import type { IconSvgElement } from '@hugeicons/react-native';
+
+  const icon: IconSvgElement;
+  export default icon;
+}
+
+declare module '@hugeicons/core-free-icons/LanguageCircleIcon' {
   import type { IconSvgElement } from '@hugeicons/react-native';
 
   const icon: IconSvgElement;

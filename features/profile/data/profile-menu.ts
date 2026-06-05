@@ -1,11 +1,10 @@
-import LegalDocument01Icon from '@hugeicons/core-free-icons/LegalDocument01Icon';
-import Globe02Icon from '@hugeicons/core-free-icons/Globe02Icon';
+import File02Icon from '@hugeicons/core-free-icons/File02Icon';
+import FileSecurityIcon from '@hugeicons/core-free-icons/FileSecurityIcon';
+import LanguageCircleIcon from '@hugeicons/core-free-icons/LanguageCircleIcon';
 import MessageQuestionIcon from '@hugeicons/core-free-icons/MessageQuestionIcon';
 import Settings01Icon from '@hugeicons/core-free-icons/Settings01Icon';
-import ShieldUserIcon from '@hugeicons/core-free-icons/ShieldUserIcon';
 import SquareLockPasswordIcon from '@hugeicons/core-free-icons/SquareLockPasswordIcon';
 import StarIcon from '@hugeicons/core-free-icons/StarIcon';
-import UserEdit01Icon from '@hugeicons/core-free-icons/UserEdit01Icon';
 import type { IconSvgElement } from '@hugeicons/react-native';
 
 export type ProfileMenuItem = {
@@ -28,7 +27,7 @@ export const PROFILE_MENU_SECTIONS: ProfileMenuSection[] = [
       {
         id: 'edit-profile',
         label: 'Edit Profile Information',
-        icon: UserEdit01Icon,
+        icon: Settings01Icon,
       },
       {
         id: 'change-password',
@@ -44,7 +43,7 @@ export const PROFILE_MENU_SECTIONS: ProfileMenuSection[] = [
       {
         id: 'language',
         label: 'Language',
-        icon: Globe02Icon,
+        icon: LanguageCircleIcon,
       },
     ],
   },
@@ -65,12 +64,12 @@ export const PROFILE_MENU_SECTIONS: ProfileMenuSection[] = [
       {
         id: 'terms',
         label: 'Terms & Conditions',
-        icon: LegalDocument01Icon,
+        icon: File02Icon,
       },
       {
         id: 'privacy',
         label: 'Privacy Policy',
-        icon: ShieldUserIcon,
+        icon: FileSecurityIcon,
       },
     ],
   },

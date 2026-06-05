@@ -6,6 +6,7 @@ import type { NavTab } from '../components/Navbar';
 const TAB_ROUTES: Partial<Record<NavTab, Href>> = {
   home: '/home',
   history: '/history',
+  statistics: '/statistics',
 };
 
 export function useNavbarNavigation(activeTab: NavTab) {

@@ -19,6 +19,7 @@ export default function RootLayout() {
       <Stack.Screen name="set-salary" />
       <Stack.Screen name="home" />
       <Stack.Screen name="history" />
+      <Stack.Screen name="statistics" />
       <Stack.Screen name="transaction/[id]" />
     </Stack>
   );

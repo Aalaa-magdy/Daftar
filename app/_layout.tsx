@@ -27,6 +27,7 @@ export default function RootLayout() {
       <Stack.Screen name="faq" />
       <Stack.Screen name="terms" />
       <Stack.Screen name="privacy-policy" />
+      <Stack.Screen name="language" />
       <Stack.Screen name="transaction/[id]" />
     </Stack>
   );

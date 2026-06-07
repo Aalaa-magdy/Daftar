@@ -90,7 +90,9 @@ const CategoryGrid = ({ selectedId, onSelect }: Props) => {
         onPress={() => openForm('add', null)}
       >
         <HugeiconsIcon icon={Add01Icon} size={18} color={colors.primary} />
-        <Text style={styles.addChipText}>{t('transaction.addCategory')}</Text>
+        <Text style={styles.addChipText} numberOfLines={1}>
+          {t('transaction.addCategory')}
+        </Text>
       </TouchableOpacity>
 
       <EditCategoriesDialogue
@@ -164,7 +166,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     backgroundColor: colors.white,
     borderWidth: 1,
-    borderColor: colors.white,
+    borderColor: colors.border,
   },
   chipSelected: {
     backgroundColor: colors.secondary,
@@ -186,8 +188,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.primary,
     borderStyle: 'dashed',
+    backgroundColor: colors.secondary,
   },
   addChipText: {
+    flexShrink: 0,
     fontFamily: 'Changa_500Medium',
     fontSize: 14,
     lineHeight: 18,

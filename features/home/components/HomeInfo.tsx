@@ -50,7 +50,7 @@ const HomeInfo = () => {
           }
         >
           <HugeiconsIcon
-            icon={amountsVisible ? ViewOffIcon : ViewIcon}
+            icon={amountsVisible ? ViewIcon : ViewOffIcon}
             size={24}
             color={colors.white}
           />

@@ -1,8 +1,8 @@
 import { colors } from '@/theme/colors';
 import {
-    Changa_400Regular,
-    Changa_500Medium,
-    useFonts,
+  Changa_400Regular,
+  Changa_500Medium,
+  useFonts,
 } from '@expo-google-fonts/changa';
 import Add01Icon from '@hugeicons/core-free-icons/Add01Icon';
 import AnalyticsUpIcon from '@hugeicons/core-free-icons/AnalyticsUpIcon';
@@ -13,12 +13,12 @@ import { HugeiconsIcon, type IconSvgElement } from '@hugeicons/react-native';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-    Platform,
-    Pressable,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  Platform,
+  Pressable,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -47,6 +47,7 @@ const ICON_SIZE = 24;
 const ICON_STROKE_INACTIVE = 1.5;
 const ICON_STROKE_ACTIVE = 2.5;
 const FAB_SIZE = 50;
+const CENTER_SLOT_WIDTH = 68;
 
 const Navbar = ({
   activeTab = 'history',
@@ -79,6 +80,7 @@ const Navbar = ({
 
     return (
       <TouchableOpacity
+        key={tab.id}
         style={styles.item}
         activeOpacity={0.7}
         onPress={() => handleTabPress(tab.id)}
@@ -105,17 +107,21 @@ const Navbar = ({
     <View
       style={[
         styles.wrapper,
-        { paddingBottom: Math.max(insets.bottom, 8), direction: 'ltr' },
+        { paddingBottom: Math.max(insets.bottom, 4), direction: 'ltr' },
       ]}
     >
       <View style={styles.fabNotch} pointerEvents="none" />
 
       <View style={styles.bar}>
-        <View style={styles.slot}>{renderTab(TABS[0])}</View>
-        <View style={styles.slot}>{renderTab(TABS[1])}</View>
+        <View style={styles.sideGroup}>
+          {renderTab(TABS[0])}
+          {renderTab(TABS[1])}
+        </View>
         <View style={styles.centerSlot} />
-        <View style={styles.slot}>{renderTab(TABS[2])}</View>
-        <View style={styles.slot}>{renderTab(TABS[3])}</View>
+        <View style={styles.sideGroup}>
+          {renderTab(TABS[2])}
+          {renderTab(TABS[3])}
+        </View>
       </View>
 
       <Pressable
@@ -157,10 +163,10 @@ const styles = StyleSheet.create({
   },
   fabNotch: {
     position: 'absolute',
-    top: -20,
+    top: -14,
     alignSelf: 'center',
     width: FAB_SIZE,
-    height: 36,
+    height: 28,
     backgroundColor: colors.background,
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
@@ -170,24 +176,27 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'flex-end',
     width: '100%',
-    height: 64,
-    paddingTop: 8,
+    height: 52,
+    paddingHorizontal: 12,
+    paddingTop: 4,
     zIndex: 0,
   },
-  slot: {
+  sideGroup: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    paddingBottom: 6,
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    alignItems: 'flex-end',
+    paddingBottom: 2,
   },
   centerSlot: {
-    flex: 1,
+    width: CENTER_SLOT_WIDTH,
+    flexShrink: 0,
   },
   item: {
-    width: '100%',
+    minWidth: 56,
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 4,
+    gap: 2,
   },
   iconWrap: {
     width: ICON_SIZE,
@@ -196,9 +205,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   label: {
-    width: '100%',
     fontSize: 14,
-    lineHeight: 18,
+    lineHeight: 16,
     fontFamily: 'Changa_400Regular',
     color: colors.textSecondary,
     textAlign: 'center',
@@ -209,7 +217,7 @@ const styles = StyleSheet.create({
   },
   fab: {
     position: 'absolute',
-    top: -28,
+    top: -22,
     alignSelf: 'center',
     width: FAB_SIZE,
     height: FAB_SIZE,

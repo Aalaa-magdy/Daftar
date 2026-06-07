@@ -14,7 +14,7 @@ const PasswordInput = (props: Props) => {
   const [visible, setVisible] = useState(false);
 
   const toggleIcon = (
-    <HugeiconsIcon icon={(visible ? ViewOffIcon : ViewIcon) as IconSvgElement} size={22} />
+    <HugeiconsIcon icon={(visible ? ViewIcon : ViewOffIcon) as IconSvgElement} size={22} />
   );
 
   return (

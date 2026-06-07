@@ -212,7 +212,7 @@
     "updatePassword": "Update password",
     "languageTitle": "Language",
     "languageNoteTitle": "Important Note",
-    "languageNoteBody": "The selected language will be applied throughout the app. You may need to restart the app for all changes to take effect completely.",
+    "languageNoteBody": "The selected language will be applied throughout the app immediately after you save.",
     "faqTitle": "Frequently Asked Questions",
     "faqSubtitle": "Find answers to the most frequently asked questions about the app.",
     "logoutConfirmTitle": "Are you sure you want to log out?",

@@ -47,13 +47,10 @@ export async function initI18n() {
 }
 
 export async function changeAppLanguage(language: AppLanguage) {
-  const needsReload = applyLayoutDirection(language);
   await i18n.changeLanguage(language);
 
   const { persistLanguage } = await import('@/lib/language');
   await persistLanguage(language);
-
-  return needsReload;
 }
 
 export default i18n;

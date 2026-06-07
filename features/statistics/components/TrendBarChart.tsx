@@ -1,6 +1,6 @@
 import { colors } from '@/theme/colors';
 import { useAppDirection } from '@/hooks/useAppDirection';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import type { TrendPoint } from '../data/mock-statistics';
 
 interface Props {
@@ -14,7 +14,6 @@ interface Props {
 
 const CHART_HEIGHT = 200;
 const X_LABEL_HEIGHT = 32;
-const MONTH_COLUMN_WIDTH = 48;
 
 function buildTicks(maxValue: number): number[] {
   const step =
@@ -52,7 +51,6 @@ const TrendBarChart = ({
 }: Props) => {
   const { isRTL } = useAppDirection();
   const ticks = buildTicks(maxValue);
-  const monthlyPlotWidth = data.length * MONTH_COLUMN_WIDTH;
 
   const renderBarColumn = (point: TrendPoint) => {
     const columnStyle = [
@@ -95,10 +93,10 @@ const TrendBarChart = ({
             style={[
               styles.bar,
               isWeeklyChart && styles.barWeekly,
+              isMonthlyChart && styles.barMonthly,
               {
                 height: barHeight,
                 backgroundColor: barColor,
-                maxWidth: 28,
               },
             ]}
           />
@@ -120,10 +118,7 @@ const TrendBarChart = ({
       style={[
         styles.barsRow,
         isWeeklyChart && styles.barsRowWeekly,
-        isMonthlyChart && [
-          styles.barsRowMonthly,
-          { width: monthlyPlotWidth },
-        ],
+        isMonthlyChart && styles.barsRowMonthly,
       ]}
     >
       {data.map((point) => renderBarColumn(point))}
@@ -131,12 +126,7 @@ const TrendBarChart = ({
   );
 
   const plotContent = (
-    <View
-      style={[
-        styles.plotArea,
-        isMonthlyChart && { width: monthlyPlotWidth },
-      ]}
-    >
+    <View style={styles.plotArea}>
       {ticks.map((tick) => (
         <View
           key={`grid-${tick}`}
@@ -164,18 +154,7 @@ const TrendBarChart = ({
           ))}
         </View>
 
-        {isMonthlyChart ? (
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            style={styles.monthlyScroll}
-            contentContainerStyle={styles.monthlyScrollContent}
-          >
-            {plotContent}
-          </ScrollView>
-        ) : (
-          <View style={styles.plotAreaFlex}>{plotContent}</View>
-        )}
+        <View style={styles.plotAreaFlex}>{plotContent}</View>
       </View>
     </View>
   );
@@ -223,12 +202,6 @@ const styles = StyleSheet.create({
   plotAreaFlex: {
     flex: 1,
   },
-  monthlyScroll: {
-    flex: 1,
-  },
-  monthlyScrollContent: {
-    flexGrow: 1,
-  },
   plotArea: {
     height: CHART_HEIGHT + X_LABEL_HEIGHT,
     position: 'relative',
@@ -257,7 +230,6 @@ const styles = StyleSheet.create({
     gap: 18,
   },
   barsRowMonthly: {
-    justifyContent: 'flex-start',
     gap: 0,
   },
   barColumn: {
@@ -270,9 +242,8 @@ const styles = StyleSheet.create({
     width: 36,
   },
   barColumnMonthly: {
-    flex: 0,
-    width: MONTH_COLUMN_WIDTH,
-    minWidth: MONTH_COLUMN_WIDTH,
+    flex: 1,
+    minWidth: 0,
   },
   barArea: {
     height: CHART_HEIGHT,
@@ -289,6 +260,12 @@ const styles = StyleSheet.create({
   barWeekly: {
     width: 28,
     minWidth: 28,
+  },
+  barMonthly: {
+    width: 10,
+    minWidth: 10,
+    borderTopLeftRadius: 6,
+    borderTopRightRadius: 6,
   },
   placeholderDot: {
     width: 8,
@@ -308,10 +285,10 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   xLabelMonthly: {
-    fontSize: 12,
-    lineHeight: 18,
-    minHeight: 24,
-    paddingHorizontal: 2,
+    fontSize: 10,
+    lineHeight: 14,
+    minHeight: 18,
+    paddingHorizontal: 0,
   },
   xLabelRtl: {
     writingDirection: 'rtl',

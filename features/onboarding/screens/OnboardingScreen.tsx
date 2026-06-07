@@ -39,11 +39,8 @@ const OnboardingScreen = () => {
   const contentWidth = Math.max(width - 40, 0);
 
   React.useEffect(() => {
-    setCurrentStep(0);
-    requestAnimationFrame(() => {
-      flatListRef.current?.scrollToOffset({ offset: 0, animated: false });
-    });
-  }, [isRTL]);
+    flatListRef.current?.scrollToOffset({ offset: 0, animated: false });
+  }, [contentWidth]);
 
   const handleScrollEnd = React.useCallback(
     (event: NativeSyntheticEvent<NativeScrollEvent>) => {
@@ -69,17 +66,11 @@ const OnboardingScreen = () => {
 
   const renderItem = React.useCallback(
     ({ item }: { item: OnboardingItemType }) => (
-      <View
-        style={[
-          styles.slide,
-          { width: contentWidth },
-          isRTL && styles.slideUnmirror,
-        ]}
-      >
+      <View style={[styles.slide, { width: contentWidth }]}>
         <OnboardingItem item={item} width={contentWidth} />
       </View>
     ),
-    [contentWidth, isRTL],
+    [contentWidth],
   );
 
   if (!fontsLoaded) {
@@ -112,7 +103,6 @@ const OnboardingScreen = () => {
         <View style={styles.listContainer}>
           <FlatList
             ref={flatListRef}
-            key={isRTL ? 'onboarding-rtl' : 'onboarding-ltr'}
             data={onboardingData}
             renderItem={renderItem}
             keyExtractor={(item) => item.id.toString()}
@@ -120,6 +110,7 @@ const OnboardingScreen = () => {
             pagingEnabled
             bounces={false}
             showsHorizontalScrollIndicator={false}
+            initialScrollIndex={0}
             onMomentumScrollEnd={handleScrollEnd}
             getItemLayout={(_, index) => ({
               length: contentWidth,
@@ -132,7 +123,7 @@ const OnboardingScreen = () => {
                 animated: true,
               });
             }}
-            style={[styles.list, isRTL && styles.listRtl]}
+            style={styles.list}
           />
         </View>
         <View style={styles.footer}>
@@ -206,18 +197,13 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     flex: 1,
+    direction: 'ltr',
   },
   list: {
     flex: 1,
   },
-  listRtl: {
-    transform: [{ scaleX: -1 }],
-  },
   slide: {
     flex: 1,
-  },
-  slideUnmirror: {
-    transform: [{ scaleX: -1 }],
   },
   footer: {
     width: '100%',

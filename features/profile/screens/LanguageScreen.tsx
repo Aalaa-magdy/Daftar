@@ -10,7 +10,7 @@ import {
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Alert, DevSettings, ScrollView, StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import LanguageNoteCard from '@/features/profile/components/LanguageNoteCard';
 import LanguageOptionRow from '@/features/profile/components/LanguageOptionRow';
@@ -38,28 +38,7 @@ const LanguageScreen = () => {
   }
 
   const handleSave = async () => {
-    const needsReload = await changeAppLanguage(selectedLanguage);
-
-    if (needsReload) {
-      Alert.alert(
-        t('profile.languageNoteTitle'),
-        t('profile.languageNoteBody'),
-        [
-          {
-            text: t('common.continue'),
-            onPress: () => {
-              if (__DEV__) {
-                DevSettings.reload();
-                return;
-              }
-              router.back();
-            },
-          },
-        ],
-      );
-      return;
-    }
-
+    await changeAppLanguage(selectedLanguage);
     router.back();
   };
 

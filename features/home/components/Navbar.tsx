@@ -47,7 +47,7 @@ const ICON_SIZE = 24;
 const ICON_STROKE_INACTIVE = 1.5;
 const ICON_STROKE_ACTIVE = 2.5;
 const FAB_SIZE = 50;
-const CENTER_SLOT_WIDTH = 68;
+const CENTER_SLOT_WIDTH = 56;
 
 const Navbar = ({
   activeTab = 'history',
@@ -177,14 +177,14 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
     width: '100%',
     height: 52,
-    paddingHorizontal: 12,
+    paddingHorizontal: 10,
     paddingTop: 4,
     zIndex: 0,
   },
   sideGroup: {
     flex: 1,
     flexDirection: 'row',
-    justifyContent: 'space-evenly',
+    justifyContent: 'space-around',
     alignItems: 'flex-end',
     paddingBottom: 2,
   },

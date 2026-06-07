@@ -30,6 +30,7 @@ export async function resolveInitialLanguage(): Promise<AppLanguage> {
   return getDeviceLanguage();
 }
 
+/** Applied once on cold start. Runtime switches use root `direction` + i18n remount. */
 export function applyLayoutDirection(language: AppLanguage) {
   const shouldUseRTL = language === 'ar';
 

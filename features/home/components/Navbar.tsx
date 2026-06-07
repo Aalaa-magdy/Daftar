@@ -1,8 +1,8 @@
 import { colors } from '@/theme/colors';
 import {
-  Changa_400Regular,
-  Changa_500Medium,
-  useFonts,
+    Changa_400Regular,
+    Changa_500Medium,
+    useFonts,
 } from '@expo-google-fonts/changa';
 import Add01Icon from '@hugeicons/core-free-icons/Add01Icon';
 import AnalyticsUpIcon from '@hugeicons/core-free-icons/AnalyticsUpIcon';
@@ -13,12 +13,12 @@ import { HugeiconsIcon, type IconSvgElement } from '@hugeicons/react-native';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  Platform,
-  Pressable,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
+    Platform,
+    Pressable,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 

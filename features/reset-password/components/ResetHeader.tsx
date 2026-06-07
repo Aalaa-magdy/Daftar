@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
     marginBottom:16
   },
   rootWhite: {
-    backgroundColor: colors.white,
+    backgroundColor: colors.backgroundColor,
   },
   backgroundImage: {
     position: 'absolute',
@@ -107,17 +107,15 @@ const styles = StyleSheet.create({
   },
   backButton: {
     position: 'absolute',
-    left: 0,
+    left: 16,
     zIndex: 10,
-    paddingLeft: 4,
     paddingVertical: 8,
   },
   centerContent: {
     width: '100%',
     alignItems: 'center',
-    paddingHorizontal: 4,
     paddingTop: 40,
-    marginTop:60,
+    marginTop: 60,
     paddingBottom: 16,
     gap: 12,
   },

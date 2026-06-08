@@ -1,6 +1,5 @@
 // src/features/auth/hooks/useSignup.ts
 import { useMutation } from '@tanstack/react-query';
-import { Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { signupApi } from '../api/signup.api';
 import { SignupRequest, AuthResponse, isAuthSuccess } from '../types/signup.types';
@@ -21,12 +20,6 @@ export const useSignup = () => {
           await AsyncStorage.setItem('refreshToken', data.refreshToken);
         }
       }
-      
-      // Show success message
-      Alert.alert('Success', 'Account created successfully!');
-      
-      // You can trigger navigation here or handle in the component
-      console.log('Signup successful:', data);
     },
     
   });

@@ -126,6 +126,9 @@ const Signup = () => {
         password,
       },
       {
+        onSuccess: () => {
+          router.replace("/set-salary" as Href);
+        },
         onError: (error) => {
           const errorMessage = getApiErrorMessage(error);
           setErrors(mapSignupFieldErrors(errorMessage));

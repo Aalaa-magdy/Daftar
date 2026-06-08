@@ -52,7 +52,8 @@
     "invalidEmail": "Please enter a valid email address.",
     "passwordRequired": "Please enter a password.",
     "passwordMinLength": "Password must be at least 6 characters.",
-    "confirmPasswordRequired": "Please confirm your password."
+    "confirmPasswordRequired": "Please confirm your password.",
+    "invalidCredentials": "Invalid email or password."
   },
   "onboarding": {
     "skip": "Skip",

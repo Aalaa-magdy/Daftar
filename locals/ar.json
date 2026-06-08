@@ -52,7 +52,8 @@
     "invalidEmail": "يرجى إدخال بريد إلكتروني صالح.",
     "passwordRequired": "يرجى إدخال كلمة المرور.",
     "passwordMinLength": "يجب أن تتكون كلمة المرور من 6 أحرف على الأقل.",
-    "confirmPasswordRequired": "يرجى تأكيد كلمة المرور."
+    "confirmPasswordRequired": "يرجى تأكيد كلمة المرور.",
+    "invalidCredentials": "البريد الإلكتروني أو كلمة المرور غير صحيحة."
   },
   "onboarding": {
     "skip": "تخطي",

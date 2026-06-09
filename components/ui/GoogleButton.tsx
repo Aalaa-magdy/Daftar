@@ -6,15 +6,20 @@ import { StyleSheet, Text, TouchableOpacity } from 'react-native'
 interface Props {
   title: string;
   onPress?: () => void;
+  disabled?: boolean;
 }
 
-const GoogleButton = ({ title, onPress }: Props) => {
+const GoogleButton = ({ title, onPress, disabled = false }: Props) => {
   return (
     <TouchableOpacity
       accessibilityRole="button"
-      style={styles.primaryButton}
+      style={[
+        styles.primaryButton,
+        disabled ? styles.primaryButtonDisabled : null,
+      ]}
       activeOpacity={0.8}
-      onPress={onPress}
+      onPress={disabled ? undefined : onPress}
+      disabled={disabled}
     >
       <Text style={styles.primaryButtonText}>{title}</Text>
       <GoogleLogo width={20} height={20} />
@@ -33,6 +38,9 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         gap: 12,
+    },
+    primaryButtonDisabled: {
+        opacity: 0.6,
     },
     primaryButtonText: {
         fontSize: 16,

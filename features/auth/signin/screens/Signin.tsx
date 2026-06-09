@@ -27,7 +27,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { useTranslation } from "react-i18next";
 import { useAppDirection } from "@/hooks/useAppDirection";
-import { useSignin } from "@/features/auth/signin/hooks/useSignin";
+import { useSignin, useGoogleAuth } from "@/features/auth/hooks";
 import {
   mapSigninFieldErrors,
   resolveSigninFieldError,
@@ -36,6 +36,7 @@ import {
   type SigninFieldErrors,
 } from "@/features/auth/lib/signin-errors";
 import { getApiErrorMessage } from "@/lib/api-error";
+import { AxiosError } from "axios";
 
 const patternSource = require("@/assets/images/background-pattern-decorative.png");
 
@@ -47,16 +48,19 @@ const Signin = () => {
   const { t } = useTranslation();
   const { directionStyle, textAlign, writingDirection } = useAppDirection();
   const router = useRouter();
-  const { mutate: signin, isPending } = useSignin();
+
+  const { mutate: signin, isPending: isSigninPending } = useSignin();
+  const { signInWithGoogle, isPending: isGooglePending } = useGoogleAuth({
+    onSuccess: () => router.replace("/set-salary" as Href),
+  });
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<SigninFieldErrors>({});
 
-  const [fontsLoaded] = useFonts({
-    Changa_400Regular,
-    Changa_500Medium,
-  });
+  const [fontsLoaded] = useFonts({ Changa_400Regular, Changa_500Medium });
+
+  const isPending = isSigninPending || isGooglePending;
 
   const clearFieldError = (field: SigninField) => {
     setErrors((prev) => {
@@ -69,12 +73,8 @@ const Signin = () => {
 
   const handleFieldChange = (field: SigninField, value: string) => {
     switch (field) {
-      case "email":
-        setEmail(value);
-        break;
-      case "password":
-        setPassword(value);
-        break;
+      case "email":    setEmail(value);    break;
+      case "password": setPassword(value); break;
     }
     clearFieldError(field);
   };
@@ -82,15 +82,13 @@ const Signin = () => {
   const validateForm = (): boolean => {
     const nextErrors: SigninFieldErrors = {};
 
-    if (!email.trim()) {
+    if (!email.trim())
       nextErrors.email = "auth.emailRequired";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()))
       nextErrors.email = "auth.invalidEmail";
-    }
 
-    if (!password) {
+    if (!password)
       nextErrors.password = "auth.passwordRequired";
-    }
 
     setErrors(nextErrors);
     return Object.keys(nextErrors).length === 0;
@@ -100,21 +98,20 @@ const Signin = () => {
     if (!validateForm()) return;
 
     signin(
+      { email: email.trim(), password },
       {
-        email: email.trim(),
-        password,
-      },
-      {
-        onSuccess: () => {
-          router.replace("/set-salary" as Href);
-        },
-        onError: (error) => {
-          const errorMessage = getApiErrorMessage(error);
-          setErrors(mapSigninFieldErrors(errorMessage));
-          console.error("Signin error:", errorMessage);
+        onSuccess: () => router.replace("/set-salary" as Href),
+        onError: (error: AxiosError) => {
+          const message = getApiErrorMessage(error);
+          setErrors(mapSigninFieldErrors(message));
+          console.error("Signin error:", message);
         },
       },
     );
+  };
+
+  const handleGoogleSignin = () => {
+    signInWithGoogle();
   };
 
   if (!fontsLoaded) return null;
@@ -137,8 +134,8 @@ const Signin = () => {
           contentContainerStyle={styles.content}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
-          enableOnAndroid={true}
-          enableAutomaticScroll={true}
+          enableOnAndroid
+          enableAutomaticScroll
           extraHeight={120}
           extraScrollHeight={120}
         >
@@ -151,7 +148,8 @@ const Signin = () => {
             <View style={styles.actions}>
               <View>
                 <Text style={[styles.label, { textAlign, writingDirection }]}>
-                  {t("common.email")} <Text style={styles.star}>{t("common.required")}</Text>
+                  {t("common.email")}{" "}
+                  <Text style={styles.star}>{t("common.required")}</Text>
                 </Text>
                 <Input
                   placeholder={t("common.emailPlaceholder")}
@@ -170,7 +168,8 @@ const Signin = () => {
 
               <View style={styles.passwordField}>
                 <Text style={[styles.label, { textAlign, writingDirection }]}>
-                  {t("common.password")} <Text style={styles.star}>{t("common.required")}</Text>
+                  {t("common.password")}{" "}
+                  <Text style={styles.star}>{t("common.required")}</Text>
                 </Text>
                 <PasswordInput
                   placeholder={t("common.passwordPlaceholder")}
@@ -198,12 +197,15 @@ const Signin = () => {
               onPress={handleSignin}
               disabled={isPending}
             />
-            <GoogleButton title={t("auth.googleSignIn")} />
+
+            <GoogleButton
+              title={t("auth.googleSignIn")}
+              onPress={handleGoogleSignin}
+              disabled={isPending}
+            />
 
             <View style={styles.footerAuth}>
-              <Text style={styles.footerAuthMuted}>
-                {t("auth.noAccount")}
-              </Text>
+              <Text style={styles.footerAuthMuted}>{t("auth.noAccount")}</Text>
               <TextLinkButton
                 title={t("auth.signUp")}
                 variant="inline"
@@ -218,9 +220,7 @@ const Signin = () => {
 };
 
 const styles = StyleSheet.create({
-  flex: {
-    flex: 1,
-  },
+  flex: { flex: 1 },
 
   container: {
     flex: 1,
@@ -248,13 +248,9 @@ const styles = StyleSheet.create({
     gap: 16,
   },
 
-  passwordField: {
-    width: "100%",
-  },
+  passwordField: { width: "100%" },
 
-  passwordInput: {
-    marginBottom: 4,
-  },
+  passwordInput: { marginBottom: 4 },
 
   forgetPasswordRow: {
     width: "100%",
@@ -264,9 +260,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
 
-  bottomActions: {
-    gap: 16,
-  },
+  bottomActions: { gap: 16 },
 
   label: {
     width: "100%",
@@ -277,9 +271,7 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
 
-  star: {
-    color: "red",
-  },
+  star: { color: "red" },
 
   footerAuth: {
     flexDirection: "row",

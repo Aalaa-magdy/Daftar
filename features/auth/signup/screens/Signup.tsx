@@ -28,7 +28,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { useTranslation } from "react-i18next";
 import { useAppDirection } from "@/hooks/useAppDirection";
-import { useSignup } from "@/features/auth/signup/hooks/useSignup";
+import { useSignup, useGoogleAuth } from "@/features/auth/hooks";
 import {
   mapSignupFieldErrors,
   resolveSignupFieldError,
@@ -36,6 +36,7 @@ import {
   type SignupFieldErrors,
 } from "@/features/auth/lib/signup-errors";
 import { getApiErrorMessage } from "@/lib/api-error";
+import { AxiosError } from "axios";
 
 const patternSource = require("@/assets/images/background-pattern-decorative.png");
 
@@ -47,7 +48,11 @@ const Signup = () => {
   const { t } = useTranslation();
   const { directionStyle, textAlign, writingDirection } = useAppDirection();
   const router = useRouter();
-  const { mutate: signup, isPending } = useSignup();
+
+  const { mutate: signup, isPending: isSignupPending } = useSignup();
+  const { signInWithGoogle, isPending: isGooglePending } = useGoogleAuth({
+    onSuccess: () => router.replace("/set-salary" as Href),
+  });
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -55,10 +60,9 @@ const Signup = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errors, setErrors] = useState<SignupFieldErrors>({});
 
-  const [fontsLoaded] = useFonts({
-    Changa_400Regular,
-    Changa_500Medium,
-  });
+  const [fontsLoaded] = useFonts({ Changa_400Regular, Changa_500Medium });
+
+  const isPending = isSignupPending || isGooglePending;
 
   const clearFieldError = (field: SignupField) => {
     setErrors((prev) => {
@@ -71,18 +75,10 @@ const Signup = () => {
 
   const handleFieldChange = (field: SignupField, value: string) => {
     switch (field) {
-      case "name":
-        setName(value);
-        break;
-      case "email":
-        setEmail(value);
-        break;
-      case "password":
-        setPassword(value);
-        break;
-      case "confirmPassword":
-        setConfirmPassword(value);
-        break;
+      case "name":         setName(value);            break;
+      case "email":        setEmail(value);           break;
+      case "password":     setPassword(value);        break;
+      case "confirmPassword": setConfirmPassword(value); break;
     }
     clearFieldError(field);
   };
@@ -90,27 +86,23 @@ const Signup = () => {
   const validateForm = (): boolean => {
     const nextErrors: SignupFieldErrors = {};
 
-    if (!name.trim()) {
+    if (!name.trim())
       nextErrors.name = "auth.nameRequired";
-    }
 
-    if (!email.trim()) {
+    if (!email.trim())
       nextErrors.email = "auth.emailRequired";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()))
       nextErrors.email = "auth.invalidEmail";
-    }
 
-    if (!password) {
+    if (!password)
       nextErrors.password = "auth.passwordRequired";
-    } else if (password.length < 6) {
+    else if (password.length < 6)
       nextErrors.password = "auth.passwordMinLength";
-    }
 
-    if (!confirmPassword) {
+    if (!confirmPassword)
       nextErrors.confirmPassword = "auth.confirmPasswordRequired";
-    } else if (password !== confirmPassword) {
+    else if (password !== confirmPassword)
       nextErrors.confirmPassword = "auth.passwordsDoNotMatch";
-    }
 
     setErrors(nextErrors);
     return Object.keys(nextErrors).length === 0;
@@ -120,22 +112,20 @@ const Signup = () => {
     if (!validateForm()) return;
 
     signup(
+      { name: name.trim(), email: email.trim(), password },
       {
-        name: name.trim(),
-        email: email.trim(),
-        password,
-      },
-      {
-        onSuccess: () => {
-          router.replace("/set-salary" as Href);
-        },
-        onError: (error) => {
-          const errorMessage = getApiErrorMessage(error);
-          setErrors(mapSignupFieldErrors(errorMessage));
-          console.error("Signup error:", errorMessage);
+        onSuccess: () => router.replace("/set-salary" as Href),
+        onError: (error: AxiosError) => {
+          const message = getApiErrorMessage(error);
+          setErrors(mapSignupFieldErrors(message));
+          console.error("Signup error:", message);
         },
       },
     );
+  };
+
+  const handleGoogleSignup = () => {
+    signInWithGoogle();
   };
 
   if (!fontsLoaded) return null;
@@ -154,8 +144,8 @@ const Signup = () => {
           contentContainerStyle={styles.content}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
-          enableOnAndroid={true}
-          enableAutomaticScroll={true}
+          enableOnAndroid
+          enableAutomaticScroll
           extraHeight={120}
           extraScrollHeight={120}
         >
@@ -167,7 +157,8 @@ const Signup = () => {
           <View style={styles.actions}>
             <View>
               <Text style={[styles.label, { textAlign, writingDirection }]}>
-                {t("common.name")} <Text style={styles.star}>{t("common.required")}</Text>
+                {t("common.name")}{" "}
+                <Text style={styles.star}>{t("common.required")}</Text>
               </Text>
               <Input
                 placeholder={t("auth.enterYourName")}
@@ -180,7 +171,8 @@ const Signup = () => {
 
             <View>
               <Text style={[styles.label, { textAlign, writingDirection }]}>
-                {t("common.email")} <Text style={styles.star}>{t("common.required")}</Text>
+                {t("common.email")}{" "}
+                <Text style={styles.star}>{t("common.required")}</Text>
               </Text>
               <Input
                 placeholder={t("common.emailPlaceholder")}
@@ -194,7 +186,8 @@ const Signup = () => {
 
             <View>
               <Text style={[styles.label, { textAlign, writingDirection }]}>
-                {t("common.password")} <Text style={styles.star}>{t("common.required")}</Text>
+                {t("common.password")}{" "}
+                <Text style={styles.star}>{t("common.required")}</Text>
               </Text>
               <PasswordInput
                 placeholder={t("common.passwordPlaceholder")}
@@ -207,13 +200,16 @@ const Signup = () => {
 
             <View>
               <Text style={[styles.label, { textAlign, writingDirection }]}>
-                {t("auth.confirmPasswordLabel")} <Text style={styles.star}>{t("common.required")}</Text>
+                {t("auth.confirmPasswordLabel")}{" "}
+                <Text style={styles.star}>{t("common.required")}</Text>
               </Text>
               <PasswordInput
                 placeholder={t("common.passwordPlaceholder")}
                 icon={fieldIcon(LockPasswordIcon)}
                 value={confirmPassword}
-                onChangeText={(text) => handleFieldChange("confirmPassword", text)}
+                onChangeText={(text) =>
+                  handleFieldChange("confirmPassword", text)
+                }
                 error={resolveSignupFieldError(errors.confirmPassword, t)}
               />
             </View>
@@ -223,13 +219,15 @@ const Signup = () => {
               onPress={handleSignup}
               disabled={isPending}
             />
-            <GoogleButton title={t("auth.googleSignUp")} />
+
+            <GoogleButton
+              title={t("auth.googleSignUp")}
+              onPress={handleGoogleSignup}
+              disabled={isPending}
+            />
 
             <View style={styles.footerAuth}>
-              <Text style={styles.footerAuthMuted}>
-                {t("auth.hasAccount")}
-              </Text>
-
+              <Text style={styles.footerAuthMuted}>{t("auth.hasAccount")}</Text>
               <TextLinkButton
                 title={t("auth.signIn")}
                 variant="inline"
@@ -244,9 +242,7 @@ const Signup = () => {
 };
 
 const styles = StyleSheet.create({
-  flex: {
-    flex: 1,
-  },
+  flex: { flex: 1 },
 
   container: {
     flex: 1,
@@ -273,7 +269,7 @@ const styles = StyleSheet.create({
   },
 
   label: {
-    width: '100%',
+    width: "100%",
     fontFamily: "Changa_400Regular",
     color: colors.black,
     fontSize: 16,
@@ -281,9 +277,7 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
 
-  star: {
-    color: "red",
-  },
+  star: { color: "red" },
 
   footerAuth: {
     flexDirection: "row",

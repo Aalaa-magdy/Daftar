@@ -1,5 +1,4 @@
 export type SignupField = 'name' | 'email' | 'password' | 'confirmPassword';
-
 export type SignupFieldErrors = Partial<Record<SignupField, string>>;
 
 const CLIENT_ERROR_KEYS = new Set([
@@ -27,14 +26,9 @@ export function mapSignupFieldErrors(errorMessage: string): SignupFieldErrors {
 
   for (const part of parts) {
     const lower = part.toLowerCase();
-
-    if (lower.includes('email')) {
-      errors.email = part;
-    } else if (lower.includes('password')) {
-      errors.password = part;
-    } else if (lower.includes('name')) {
-      errors.name = part;
-    }
+    if (lower.includes('email')) errors.email = part;
+    else if (lower.includes('password')) errors.password = part;
+    else if (lower.includes('name')) errors.name = part;
   }
 
   if (!Object.keys(errors).length && errorMessage) {

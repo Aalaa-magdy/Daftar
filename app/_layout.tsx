@@ -39,7 +39,7 @@ export default function RootLayout() {
             flex: 1,
             alignItems: 'center',
             justifyContent: 'center',
-            backgroundColor: colors.background,
+            backgroundColor: colors.white,
           }}
         >
           <ActivityIndicator color={colors.primary} />
@@ -50,7 +50,15 @@ export default function RootLayout() {
           style={{ flex: 1, direction: isRTL ? 'rtl' : 'ltr' }}
         >
           <Stack screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="index" />
+            <Stack.Screen
+              name="index"
+              options={{
+                contentStyle: {
+                  backgroundColor: colors.white,
+                  direction: 'ltr',
+                },
+              }}
+            />
             <Stack.Screen name="onboarding" />
             <Stack.Screen name="lastOnboarding" />
             <Stack.Screen name="signup" />

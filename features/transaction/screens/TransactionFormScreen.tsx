@@ -16,14 +16,16 @@ import { useRouter } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
+  Keyboard,
   Modal,
   Pressable,
-  ScrollView,
   StyleSheet,
   TouchableOpacity,
+  TouchableWithoutFeedback,
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import CategoryGrid from '../components/CategoryGrid';
 import DeleteDialogue from '../components/DeleteDialogue';
 import FormField from '../components/FormField';
@@ -147,12 +149,17 @@ const TransactionFormScreen = () => {
 
   return (
     <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
-      <ScrollView
-        style={styles.scroll}
-        contentContainerStyle={styles.content}
-        keyboardShouldPersistTaps="handled"
-        showsVerticalScrollIndicator={false}
-      >
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <KeyboardAwareScrollView
+          style={styles.scroll}
+          contentContainerStyle={styles.content}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+          enableOnAndroid
+          enableAutomaticScroll
+          extraHeight={120}
+          extraScrollHeight={120}
+        >
         <TransactionHeader
           title={t(titleKey)}
           onBack={() => router.back()}
@@ -285,7 +292,8 @@ const TransactionFormScreen = () => {
             disabled={!isFormComplete}
           />
         </View>
-      </ScrollView>
+        </KeyboardAwareScrollView>
+      </TouchableWithoutFeedback>
 
       <Modal
         visible={showDatePicker}

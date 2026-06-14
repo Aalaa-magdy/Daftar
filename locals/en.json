@@ -25,6 +25,8 @@
     "monthly": "Monthly",
     "oneTime": "One-time",
     "resend": "Resend",
+    "success": "Success",
+    "error": "Error",
     "verified": "Verified",
     "english": "English",
     "arabic": "Arabic"
@@ -84,7 +86,11 @@
     "didntReceiveEmail": "Didn't receive the email",
     "setNewPasswordTitle": "Set new password",
     "setNewPasswordSubtitle": "Set a new password for your account.",
-    "resetPasswordButton": "Reset password"
+    "resetPasswordButton": "Reset password",
+    "invalidCode": "Please enter the 4-digit verification code.",
+    "codeSentAgain": "A new verification code has been sent to your email.",
+    "success": "Your password has been reset. You can now sign in.",
+    "sessionExpired": "Your session expired. Please start the reset process again."
   },
   "setSalary": {
     "title": "Let's set your monthly salary",

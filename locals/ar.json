@@ -25,6 +25,8 @@
     "monthly": "شهري",
     "oneTime": "مرة واحدة",
     "resend": "إعادة الإرسال",
+    "success": "نجاح",
+    "error": "خطأ",
     "verified": "موثّق",
     "english": "English",
     "arabic": "العربية"
@@ -84,7 +86,11 @@
     "didntReceiveEmail": "لم تصلك الرسالة",
     "setNewPasswordTitle": "تعيين كلمة مرور جديدة",
     "setNewPasswordSubtitle": "عيّن كلمة مرور جديدة لحسابك.",
-    "resetPasswordButton": "إعادة تعيين كلمة المرور"
+    "resetPasswordButton": "إعادة تعيين كلمة المرور",
+    "invalidCode": "يرجى إدخال رمز التحقق المكوّن من 4 أرقام.",
+    "codeSentAgain": "تم إرسال رمز تحقق جديد إلى بريدك الإلكتروني.",
+    "success": "تم إعادة تعيين كلمة المرور. يمكنك تسجيل الدخول الآن.",
+    "sessionExpired": "انتهت صلاحية الجلسة. يرجى بدء عملية إعادة التعيين من جديد."
   },
   "setSalary": {
     "title": "لنحدّد راتبك الشهري",

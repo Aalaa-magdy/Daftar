@@ -4,106 +4,73 @@ import {
   Changa_500Medium,
   useFonts,
 } from '@expo-google-fonts/changa';
-import { useRouter } from 'expo-router';
-import React, { useCallback, useRef, useState } from 'react';
-import {
-  FlatList,
-  NativeScrollEvent,
-  NativeSyntheticEvent,
-  StyleSheet,
-  useWindowDimensions,
-  View,
-} from 'react-native';
+import { useRouter, type Href } from 'expo-router';
+import React, { useCallback, useState } from 'react';
+import { StyleSheet, View } from 'react-native';
 import {
   SafeAreaView,
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
 import Pagination from '../components/Pagination';
 import ResetPasswordItem from '../components/ResetPasswordItem';
-import passwordData, { type PasswordDataType } from '../data/passwordData';
+import passwordData from '../data/passwordData';
 
 const HORIZONTAL_PADDING = 20;
 
 const ResetPassword = () => {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const flatListRef = useRef<FlatList<PasswordDataType>>(null);
-  const { width } = useWindowDimensions();
-  const contentWidth = Math.max(width - HORIZONTAL_PADDING * 2, 0);
 
-  const [fontsLoaded] = useFonts({
-    Changa_400Regular,
-    Changa_500Medium,
-  });
+  const [fontsLoaded] = useFonts({ Changa_400Regular, Changa_500Medium });
   const [currentStep, setCurrentStep] = useState(0);
 
-  const handleScrollEnd = useCallback(
-    (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-      const offsetX = event.nativeEvent.contentOffset.x;
-      const nextIndex = Math.round(offsetX / contentWidth);
-      setCurrentStep(nextIndex);
-    },
-    [contentWidth]
-  );
+  const [email, setEmail] = useState('');
+  const [code, setCode] = useState('');
 
-  const handleNext = useCallback(() => {
-    if (currentStep >= passwordData.length - 1) {
+  const step = passwordData[currentStep];
+
+  const handleEmailChange = useCallback((value: string) => {
+    setEmail(value);
+    setCode('');
+  }, []);
+
+  const handleBack = useCallback(() => {
+    if (currentStep === 0) {
       router.back();
       return;
     }
-    const nextIndex = currentStep + 1;
-    setCurrentStep(nextIndex);
-    flatListRef.current?.scrollToIndex({
-      index: nextIndex,
-      animated: true,
-    });
+    setCurrentStep((prev) => prev - 1);
   }, [currentStep, router]);
 
-  const renderItem = useCallback(
-    ({ item }: { item: PasswordDataType }) => (
-      <ResetPasswordItem
-        item={item}
-        width={contentWidth}
-        onBackPress={() => router.back()}
-        onNext={handleNext}
-      />
-    ),
-    [contentWidth, router, handleNext]
-  );
+  const handleNext = useCallback(() => {
+    setCurrentStep((prev) => Math.min(prev + 1, passwordData.length - 1));
+  }, []);
 
-  if (!fontsLoaded) {
-    return null;
-  }
+  const handleDone = useCallback(() => {
+    router.replace('/signin' as Href);
+  }, [router]);
+
+  if (!fontsLoaded || !step) return null;
 
   return (
     <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
       <View style={styles.content}>
-        <FlatList
-          ref={flatListRef}
-          data={passwordData}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.id.toString()}
-          horizontal
-          pagingEnabled
-          bounces={false}
-          showsHorizontalScrollIndicator={false}
-          onMomentumScrollEnd={handleScrollEnd}
-          getItemLayout={(_, index) => ({
-            length: contentWidth,
-            offset: contentWidth * index,
-            index,
-          })}
-          style={styles.list}
+        <ResetPasswordItem
+          item={step}
+          email={email}
+          code={code}
+          onEmailChange={handleEmailChange}
+          onCodeChange={setCode}
+          onBackPress={handleBack}
+          onNext={handleNext}
+          onDone={handleDone}
         />
       </View>
 
       <View
         style={[styles.paginationContainer, { paddingBottom: insets.bottom + 16 }]}
       >
-        <Pagination
-          currentStep={currentStep}
-          totalSteps={passwordData.length}
-        />
+        <Pagination currentStep={currentStep} totalSteps={passwordData.length} />
       </View>
     </SafeAreaView>
   );
@@ -117,9 +84,6 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     paddingHorizontal: HORIZONTAL_PADDING,
-  },
-  list: {
-    flex: 1,
   },
   paginationContainer: {
     width: '100%',

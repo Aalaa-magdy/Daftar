@@ -17,6 +17,55 @@ export interface GoogleAuthRequest {
   idToken: string;
 }
 
+// ─── Password Reset ───────────────────────────────────────────────────────────
+
+export interface ForgotPasswordRequest {
+  email: string;
+}
+
+export interface ForgotPasswordResponse {
+  message: string;
+}
+
+export interface VerifyResetCodeRequest {
+  email: string;
+  code: string;
+}
+
+export interface VerifyResetCodeResponse {
+  success: boolean;
+  message: string;
+}
+
+export interface ResetPasswordRequest {
+  email: string;
+  code: string;
+  newPassword: string;
+}
+
+export interface ResetPasswordResponse {
+  message: string;
+}
+
+export interface ResendResetCodeRequest {
+  email: string;
+}
+
+export interface ResendResetCodeResponse {
+  message: string;
+}
+
+// ─── Token Refresh ────────────────────────────────────────────────────────────
+
+export interface RefreshTokenRequest {
+  refreshToken: string;
+}
+
+export interface RefreshTokenResponse {
+  accessToken: string;
+  refreshToken: string;
+}
+
 // ─── Shared responses ─────────────────────────────────────────────────────────
 
 export interface AuthSuccessResponse {

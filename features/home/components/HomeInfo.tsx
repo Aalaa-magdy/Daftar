@@ -15,7 +15,7 @@ import {
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-const MASK = '***';
+const MASK = '******';
 
 const HomeInfo = () => {
   const { t } = useTranslation();

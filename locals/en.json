@@ -195,7 +195,9 @@
     "editCategoryA11y": "Edit {{name}}",
     "deleteCategoryA11y": "Delete {{name}}",
     "deleteCategoryConfirm": "Are you sure you want to delete \"{{name}}\"?",
-    "categoriesLoadError": "Could not load categories. Tap to retry.",
+    "signInForCategoryList": "Sign in to view and manage your categories.",
+    "tapRetryCategoryList": "Tap to retry.",
+    "categoryListFailed": "Could not load categories.",
     "categories": {
       "food": "Food",
       "bills": "Bills",

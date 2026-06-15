@@ -32,13 +32,33 @@ export function getCategoryBackgroundColor(color: string, alpha = 0.12): string 
 
 /** Border color for selected category chip — same as the category color. */
 export function getCategoryBorderColor(color: string): string {
-  return normalizeHex(color) ?? color;
+  return normalizeHex(color) ?? color.trim();
 }
 
 export function getCategorySelectedStyles(color: string) {
   return {
     backgroundColor: getCategoryBackgroundColor(color),
     borderColor: getCategoryBorderColor(color),
+  };
+}
+
+/** Unselected chip — white background and border (add-transaction grid). */
+export function getCategoryUnselectedStyles() {
+  return {
+    backgroundColor: '#FFFFFF',
+    borderColor: '#FFFFFF',
+  } as const;
+}
+
+/** API payload color fields — always strings for create/update requests. */
+export function buildCategoryColorPayload(color: string) {
+  const borderColor = getCategoryBorderColor(color);
+  const backgroundColor = getCategoryBackgroundColor(borderColor);
+
+  return {
+    color: borderColor,
+    backgroundColor,
+    borderColor,
   };
 }
 

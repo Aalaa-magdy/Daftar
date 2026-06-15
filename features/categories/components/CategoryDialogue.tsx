@@ -1,13 +1,12 @@
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import { colors } from '@/theme/colors';
-import { CATEGORY_COLOR_OPTIONS } from '@/features/categories/lib/category-colors';
+import { CATEGORY_COLOR_OPTIONS, buildCategoryColorPayload } from '@/features/categories/lib/category-colors';
 import {
   CATEGORY_ICON_OPTIONS,
   DEFAULT_CATEGORY_ICON,
   resolveCategoryIcon,
   resolveFaIcon,
-  resolveFaIconFromString,
 } from '@/features/categories/lib/category-icons';
 import type {
   Category,
@@ -26,14 +25,18 @@ import { useTranslation } from 'react-i18next';
 import {
   ActivityIndicator,
   Alert,
+  Keyboard,
   Modal,
+  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
+  TouchableWithoutFeedback,
   View,
 } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import FormField from '@/features/transaction/components/FormField';
 import { getApiErrorMessage } from '@/lib/api-error';
 import {
@@ -113,10 +116,12 @@ const CategoryDialogue = ({
   const handleSave = () => {
     if (!canSave) return;
 
+    const colorFields = buildCategoryColorPayload(selectedColor);
+
     const payload = {
       name: name.trim(),
-      color: selectedColor,
       icon: resolveFaIcon(selectedIcon),
+      ...colorFields,
     };
 
     if (isEdit && category) {
@@ -160,142 +165,161 @@ const CategoryDialogue = ({
       onRequestClose={onClose}
     >
       <View style={styles.root}>
-        <Pressable style={styles.backdrop} onPress={onClose} />
-        <View style={styles.sheet}>
-          <View style={styles.handle} />
+        <Pressable
+          style={styles.backdrop}
+          onPress={() => {
+            Keyboard.dismiss();
+            onClose();
+          }}
+        />
 
-          <Text style={styles.title}>{title}</Text>
+        <KeyboardAwareScrollView
+          style={styles.sheetScroll}
+          contentContainerStyle={styles.sheetScrollContent}
+          enableOnAndroid
+          enableAutomaticScroll
+          keyboardShouldPersistTaps="handled"
+          extraScrollHeight={Platform.OS === 'ios' ? 24 : 80}
+          extraHeight={120}
+          showsVerticalScrollIndicator={false}
+          bounces={false}
+        >
+          <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+            <View style={styles.sheet}>
+              <View style={styles.handle} />
 
-          <FormField label={t('transaction.categoryName')} required>
-            <Input
-              placeholder={t('transaction.enterCategoryName')}
-              value={name}
-              onChangeText={setName}
-              icon={
-                <HugeiconsIcon
-                  icon={MoneyBag01Icon}
-                  size={22}
-                  color={colors.captionMuted}
+              <Text style={styles.title}>{title}</Text>
+
+              <FormField label={t('transaction.categoryName')} required>
+                <Input
+                  placeholder={t('transaction.enterCategoryName')}
+                  value={name}
+                  onChangeText={setName}
+                  icon={
+                    <HugeiconsIcon
+                      icon={MoneyBag01Icon}
+                      size={22}
+                      color={colors.captionMuted}
+                    />
+                  }
+                  containerStyle={styles.fieldInput}
                 />
-              }
-              containerStyle={styles.fieldInput}
-            />
-          </FormField>
+              </FormField>
 
-          <FormField label={t('transaction.icon')} required>
-            <View style={styles.iconFieldWrap}>
-              {showIconPicker ? (
-                <View style={styles.iconPicker}>
-                  <ScrollView
-                    nestedScrollEnabled
-                    showsVerticalScrollIndicator={false}
-                    bounces={false}
-                    style={styles.iconPickerScroll}
-                    contentContainerStyle={styles.iconPickerContent}
-                  >
-                    <View style={styles.iconGrid}>
-                      {CATEGORY_ICON_OPTIONS.map((option, index) => {
-                        const isSelected = selectedIcon === option.icon;
+              <FormField label={t('transaction.icon')} required>
+                <View style={styles.iconFieldWrap}>
+                  {showIconPicker ? (
+                    <View style={styles.iconPicker}>
+                      <ScrollView
+                        nestedScrollEnabled
+                        showsVerticalScrollIndicator={false}
+                        bounces={false}
+                        style={styles.iconPickerScroll}
+                        contentContainerStyle={styles.iconPickerContent}
+                      >
+                        <View style={styles.iconGrid}>
+                          {CATEGORY_ICON_OPTIONS.map((option, index) => {
+                            const isSelected = selectedIcon === option.icon;
 
-                        return (
-                          <TouchableOpacity
-                            key={`category-icon-${index}`}
-                            style={styles.iconCell}
-                            onPress={() => handleSelectIcon(option.icon)}
-                            activeOpacity={0.7}
-                          >
-                            <HugeiconsIcon
-                              icon={option.icon}
-                              size={22}
-                              color={
-                                isSelected ? colors.primary : colors.textSecondary
-                              }
-                              strokeWidth={isSelected ? 2 : 1.5}
-                            />
-                          </TouchableOpacity>
-                        );
-                      })}
+                            return (
+                              <TouchableOpacity
+                                key={`category-icon-${index}`}
+                                style={styles.iconCell}
+                                onPress={() => handleSelectIcon(option.icon)}
+                                activeOpacity={0.7}
+                              >
+                                <HugeiconsIcon
+                                  icon={option.icon}
+                                  size={22}
+                                  color={
+                                    isSelected
+                                      ? colors.primary
+                                      : colors.textSecondary
+                                  }
+                                  strokeWidth={isSelected ? 2 : 1.5}
+                                />
+                              </TouchableOpacity>
+                            );
+                          })}
+                        </View>
+                      </ScrollView>
                     </View>
-                  </ScrollView>
-                </View>
-              ) : null}
+                  ) : null}
 
-              <TouchableOpacity
-                activeOpacity={0.85}
-                onPress={() => setShowIconPicker((current) => !current)}
-              >
-                <View pointerEvents="none">
-                  <Input
-                    placeholder={t('transaction.chooseIcon')}
-                    value={
-                      hasChosenIcon
-                        ? resolveFaIconFromString(resolveFaIcon(selectedIcon))
-                        : ''
-                    }
-                    icon={
-                      <HugeiconsIcon
-                        icon={hasChosenIcon ? selectedIcon : GridViewIcon}
-                        size={22}
-                        color={
-                          hasChosenIcon ? selectedColor : colors.captionMuted
-                        }
-                      />
-                    }
-                    containerStyle={styles.fieldInput}
-                  />
-                </View>
-              </TouchableOpacity>
-            </View>
-          </FormField>
-
-          <FormField label={t('transaction.color')} required>
-            <View style={styles.colors}>
-              {CATEGORY_COLOR_OPTIONS.map((color) => {
-                const isSelected = selectedColor === color;
-
-                return (
                   <TouchableOpacity
-                    key={color}
-                    style={[
-                      styles.colorSwatch,
-                      { backgroundColor: color },
-                      isSelected && styles.colorSwatchSelected,
-                    ]}
-                    onPress={() => {
-                      setSelectedColor(color);
-                      setShowIconPicker(false);
-                    }}
                     activeOpacity={0.85}
-                  />
-                );
-              })}
-            </View>
-          </FormField>
-
-          <View style={styles.actions}>
-            <TouchableOpacity
-              style={styles.cancelButton}
-              activeOpacity={0.85}
-              onPress={onClose}
-              disabled={isPending}
-            >
-              <Text style={styles.cancelText}>{t('common.cancel')}</Text>
-            </TouchableOpacity>
-            <View style={styles.saveWrap}>
-              {isPending ? (
-                <View style={styles.pendingWrap}>
-                  <ActivityIndicator color={colors.primary} />
+                    onPress={() => setShowIconPicker((current) => !current)}
+                  >
+                    <View pointerEvents="none">
+                      <Input
+                        placeholder={t('transaction.chooseIcon')}
+                        value=""
+                        icon={
+                          <HugeiconsIcon
+                            icon={hasChosenIcon ? selectedIcon : GridViewIcon}
+                            size={22}
+                            color={
+                              hasChosenIcon ? selectedColor : colors.captionMuted
+                            }
+                          />
+                        }
+                        containerStyle={styles.fieldInput}
+                      />
+                    </View>
+                  </TouchableOpacity>
                 </View>
-              ) : (
-                <Button
-                  title={t('common.save')}
-                  onPress={handleSave}
-                  disabled={!canSave}
-                />
-              )}
+              </FormField>
+
+              <FormField label={t('transaction.color')} required>
+                <View style={styles.colors}>
+                  {CATEGORY_COLOR_OPTIONS.map((color) => {
+                    const isSelected = selectedColor === color;
+
+                    return (
+                      <TouchableOpacity
+                        key={color}
+                        style={[
+                          styles.colorSwatch,
+                          { backgroundColor: color },
+                          isSelected && styles.colorSwatchSelected,
+                        ]}
+                        onPress={() => {
+                          setSelectedColor(color);
+                          setShowIconPicker(false);
+                        }}
+                        activeOpacity={0.85}
+                      />
+                    );
+                  })}
+                </View>
+              </FormField>
+
+              <View style={styles.actions}>
+                <TouchableOpacity
+                  style={styles.cancelButton}
+                  activeOpacity={0.85}
+                  onPress={onClose}
+                  disabled={isPending}
+                >
+                  <Text style={styles.cancelText}>{t('common.cancel')}</Text>
+                </TouchableOpacity>
+                <View style={styles.saveWrap}>
+                  {isPending ? (
+                    <View style={styles.pendingWrap}>
+                      <ActivityIndicator color={colors.primary} />
+                    </View>
+                  ) : (
+                    <Button
+                      title={t('common.save')}
+                      onPress={handleSave}
+                      disabled={!canSave}
+                    />
+                  )}
+                </View>
+              </View>
             </View>
-          </View>
-        </View>
+          </TouchableWithoutFeedback>
+        </KeyboardAwareScrollView>
       </View>
     </Modal>
   );
@@ -310,12 +334,19 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     backgroundColor: 'rgba(8, 27, 10, 0.25)',
   },
+  sheetScroll: {
+    maxHeight: '92%',
+  },
+  sheetScrollContent: {
+    flexGrow: 1,
+    justifyContent: 'flex-end',
+  },
   sheet: {
     backgroundColor: colors.backgroundColor,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     paddingHorizontal: 20,
-    paddingBottom: 28,
+    paddingBottom: Platform.OS === 'ios' ? 28 : 36,
     paddingTop: 12,
     gap: 12,
   },

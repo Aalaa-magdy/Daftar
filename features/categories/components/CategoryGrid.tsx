@@ -1,5 +1,8 @@
 import { colors } from '@/theme/colors';
-import { getCategorySelectedStyles } from '@/features/categories/lib/category-colors';
+import {
+  getCategorySelectedStyles,
+  getCategoryUnselectedStyles,
+} from '@/features/categories/lib/category-colors';
 import { resolveCategoryIcon } from '@/features/categories/lib/category-icons';
 import type {
   Category,
@@ -13,7 +16,7 @@ import Add01Icon from '@hugeicons/core-free-icons/Add01Icon';
 import PencilEdit02Icon from '@hugeicons/core-free-icons/PencilEdit02Icon';
 import { HugeiconsIcon } from '@hugeicons/react-native';
 import { useTranslation } from 'react-i18next';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -27,6 +30,35 @@ import CategoryDeleteDialogue from './CategoryDeleteDialogue';
 import CategoryDialogue from './CategoryDialogue';
 import EditCategoriesDialogue from './EditCategoriesDialogue';
 
+interface CategoryChipProps {
+  category: Category;
+  isSelected: boolean;
+  onPress: () => void;
+}
+
+const CategoryChip = ({ category, isSelected, onPress }: CategoryChipProps) => {
+  const chipColors = isSelected
+    ? getCategorySelectedStyles(category.color)
+    : getCategoryUnselectedStyles();
+
+  return (
+    <TouchableOpacity
+      style={[styles.chip, chipColors]}
+      onPress={onPress}
+      activeOpacity={0.8}
+    >
+      <HugeiconsIcon
+        icon={resolveCategoryIcon(category.icon)}
+        size={18}
+        color={category.color}
+      />
+      <Text style={[styles.chipText, { color: category.color }]}>
+        {category.name}
+      </Text>
+    </TouchableOpacity>
+  );
+};
+
 interface Props {
   selectedId: string | null;
   onSelect: (id: string | null) => void;
@@ -34,7 +66,14 @@ interface Props {
 
 const CategoryGrid = ({ selectedId, onSelect }: Props) => {
   const { t } = useTranslation();
-  const { data: categories = [], isLoading, isError, refetch } = useCategories();
+  const {
+    data: categories = [],
+    isLoading,
+    isError,
+    isAuthRequired,
+    error,
+    refetch,
+  } = useCategories();
   const { mutate: deleteCategory, isPending: isDeleting } = useDeleteCategory();
 
   const [listVisible, setListVisible] = useState(false);
@@ -79,6 +118,18 @@ const CategoryGrid = ({ selectedId, onSelect }: Props) => {
     onSelect(category.id);
   };
 
+  const loadErrorMessage = useMemo(() => {
+    if (isAuthRequired || error?.response?.status === 401) {
+      return t('transaction.signInForCategoryList');
+    }
+
+    if (error) {
+      return getApiErrorMessage(error, t('transaction.categoryListFailed'));
+    }
+
+    return t('transaction.categoryListFailed');
+  }, [error, isAuthRequired, t]);
+
   return (
     <View style={styles.wrapper}>
       <View style={styles.header}>
@@ -101,43 +152,28 @@ const CategoryGrid = ({ selectedId, onSelect }: Props) => {
           <ActivityIndicator color={colors.primary} />
         </View>
       ) : isError ? (
-        <TouchableOpacity style={styles.errorWrap} onPress={() => refetch()}>
-          <Text style={styles.errorText}>{t('transaction.categoriesLoadError')}</Text>
+        <TouchableOpacity
+          style={styles.errorWrap}
+          onPress={() => {
+            if (!isAuthRequired) refetch();
+          }}
+          disabled={isAuthRequired}
+        >
+          <Text style={styles.errorText}>{loadErrorMessage}</Text>
+          {!isAuthRequired ? (
+            <Text style={styles.errorHint}>{t('transaction.tapRetryCategoryList')}</Text>
+          ) : null}
         </TouchableOpacity>
       ) : (
         <View style={styles.grid}>
-          {categories.map((category) => {
-            const isSelected = selectedId === category.id;
-            const selectedStyles = isSelected
-              ? getCategorySelectedStyles(category.color)
-              : null;
-
-            return (
-              <TouchableOpacity
-                key={category.id}
-                style={[
-                  styles.chip,
-                  isSelected
-                    ? {
-                        backgroundColor: selectedStyles!.backgroundColor,
-                        borderColor: selectedStyles!.borderColor,
-                      }
-                    : styles.chipDefault,
-                ]}
-                onPress={() => onSelect(category.id)}
-                activeOpacity={0.8}
-              >
-                <HugeiconsIcon
-                  icon={resolveCategoryIcon(category.icon)}
-                  size={18}
-                  color={category.color}
-                />
-                <Text style={[styles.chipText, { color: category.color }]}>
-                  {category.name}
-                </Text>
-              </TouchableOpacity>
-            );
-          })}
+          {categories.map((category) => (
+            <CategoryChip
+              key={category.id}
+              category={category}
+              isSelected={selectedId === category.id}
+              onPress={() => onSelect(category.id)}
+            />
+          ))}
         </View>
       )}
 
@@ -224,11 +260,22 @@ const styles = StyleSheet.create({
   },
   errorWrap: {
     paddingVertical: 12,
+    paddingHorizontal: 4,
+    gap: 4,
   },
   errorText: {
     fontFamily: 'Changa_400Regular',
     fontSize: 14,
+    lineHeight: 20,
     color: colors.red,
+    textAlign: 'center',
+    flexShrink: 1,
+  },
+  errorHint: {
+    fontFamily: 'Changa_400Regular',
+    fontSize: 13,
+    lineHeight: 18,
+    color: colors.captionMuted,
     textAlign: 'center',
   },
   grid: {
@@ -244,10 +291,6 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 8,
     borderWidth: 1,
-  },
-  chipDefault: {
-    backgroundColor: colors.white,
-    borderColor: colors.border,
   },
   chipText: {
     fontFamily: 'Changa_400Regular',

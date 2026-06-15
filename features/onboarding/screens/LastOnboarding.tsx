@@ -18,6 +18,8 @@ import { useRouter, type Href } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { useAppDirection } from "@/hooks/useAppDirection";
 import { useGoogleAuth } from "@/features/auth/hooks";
+import { clearAuthTokens } from "@/features/auth/lib/auth-storage";
+import { setGuestMode, setOnboardingCompleted } from "@/features/auth/lib/app-session";
 
 const LastOnboarding = () => {
   const { t } = useTranslation();
@@ -30,6 +32,13 @@ const LastOnboarding = () => {
     Changa_400Regular,
     Changa_500Medium
   });
+
+  const handleContinueAsGuest = async () => {
+    await clearAuthTokens();
+    await setGuestMode(true);
+    await setOnboardingCompleted();
+    router.replace("/home" as Href);
+  };
 
   if (!fontsLoaded) {
     return null;
@@ -61,7 +70,11 @@ const LastOnboarding = () => {
             <Text style={styles.secondaryButtonText}>{t("auth.signIn")}</Text>
           </TouchableOpacity>
 
-          <TextLinkButton title={t("onboarding.continueAsGuest")} variant="block" />
+          <TextLinkButton
+            title={t("onboarding.continueAsGuest")}
+            variant="block"
+            onPress={handleContinueAsGuest}
+          />
         </View>
       </View>
     </SafeAreaView>

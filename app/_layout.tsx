@@ -8,7 +8,7 @@ import { queryClient } from '@/lib/query-client';
 import { colors } from '@/theme/colors';
 
 export const unstable_settings = {
-  initialRouteName: 'onboarding',
+  initialRouteName: 'index',
 };
 
 export default function RootLayout() {

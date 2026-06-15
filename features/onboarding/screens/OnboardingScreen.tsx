@@ -20,6 +20,7 @@ import React from 'react';
 import OnboardingItem from '../components/OnboardingItem';
 import OnboardingButton from '../components/OnboardingButton';
 import { onboardingData, type OnboardingItemType } from '../data/onboardingData';
+import { setOnboardingCompleted } from '@/features/auth/lib/app-session';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useAppDirection } from '@/hooks/useAppDirection';
@@ -50,9 +51,14 @@ const OnboardingScreen = () => {
     [contentWidth],
   );
 
+  const goToLastOnboarding = React.useCallback(async () => {
+    await setOnboardingCompleted();
+    router.push('/lastOnboarding');
+  }, [router]);
+
   const handleNext = React.useCallback(() => {
     if (currentStep >= onboardingData.length - 1) {
-      router.push('/lastOnboarding');
+      goToLastOnboarding();
       return;
     }
 
@@ -62,7 +68,7 @@ const OnboardingScreen = () => {
       animated: true,
     });
     setCurrentStep(nextStep);
-  }, [currentStep, router]);
+  }, [currentStep, goToLastOnboarding]);
 
   const renderItem = React.useCallback(
     ({ item }: { item: OnboardingItemType }) => (
@@ -85,7 +91,7 @@ const OnboardingScreen = () => {
         style={styles.backgroundImage}
       />
       <View style={[styles.header, isRTL ? styles.headerRtl : styles.headerLtr]}>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={goToLastOnboarding}>
           <Text style={styles.headerButton}>{t('onboarding.skip')}</Text>
         </TouchableOpacity>
       </View>

@@ -51,7 +51,7 @@ const Signin = () => {
 
   const { mutate: signin, isPending: isSigninPending } = useSignin();
   const { signInWithGoogle, isPending: isGooglePending } = useGoogleAuth({
-    onSuccess: () => router.replace("/set-salary" as Href),
+    onSuccess: () => router.replace("/home" as Href),
   });
 
   const [email, setEmail] = useState("");
@@ -100,7 +100,7 @@ const Signin = () => {
     signin(
       { email: email.trim(), password },
       {
-        onSuccess: () => router.replace("/set-salary" as Href),
+        onSuccess: () => router.replace("/home" as Href),
         onError: (error: AxiosError) => {
           const message = getApiErrorMessage(error);
           setErrors(mapSigninFieldErrors(message));

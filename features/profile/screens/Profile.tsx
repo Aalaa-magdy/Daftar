@@ -1,3 +1,5 @@
+import { clearAuthTokens } from '@/features/auth/lib/auth-storage';
+import { setGuestMode } from '@/features/auth/lib/app-session';
 import Navbar from '@/features/home/components/Navbar';
 import { useNavbarNavigation } from '@/features/home/hooks/useNavbarNavigation';
 import { colors } from '@/theme/colors';
@@ -49,8 +51,10 @@ const Profile = () => {
     return null;
   }
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     setLogoutVisible(false);
+    await clearAuthTokens();
+    await setGuestMode(false);
     router.replace('/signin');
   };
 

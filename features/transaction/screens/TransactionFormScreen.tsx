@@ -26,7 +26,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import CategoryGrid from '../components/CategoryGrid';
+import CategoryGrid from '@/features/categories/components/CategoryGrid';
 import DeleteDialogue from '../components/DeleteDialogue';
 import FormField from '../components/FormField';
 import SelectField from '../components/SelectField';

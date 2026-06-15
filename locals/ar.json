@@ -194,6 +194,8 @@
     "editCategories": "تعديل الفئات",
     "editCategoryA11y": "تعديل {{name}}",
     "deleteCategoryA11y": "حذف {{name}}",
+    "deleteCategoryConfirm": "هل أنت متأكد أنك تريد حذف \"{{name}}\"؟",
+    "categoriesLoadError": "تعذّر تحميل الفئات. اضغط لإعادة المحاولة.",
     "categories": {
       "food": "طعام",
       "bills": "فواتير",

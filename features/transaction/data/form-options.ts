@@ -39,9 +39,9 @@ export const REPEAT_OPTIONS = ['monthly', 'oneTime'] as const;
 
 export const CATEGORY_COLOR_OPTIONS = [
   '#1B5E20',
-  '#EAAA08',
+  '#C9A227',
   '#F04438',
-  '#EE46BC',
+  '#F63D68',
   '#7A5AF8',
   '#717680',
 ] as const;

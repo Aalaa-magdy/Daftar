@@ -66,6 +66,12 @@ export interface RefreshTokenResponse {
   refreshToken: string;
 }
 
+// ─── Logout ───────────────────────────────────────────────────────────────────
+
+export interface LogoutResponse {
+  message: string;
+}
+
 // ─── Shared responses ─────────────────────────────────────────────────────────
 
 export interface AuthSuccessResponse {

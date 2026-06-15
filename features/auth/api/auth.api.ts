@@ -14,6 +14,7 @@ import {
   ResendResetCodeResponse,
   RefreshTokenRequest,
   RefreshTokenResponse,
+  LogoutResponse,
 } from '@/features/auth/types/auth.types';
 
 export const authApi = {
@@ -58,6 +59,11 @@ export const authApi = {
 
   refreshToken: async (data: RefreshTokenRequest): Promise<RefreshTokenResponse> => {
     const response = await apiClient.post<RefreshTokenResponse>('/auth/refresh', data);
+    return response.data;
+  },
+
+  logout: async (data?: RefreshTokenRequest): Promise<LogoutResponse> => {
+    const response = await apiClient.post<LogoutResponse>('/auth/logout', data ?? {});
     return response.data;
   },
 };

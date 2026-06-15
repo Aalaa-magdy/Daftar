@@ -1,7 +1,5 @@
-import { clearAuthTokens } from '@/features/auth/lib/auth-storage';
-import { setGuestMode } from '@/features/auth/lib/app-session';
-import Navbar from '@/features/home/components/Navbar';
-import { useNavbarNavigation } from '@/features/home/hooks/useNavbarNavigation';
+import { useLogout } from '@/features/auth/hooks';
+import Navbar from '@/features/home/components/Navbar';import { useNavbarNavigation } from '@/features/home/hooks/useNavbarNavigation';
 import { colors } from '@/theme/colors';
 import {
   Changa_400Regular,
@@ -10,7 +8,7 @@ import {
 } from '@expo-google-fonts/changa';
 import Logout03Icon from '@hugeicons/core-free-icons/Logout03Icon';
 import { HugeiconsIcon } from '@hugeicons/react-native';
-import { useRouter, useLocalSearchParams } from 'expo-router';
+import { useRouter, useLocalSearchParams, type Href } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { screenLayout } from '@/theme/screen-layout';
@@ -33,6 +31,7 @@ const Profile = () => {
   const { t } = useTranslation();
   const { passwordChanged } = useLocalSearchParams<{ passwordChanged?: string }>();
   const { onTabPress, onAddPress } = useNavbarNavigation('profile');
+  const { mutate: logout, isPending: isLoggingOut } = useLogout();
   const [logoutVisible, setLogoutVisible] = useState(false);
   const [showSuccessBanner, setShowSuccessBanner] = useState(false);
   const [fontsLoaded] = useFonts({
@@ -51,13 +50,15 @@ const Profile = () => {
     return null;
   }
 
-  const handleLogout = async () => {
+  const handleLogout = () => {
     setLogoutVisible(false);
-    await clearAuthTokens();
-    await setGuestMode(false);
-    router.replace('/signin');
-  };
 
+    logout(undefined, {
+      onSettled: () => {
+        router.replace('/lastOnboarding' as Href);
+      },
+    });
+  };
   const handleMenuPress = (itemId: string) => {
     if (itemId === 'edit-profile') {
       router.push('/edit-profile');
@@ -130,7 +131,7 @@ const Profile = () => {
 
       <LogoutDialogue
         visible={logoutVisible}
-        onClose={() => setLogoutVisible(false)}
+        onClose={() => !isLoggingOut && setLogoutVisible(false)}
         onConfirm={handleLogout}
       />
     </SafeAreaView>

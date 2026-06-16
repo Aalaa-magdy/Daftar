@@ -29,7 +29,8 @@
     "error": "خطأ",
     "verified": "موثّق",
     "english": "English",
-    "arabic": "العربية"
+    "arabic": "العربية",
+    "guest": "ضيف"
   },
   "auth": {
     "signInTitle": "تسجيل الدخول إلى حسابك",

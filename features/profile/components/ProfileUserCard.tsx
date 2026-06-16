@@ -1,18 +1,31 @@
 import { colors } from '@/theme/colors';
-import { Image, StyleSheet, Text, View } from 'react-native';
-import { PROFILE_USER } from '../data/profile-menu';
+import { ActivityIndicator, Image, StyleSheet, Text, View } from 'react-native';
+import { useProfile } from '../hooks/useProfile';
 
-const ProfileUserCard = () => (
-  <View style={styles.card}>
-    <View style={styles.avatarWrap}>
-      <Image source={PROFILE_USER.avatar} style={styles.avatar} />
+const fallbackAvatar = require('@/assets/images/profile.jpg');
+
+const ProfileUserCard = () => {
+  const { data: profile, isLoading } = useProfile();
+
+  return (
+    <View style={styles.card}>
+      <View style={styles.avatarWrap}>
+        <Image source={fallbackAvatar} style={styles.avatar} />
+      </View>
+
+      <View style={styles.info}>
+        {isLoading ? (
+          <ActivityIndicator size="small" color={colors.primary} />
+        ) : (
+          <>
+            <Text style={styles.name}>{profile?.name ?? '—'}</Text>
+            <Text style={styles.email}>{profile?.email ?? '—'}</Text>
+          </>
+        )}
+      </View>
     </View>
-    <View style={styles.info}>
-      <Text style={styles.name}>{PROFILE_USER.name}</Text>
-      <Text style={styles.email}>{PROFILE_USER.email}</Text>
-    </View>
-  </View>
-);
+  );
+};
 
 const styles = StyleSheet.create({
   card: {

@@ -1,35 +1,29 @@
+import { useAuthenticatedSession } from '@/features/auth/hooks/useAuthenticatedSession';
 import { useQuery } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
-import { useEffect, useState } from 'react';
-import { hasAccessToken, isGuestMode } from '@/features/auth/lib/app-session';
 import { categoriesApi } from '@/features/categories/api/categories.api';
 import { Category } from '@/features/categories/types/categories.types';
 import { categoryKeys } from './query-keys';
 
 export const useCategories = () => {
-  const [sessionState, setSessionState] = useState<
-    'checking' | 'ready' | 'auth-required'
-  >('checking');
-
-  useEffect(() => {
-    Promise.all([hasAccessToken(), isGuestMode()]).then(([hasToken, guest]) => {
-      setSessionState(hasToken && !guest ? 'ready' : 'auth-required');
-    });
-  }, []);
+  const { isAuthenticated, isGuest, isAuthChecking } =
+    useAuthenticatedSession();
 
   const query = useQuery<Category[], AxiosError>({
     queryKey: categoryKeys.all,
     queryFn: () => categoriesApi.list(),
-    enabled: sessionState === 'ready',
+    enabled: isAuthenticated,
+    refetchOnMount: 'always',
     retry: (failureCount, error) =>
       error.response?.status !== 401 && failureCount < 1,
   });
 
   return {
     ...query,
-    sessionState,
-    isAuthRequired: sessionState === 'auth-required',
-    isLoading: sessionState === 'checking' || query.isLoading,
-    isError: sessionState === 'auth-required' || query.isError,
+    isGuest,
+    isAuthChecking,
+    isAuthRequired: isGuest,
+    isLoading: isAuthChecking || (isAuthenticated && query.isLoading),
+    isError: isGuest || query.isError,
   };
 };

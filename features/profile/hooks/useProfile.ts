@@ -1,54 +1,19 @@
-import {
-  hasAccessToken,
-  isGuestMode,
-  setGuestMode,
-} from '@/features/auth/lib/app-session';
-import { useFocusEffect } from 'expo-router';
+import { useAuthenticatedSession } from '@/features/auth/hooks/useAuthenticatedSession';
 import { useQuery } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
-import { useCallback, useState } from 'react';
 import { userApi } from '../api/user.api';
 import type { UserProfile } from '../types/user.types';
 
 export const PROFILE_QUERY_KEY = ['user', 'me'] as const;
 
-async function resolveAuthState(): Promise<'authenticated' | 'guest'> {
-  const hasToken = await hasAccessToken();
-
-  if (hasToken) {
-    const guest = await isGuestMode();
-    if (guest) {
-      await setGuestMode(false);
-    }
-    return 'authenticated';
-  }
-
-  return 'guest';
-}
-
 export const useProfile = () => {
-  const [authState, setAuthState] = useState<
-    'checking' | 'authenticated' | 'guest'
-  >('checking');
-
-  useFocusEffect(
-    useCallback(() => {
-      let active = true;
-
-      resolveAuthState().then((next) => {
-        if (active) setAuthState(next);
-      });
-
-      return () => {
-        active = false;
-      };
-    }, []),
-  );
+  const { isAuthenticated, isGuest, isAuthChecking } =
+    useAuthenticatedSession();
 
   const query = useQuery<UserProfile, AxiosError>({
     queryKey: PROFILE_QUERY_KEY,
     queryFn: () => userApi.getMe(),
-    enabled: authState === 'authenticated',
+    enabled: isAuthenticated,
     refetchOnMount: 'always',
     retry: (failureCount, error) =>
       error.response?.status !== 401 && failureCount < 1,
@@ -56,10 +21,10 @@ export const useProfile = () => {
 
   return {
     ...query,
-    isGuest: authState === 'guest',
-    isAuthChecking: authState === 'checking',
+    data: isAuthenticated ? query.data : undefined,
+    isGuest,
+    isAuthChecking,
     isLoading:
-      authState === 'checking' ||
-      (authState === 'authenticated' && query.isLoading),
+      isAuthChecking || (isAuthenticated && query.isLoading),
   };
 };

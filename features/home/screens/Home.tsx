@@ -1,6 +1,14 @@
 import { useRouter } from 'expo-router';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {
+  ActivityIndicator,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { screenLayout } from '@/theme/screen-layout';
 import HomeHeader from '../components/HomeHeader';
@@ -15,14 +23,26 @@ import {
 import { HugeiconsIcon } from '@hugeicons/react-native';
 import Add01Icon from '@hugeicons/core-free-icons/Add01Icon';
 import TextLinkButton from '@/components/ui/TextLinkButton';
-import TransactionCard from '../components/TransactionCard';
+import TransactionCard, {
+  TransactionDateHeader,
+} from '../components/TransactionCard';
 import Navbar from '../components/Navbar';
 import { useNavbarNavigation } from '../hooks/useNavbarNavigation';
+import { useTransactionList } from '@/features/transactions/hooks';
+import { groupTransactionsByDate } from '@/features/history/lib/group-transactions';
+
+const HOME_TRANSACTION_LIMIT = 5;
 
 const Home = () => {
   const router = useRouter();
   const { t } = useTranslation();
   const { onTabPress, onAddPress } = useNavbarNavigation('home');
+  const { items, isLoading, isEmpty, isError, isGuest, refetch } = useTransactionList({
+    limit: HOME_TRANSACTION_LIMIT,
+  });
+
+  const groups = useMemo(() => groupTransactionsByDate(items), [items]);
+
   const [fontsLoaded] = useFonts({
     Changa_400Regular,
     Changa_500Medium,
@@ -33,7 +53,7 @@ const Home = () => {
   }
 
   return (
-    <SafeAreaView style={styles.safe} edges={[ 'left', 'right']}>
+    <SafeAreaView style={styles.safe} edges={['left', 'right']}>
       <ScrollView
         style={styles.scroll}
         contentContainerStyle={styles.scrollContent}
@@ -60,6 +80,7 @@ const Home = () => {
             <Text style={styles.buttonText}>{t('home.addIncome')}</Text>
           </TouchableOpacity>
         </View>
+
         <View style={styles.intro}>
           <Text style={styles.introText}>{t('home.history')}</Text>
           <View style={styles.viewAllButton}>
@@ -70,8 +91,53 @@ const Home = () => {
             />
           </View>
         </View>
-        <TransactionCard id="expense-1" type="expense" />
-        <TransactionCard id="income-1" type="income" />
+
+        {isLoading ? (
+          <View style={styles.stateWrap}>
+            <ActivityIndicator color={colors.primary} />
+          </View>
+        ) : isGuest ? (
+          <View style={styles.stateWrap}>
+            <Text style={styles.emptyText}>{t('home.signInForTransactions')}</Text>
+          </View>
+        ) : isError ? (
+          <View style={styles.stateWrap}>
+            <Text style={styles.emptyText}>{t('home.transactionsLoadError')}</Text>
+            <TouchableOpacity onPress={() => refetch()} activeOpacity={0.7}>
+              <Text style={styles.retryText}>{t('common.retry')}</Text>
+            </TouchableOpacity>
+          </View>
+        ) : isEmpty ? (
+          <View style={styles.stateWrap}>
+            <Text style={styles.emptyText}>{t('home.noTransactions')}</Text>
+          </View>
+        ) : (
+          groups.map((group, index) => (
+            <View key={group.dateKey} style={styles.group}>
+              <TransactionDateHeader
+                dateLabel={group.dateLabel}
+                style={index > 0 ? styles.dateHeaderSpaced : undefined}
+              />
+              {group.items.map((transaction) => (
+                <TransactionCard
+                  key={transaction.id}
+                  id={transaction.id}
+                  type={transaction.type}
+                  title={transaction.title}
+                  amount={transaction.amount}
+                  time={transaction.time}
+                  note={transaction.note}
+                  repeat={transaction.repeat}
+                  categoryIcon={transaction.categoryIcon}
+                  categoryIconColor={transaction.categoryIconColor}
+                  iconBackgroundColor={transaction.iconBackgroundColor}
+                  showDateHeader={false}
+                  containerStyle={styles.transactionCard}
+                />
+              ))}
+            </View>
+          ))
+        )}
       </ScrollView>
       <Navbar
         activeTab="home"
@@ -106,7 +172,7 @@ const styles = StyleSheet.create({
     height: 48,
     borderRadius: 8,
     flexDirection: 'row',
-    alignItems: 'center',   
+    alignItems: 'center',
     justifyContent: 'center',
     gap: 6,
     borderWidth: 1,
@@ -125,22 +191,53 @@ const styles = StyleSheet.create({
     fontFamily: 'Changa_500Medium',
   },
   intro: {
-    width: "94%",
-    flexDirection: "row",
-    justifyContent: "space-between", // Changed from alignContent to justifyContent
-    alignItems: "center", // Added to vertically center items
+    width: '94%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginTop: 10,
-    paddingHorizontal:12,
+    paddingHorizontal: 12,
   },
   introText: {
-    fontFamily: "Changa_500Medium",
+    fontFamily: 'Changa_500Medium',
     fontSize: 16,
     lineHeight: 24,
   },
   viewAllButton: {
-    // Ensures the button aligns to the right
-    alignSelf: "flex-end",
-  }
+    alignSelf: 'flex-end',
+  },
+  group: {
+    width: '94%',
+    alignSelf: 'center',
+    paddingHorizontal: 10,
+  },
+  transactionCard: {
+    width: '100%',
+    paddingHorizontal: 0,
+  },
+  dateHeaderSpaced: {
+    marginTop: 8,
+  },
+  stateWrap: {
+    width: '94%',
+    paddingVertical: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  emptyText: {
+    fontFamily: 'Changa_400Regular',
+    fontSize: 14,
+    lineHeight: 20,
+    color: colors.textSecondary,
+    textAlign: 'center',
+  },
+  retryText: {
+    fontFamily: 'Changa_500Medium',
+    fontSize: 14,
+    lineHeight: 20,
+    color: colors.primary,
+    marginTop: 8,
+  },
 });
 
 export default Home;

@@ -30,7 +30,8 @@
     "verified": "موثّق",
     "english": "English",
     "arabic": "العربية",
-    "guest": "ضيف"
+    "guest": "ضيف",
+    "retry": "اضغط لإعادة المحاولة"
   },
   "auth": {
     "signInTitle": "تسجيل الدخول إلى حسابك",
@@ -113,6 +114,9 @@
     "addIncome": "إضافة دخل",
     "history": "السجل",
     "viewAll": "عرض الكل",
+    "noTransactions": "لا توجد معاملات بعد.",
+    "signInForTransactions": "سجّل الدخول لعرض معاملاتك.",
+    "transactionsLoadError": "تعذّر تحميل المعاملات.",
     "defaultTransactionTitle": "تسوق",
     "defaultRepeat": "شهري",
     "defaultNote": "دورة React Native"
@@ -135,7 +139,11 @@
     "thisWeek": "هذا الأسبوع",
     "thisMonth": "هذا الشهر",
     "lastMonth": "الشهر الماضي",
-    "thisYear": "هذا العام"
+    "thisYear": "هذا العام",
+    "noTransactions": "لا توجد معاملات بعد.",
+    "noFilteredResults": "لا توجد معاملات تطابق عوامل التصفية.",
+    "signInForTransactions": "سجّل الدخول لعرض معاملاتك.",
+    "transactionsLoadError": "تعذّر تحميل المعاملات."
   },
   "statistics": {
     "title": "الإحصائيات",
@@ -212,6 +220,7 @@
       "education": "تعليم"
     },
     "incomeTypes": {
+      "salary": "راتب",
       "partTime": "دوام جزئي",
       "freelance": "عمل حر",
       "bonus": "مكافأة",

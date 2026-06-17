@@ -14,6 +14,7 @@ import {
 } from '@/features/auth/lib/native-google-signin';
 import { storeAuthTokens } from '@/features/auth/lib/auth-storage';
 import { PROFILE_QUERY_KEY } from '@/features/profile/hooks/useProfile';
+import { transactionKeys } from '@/features/transactions/hooks/query-keys';
 import { queryClient } from '@/lib/query-client';
 import { getApiErrorMessage } from '@/lib/api-error';
 
@@ -27,6 +28,7 @@ async function completeGoogleAuth(idToken: string, onSuccess?: () => void) {
   const data = await authApi.googleAuth({ idToken });
   await storeAuthTokens(data);
   await queryClient.invalidateQueries({ queryKey: PROFILE_QUERY_KEY });
+  await queryClient.invalidateQueries({ queryKey: transactionKeys.all });
   onSuccess?.();
 }
 

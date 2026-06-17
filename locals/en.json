@@ -30,7 +30,8 @@
     "verified": "Verified",
     "english": "English",
     "arabic": "Arabic",
-    "guest": "Guest"
+    "guest": "Guest",
+    "retry": "Tap to retry"
   },
   "auth": {
     "signInTitle": "Login In to your Account",
@@ -113,6 +114,9 @@
     "addIncome": "Add Income",
     "history": "History",
     "viewAll": "View All",
+    "noTransactions": "No transactions yet.",
+    "signInForTransactions": "Sign in to view your transactions.",
+    "transactionsLoadError": "Could not load transactions.",
     "defaultTransactionTitle": "Shopping",
     "defaultRepeat": "Monthly",
     "defaultNote": "React Native Course"
@@ -135,7 +139,11 @@
     "thisWeek": "This Week",
     "thisMonth": "This Month",
     "lastMonth": "Last Month",
-    "thisYear": "This Year"
+    "thisYear": "This Year",
+    "noTransactions": "No transactions yet.",
+    "noFilteredResults": "No transactions match your filters.",
+    "signInForTransactions": "Sign in to view your transactions.",
+    "transactionsLoadError": "Could not load transactions."
   },
   "statistics": {
     "title": "Statistics",
@@ -212,6 +220,7 @@
       "education": "Education"
     },
     "incomeTypes": {
+      "salary": "Salary",
       "partTime": "Part Time",
       "freelance": "Freelance",
       "bonus": "Bonus",

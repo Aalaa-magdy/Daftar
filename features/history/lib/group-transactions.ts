@@ -1,5 +1,5 @@
 import i18n from '@/lib/i18n';
-import type { HistoryTransaction } from '../data/mock-transactions';
+import type { TransactionListItem } from '@/features/transactions/types/transactions.types';
 
 function getDateLocale() {
   return i18n.language === 'ar' ? 'ar-EG' : 'en-GB';
@@ -16,11 +16,11 @@ export function formatHistoryDate(date: Date): string {
 export type HistoryDateGroup = {
   dateKey: string;
   dateLabel: string;
-  items: HistoryTransaction[];
+  items: TransactionListItem[];
 };
 
 export function groupTransactionsByDate(
-  transactions: HistoryTransaction[],
+  transactions: TransactionListItem[],
 ): HistoryDateGroup[] {
   const groups = new Map<string, HistoryDateGroup>();
 

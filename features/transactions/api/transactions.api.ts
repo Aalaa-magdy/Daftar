@@ -1,5 +1,7 @@
 import { apiClient } from '@/lib/axios';
+import { normalizeBalanceSummary } from '../lib/normalize-balance-summary';
 import { normalizeTransactionList } from '../lib/normalize-transaction';
+import type { BalanceSummary } from '../types/balance-summary.types';
 import type { HistoryQueryParams } from '../types/history-query.types';
 import type { Transaction } from '../types/transactions.types';
 
@@ -32,8 +34,14 @@ export const transactionsApi = {
   /** Recent transactions for the home screen (no filters). */
   list: async (): Promise<Transaction[]> => {
     const response = await apiClient.get<unknown>('/transactions');
-    console.log('response', response);
     return normalizeTransactionList(response.data);
+  },
+
+  balanceSummary: async (): Promise<BalanceSummary> => {
+    const response = await apiClient.get<unknown>(
+      '/transactions/balances/summary',
+    );
+    return normalizeBalanceSummary(response.data);
   },
 
   /** Filtered history list — supports type, preset/custom dates, and category. */

@@ -1,18 +1,23 @@
 import ProgressBar from '@/components/ui/ProgressBar';
+import {
+  formatBalanceAmount,
+  getDaysRemainingInMonth,
+  getExpenseProgress,
+} from '@/features/transactions/lib/format-balance-amount';
+import { useBalanceSummary } from '@/features/transactions/hooks';
 import { colors } from '@/theme/colors';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View, ActivityIndicator } from 'react-native';
 import ViewIcon from '@hugeicons/core-free-icons/ViewIcon';
 import ViewOffIcon from '@hugeicons/core-free-icons/ViewOffIcon';
 import ArrowUpLeft01Icon from '@hugeicons/core-free-icons/ArrowUpLeft01Icon';
 import ArrowDownRight01Icon from '@hugeicons/core-free-icons/ArrowDownRight01Icon';
 import { HugeiconsIcon } from '@hugeicons/react-native';
-
 import {
   Changa_400Regular,
   Changa_500Medium,
   useFonts,
 } from '@expo-google-fonts/changa';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 const MASK = '******';
@@ -20,22 +25,40 @@ const MASK = '******';
 const HomeInfo = () => {
   const { t } = useTranslation();
   const [amountsVisible, setAmountsVisible] = useState(true);
+  const { data, isLoading } = useBalanceSummary();
   const [fontsLoaded] = useFonts({
     Changa_400Regular,
     Changa_500Medium,
   });
+
+  const summary = useMemo(
+    () => ({
+      totalBalance: data?.totalBalance ?? 0,
+      totalIncome: data?.totalIncome ?? 0,
+      totalExpense: data?.totalExpense ?? 0,
+    }),
+    [data],
+  );
 
   if (!fontsLoaded) {
     return null;
   }
 
   const egp = t('common.egp');
-  const balanceDisplay = amountsVisible ? '15,000' : MASK;
-  const incomeDisplay = amountsVisible ? `20,000 ${egp}` : `${MASK} ${egp}`;
-  const expenseDisplay = amountsVisible ? `20,000 ${egp}` : `${MASK} ${egp}`;
+  const balanceDisplay = amountsVisible
+    ? formatBalanceAmount(summary.totalBalance)
+    : MASK;
+  const incomeDisplay = amountsVisible
+    ? `${formatBalanceAmount(summary.totalIncome)} ${egp}`
+    : `${MASK} ${egp}`;
+  const expenseDisplay = amountsVisible
+    ? `${formatBalanceAmount(summary.totalExpense)} ${egp}`
+    : `${MASK} ${egp}`;
   const spentDisplay = amountsVisible
-    ? t('home.spent', { amount: '5,000' })
+    ? t('home.spent', { amount: formatBalanceAmount(summary.totalExpense) })
     : t('home.spent', { amount: MASK });
+  const daysRemaining = getDaysRemainingInMonth();
+  const progress = getExpenseProgress(summary.totalExpense, summary.totalIncome);
 
   return (
     <View style={styles.container}>
@@ -57,8 +80,14 @@ const HomeInfo = () => {
         </TouchableOpacity>
       </View>
       <View style={styles.secondRow}>
-        <Text style={styles.balance}>{balanceDisplay}</Text>
-        <Text style={styles.currency}>{egp}</Text>
+        {isLoading ? (
+          <ActivityIndicator color={colors.white} style={styles.loader} />
+        ) : (
+          <>
+            <Text style={styles.balance}>{balanceDisplay}</Text>
+            <Text style={styles.currency}>{egp}</Text>
+          </>
+        )}
       </View>
       <View style={styles.thirdRow}>
         <View style={styles.item}>
@@ -91,52 +120,65 @@ const HomeInfo = () => {
       <View>
         <View style={styles.lastRow}>
           <Text style={styles.spans}>{spentDisplay}</Text>
-          <Text style={styles.spans}>{t('home.daysRemaining', { count: 20 })}</Text>
+          <Text style={styles.spans}>
+            {t('home.daysRemaining', { count: daysRemaining })}
+          </Text>
         </View>
-        <ProgressBar progress={0.5} color={colors.secondary} trackColor="#144718" />
+        <ProgressBar
+          progress={progress}
+          color={colors.secondary}
+          trackColor="#144718"
+        />
       </View>
     </View>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
     width: '93%',
     height: 230,
     padding: 20,
-    borderRadius:12,
+    borderRadius: 12,
     backgroundColor: colors.primary,
   },
-  currentBalance:{
-    color:colors.white,
+  currentBalance: {
+    color: colors.white,
     fontSize: 16,
     fontFamily: 'Changa_400Regular',
     lineHeight: 20,
   },
-  firstRow:{
-    flexDirection:'row',
-    justifyContent:'space-between',  
+  firstRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
-  secondRow:{
-    flexDirection:'row',
-    marginBottom:20,
+  secondRow: {
+    flexDirection: 'row',
+    marginBottom: 20,
+    minHeight: 52,
+    alignItems: 'flex-end',
   },
-  balance:{
-     fontSize: 36,
+  loader: {
+    marginTop: 8,
+    alignSelf: 'flex-start',
+  },
+  balance: {
+    fontSize: 36,
     fontFamily: 'Changa_500Medium',
     lineHeight: 52,
-    color:colors.white,
-    marginTop:8,
-    position:"relative"
+    color: colors.white,
+    marginTop: 8,
+    position: 'relative',
   },
-  currency:{
+  currency: {
     fontFamily: 'Changa_400Regular',
     fontSize: 16,
     lineHeight: 24,
-    color:colors.white,
-    marginTop:4,
-    position:'absolute',
-    bottom:0,
-    left:115,
+    color: colors.white,
+    marginTop: 4,
+    position: 'absolute',
+    bottom: 0,
+    left: 115,
   },
   icon: {
     backgroundColor: '#ECFDF3',
@@ -148,37 +190,40 @@ const styles = StyleSheet.create({
   },
   expenseIcon: {
     backgroundColor: '#FEF3F2',
-  },  thirdRow:{
-    flexDirection:'row',
-    gap:20,
-    marginBottom:22,
   },
-  item:{
-    flexDirection:'row',
-        gap:8,
-   alignItems:'center',
+  thirdRow: {
+    flexDirection: 'row',
+    gap: 20,
+    marginBottom: 22,
   },
-  type:{
-    color:colors.white,
+  item: {
+    flexDirection: 'row',
+    gap: 8,
+    alignItems: 'center',
+  },
+  type: {
+    color: colors.white,
     fontSize: 14,
     fontFamily: 'Changa_400Regular',
-     lineHeight: 20,
+    lineHeight: 20,
   },
-  amount:{
-    color:colors.white,    fontSize: 14,
-    fontFamily: 'Changa_400Regular',
-     lineHeight: 20,
-  },
-  lastRow:{
-    flexDirection:'row',
-    justifyContent:'space-between',
-    paddingVertical:2
-  },
-  spans:{
-    color:colors.white,    fontSize: 14,
+  amount: {
+    color: colors.white,
+    fontSize: 14,
     fontFamily: 'Changa_400Regular',
     lineHeight: 20,
-  }
+  },
+  lastRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingVertical: 2,
+  },
+  spans: {
+    color: colors.white,
+    fontSize: 14,
+    fontFamily: 'Changa_400Regular',
+    lineHeight: 20,
+  },
 });
 
 export default HomeInfo;

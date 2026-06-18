@@ -32,7 +32,7 @@ export const useTransactionHistoryList = ({
     isAuthChecking,
     refetch,
   } = useTransactionsHistory(params);
-  console.log('transactions', transactions);
+
   const { data: categories = [] } = useCategories();
 
   const items = useMemo(() => {

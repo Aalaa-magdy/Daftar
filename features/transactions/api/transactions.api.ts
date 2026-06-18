@@ -1,7 +1,11 @@
 import { apiClient } from '@/lib/axios';
 import { normalizeBalanceSummary } from '../lib/normalize-balance-summary';
-import { normalizeTransactionList } from '../lib/normalize-transaction';
+import {
+  normalizeTransactionList,
+  unwrapTransaction,
+} from '../lib/normalize-transaction';
 import type { BalanceSummary } from '../types/balance-summary.types';
+import type { CreateTransactionRequest } from '../types/create-transaction.types';
 import type { HistoryQueryParams } from '../types/history-query.types';
 import type { Transaction } from '../types/transactions.types';
 
@@ -50,5 +54,10 @@ export const transactionsApi = {
       params: buildHistoryParams(params),
     });
     return normalizeTransactionList(response.data);
+  },
+
+  create: async (data: CreateTransactionRequest): Promise<Transaction> => {
+    const response = await apiClient.post<unknown>('/transactions', data);
+    return unwrapTransaction(response.data);
   },
 };

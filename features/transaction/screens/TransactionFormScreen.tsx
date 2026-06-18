@@ -1,3 +1,6 @@
+import { buildCreateTransactionPayload } from '@/features/transactions/lib/build-create-transaction-payload';
+import { useCreateTransaction } from '@/features/transactions/hooks';
+import { getApiErrorMessage } from '@/lib/api-error';
 import Button from '@/components/ui/Button';
 import DatePicker from '@/components/ui/DatePicker';
 import Input from '@/components/ui/Input';
@@ -16,6 +19,7 @@ import { useRouter } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
+  Alert,
   Keyboard,
   Modal,
   Pressable,
@@ -47,6 +51,8 @@ const TransactionFormScreen = () => {
   const router = useRouter();
   const { t } = useTranslation();
   const { kind: initialKind, isEdit } = useTransactionFormMode();
+  const { mutate: createTransaction, isPending: isCreating } =
+    useCreateTransaction();
 
   const [kind, setKind] = useState<TransactionKind>(initialKind);
   const [amount, setAmount] = useState('');
@@ -145,9 +151,37 @@ const TransactionFormScreen = () => {
   };
 
   const handleSubmit = () => {
-    if (!isFormComplete) return;
-    // TODO: persist — create when !isEdit, update when isEdit (id)
-    router.back();
+    if (!isFormComplete || !date) return;
+
+    if (isEdit) {
+      // TODO: update transaction by id
+      router.back();
+      return;
+    }
+
+    try {
+      const payload = buildCreateTransactionPayload({
+        kind,
+        amount,
+        categoryId,
+        incomeType,
+        date,
+        repeat,
+        note,
+      });
+
+      createTransaction(payload, {
+        onSuccess: () => router.back(),
+        onError: (error) => {
+          Alert.alert(t('common.error'), getApiErrorMessage(error));
+        },
+      });
+    } catch (error) {
+      Alert.alert(
+        t('common.error'),
+        error instanceof Error ? error.message : t('common.error'),
+      );
+    }
   };
 
   const handleDelete = () => {
@@ -300,7 +334,7 @@ const TransactionFormScreen = () => {
           <Button
             title={saveLabel}
             onPress={handleSubmit}
-            disabled={!isFormComplete}
+            disabled={!isFormComplete || isCreating}
           />
         </View>
         </KeyboardAwareScrollView>

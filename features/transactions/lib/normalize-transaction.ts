@@ -1,5 +1,19 @@
 import type { Transaction } from '../types/transactions.types';
 
+export function unwrapTransaction(data: unknown): Transaction {
+  if (data && typeof data === 'object' && 'data' in data) {
+    const nested = normalizeTransaction((data as { data: unknown }).data);
+    if (nested) return nested;
+  }
+
+  const transaction = normalizeTransaction(data);
+  if (!transaction) {
+    throw new Error('Invalid transaction response');
+  }
+
+  return transaction;
+}
+
 export function normalizeTransaction(raw: unknown): Transaction | null {
   if (!raw || typeof raw !== 'object') return null;
 

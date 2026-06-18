@@ -1,4 +1,8 @@
-// src/lib/axios.ts
+import {
+  handleRefreshFailure,
+  refreshAccessToken,
+  shouldSkipTokenRefresh,
+} from '@/features/auth/lib/token-refresh';
 import axios, { type InternalAxiosRequestConfig } from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -26,7 +30,28 @@ async function attachAccessToken(config: InternalAxiosRequestConfig) {
   return config;
 }
 
-// Attach Bearer token to every request (auth, categories, transactions, etc.)
+function getAuthorizationHeader(config: InternalAxiosRequestConfig) {
+  return (
+    config.headers?.Authorization ??
+    (typeof config.headers?.get === 'function'
+      ? config.headers.get('Authorization')
+      : undefined)
+  );
+}
+
+function setAuthorizationHeader(
+  config: InternalAxiosRequestConfig,
+  token: string,
+) {
+  const value = `Bearer ${token}`;
+
+  if (typeof config.headers.set === 'function') {
+    config.headers.set('Authorization', value);
+  } else {
+    config.headers.Authorization = value;
+  }
+}
+
 apiClient.interceptors.request.use(attachAccessToken, (error) =>
   Promise.reject(error),
 );
@@ -34,16 +59,30 @@ apiClient.interceptors.request.use(attachAccessToken, (error) =>
 apiClient.interceptors.response.use(
   (response) => response,
   async (error) => {
-    if (error.response?.status === 401) {
-      const authHeader =
-        error.config?.headers?.Authorization ??
-        error.config?.headers?.get?.('Authorization');
+    const originalRequest = error.config as InternalAxiosRequestConfig | undefined;
 
-      // Only clear stored tokens when the request was sent with a token that was rejected.
-      if (authHeader) {
-        await AsyncStorage.multiRemove(['accessToken', 'refreshToken']);
-      }
+    if (!originalRequest || error.response?.status !== 401) {
+      return Promise.reject(error);
     }
-    return Promise.reject(error);
+
+    if (originalRequest._retry || shouldSkipTokenRefresh(originalRequest.url)) {
+      return Promise.reject(error);
+    }
+
+    const authHeader = getAuthorizationHeader(originalRequest);
+    if (!authHeader) {
+      return Promise.reject(error);
+    }
+
+    originalRequest._retry = true;
+
+    try {
+      const accessToken = await refreshAccessToken();
+      setAuthorizationHeader(originalRequest, accessToken);
+      return apiClient(originalRequest);
+    } catch (refreshError) {
+      await handleRefreshFailure();
+      return Promise.reject(refreshError);
+    }
   },
 );

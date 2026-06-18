@@ -179,6 +179,8 @@
   },
   "transaction": {
     "editTitle": "تعديل المعاملات",
+    "editIncome": "تعديل الدخل",
+    "editExpense": "تعديل المصروف",
     "addTitle": "إضافة معاملات",
     "incomeType": "نوع الدخل",
     "chooseIncomeType": "اختر نوع الدخل",

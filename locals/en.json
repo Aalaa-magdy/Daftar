@@ -179,6 +179,8 @@
   },
   "transaction": {
     "editTitle": "Edit Transactions",
+    "editIncome": "Edit Income",
+    "editExpense": "Edit Expense",
     "addTitle": "Add Transactions",
     "incomeType": "Income Type",
     "chooseIncomeType": "Choose income type",

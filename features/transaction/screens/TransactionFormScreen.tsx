@@ -46,7 +46,7 @@ const fieldIcon = (icon: IconSvgElement) => (
 const TransactionFormScreen = () => {
   const router = useRouter();
   const { t } = useTranslation();
-  const { kind: initialKind, isEdit, titleKey } = useTransactionFormMode();
+  const { kind: initialKind, isEdit } = useTransactionFormMode();
 
   const [kind, setKind] = useState<TransactionKind>(initialKind);
   const [amount, setAmount] = useState('');
@@ -124,8 +124,17 @@ const TransactionFormScreen = () => {
     return Boolean(incomeType);
   }, [amount, date, kind, categoryId, incomeType]);
 
-  const saveLabel =
-    kind === 'income' ? t('transaction.saveIncome') : t('transaction.saveExpense');
+  const headerTitle = isEdit
+    ? kind === 'income'
+      ? t('transaction.editIncome')
+      : t('transaction.editExpense')
+    : t('transaction.addTitle');
+
+  const saveLabel = isEdit
+    ? t('common.saveChanges')
+    : kind === 'income'
+      ? t('transaction.saveIncome')
+      : t('transaction.saveExpense');
 
   if (!fontsLoaded) {
     return null;
@@ -161,12 +170,14 @@ const TransactionFormScreen = () => {
           extraScrollHeight={120}
         >
         <TransactionHeader
-          title={t(titleKey)}
+          title={headerTitle}
           onBack={() => router.back()}
           onDelete={isEdit ? () => setShowDeleteDialogue(true) : undefined}
         />
 
-        <TransactionTypeToggle value={kind} onChange={setKind} />
+        {!isEdit ? (
+          <TransactionTypeToggle value={kind} onChange={setKind} />
+        ) : null}
 
         {kind === 'income' ? (
           <>

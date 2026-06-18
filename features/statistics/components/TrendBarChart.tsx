@@ -1,7 +1,7 @@
 import { colors } from '@/theme/colors';
 import { useAppDirection } from '@/hooks/useAppDirection';
 import { StyleSheet, Text, View } from 'react-native';
-import type { TrendPoint } from '../data/mock-statistics';
+import type { TrendPoint } from '../types/statistics.types';
 
 interface Props {
   title: string;

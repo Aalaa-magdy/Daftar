@@ -1,7 +1,7 @@
 import { colors } from '@/theme/colors';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import type { StatisticsPeriod } from '../data/mock-statistics';
+import type { StatisticsPeriod } from '../types/statistics.types';
 
 interface Props {
   value: StatisticsPeriod;

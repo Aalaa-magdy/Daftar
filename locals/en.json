@@ -162,6 +162,7 @@
     "yearlyTrend": "Yearly Trend",
     "weekLabel": "Week #{{number}}",
     "gaming": "Gaming",
+    "noCategoryData": "No spending by category for this period.",
     "months": {
       "jan": "Jan",
       "feb": "Feb",

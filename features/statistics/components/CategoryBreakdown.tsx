@@ -1,20 +1,14 @@
 import ProgressBar from '@/components/ui/ProgressBar';
-import { EXPENSE_CATEGORIES } from '@/features/transaction/data/form-options';
 import { colors } from '@/theme/colors';
 import { HugeiconsIcon } from '@hugeicons/react-native';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text, View } from 'react-native';
-import type { CategoryStat } from '../data/mock-statistics';
+import type { CategoryStat } from '../types/statistics.types';
 import { formatCompactAmount, formatPercentage } from '../lib/format-stat-amount';
 
 interface Props {
   categories: CategoryStat[];
   totalSpent: number;
-}
-
-function categoryLabelKey(categoryId: string) {
-  const key = categoryId === 'self-care' ? 'selfCare' : categoryId;
-  return `transaction.categories.${key}` as const;
 }
 
 const CategoryBreakdown = ({ categories, totalSpent }: Props) => {
@@ -31,41 +25,40 @@ const CategoryBreakdown = ({ categories, totalSpent }: Props) => {
         })}
       </Text>
 
-      <View style={styles.list}>
-        {categories.map((item, index) => {
-          const category = EXPENSE_CATEGORIES.find((entry) => entry.id === item.categoryId);
-          const label = item.labelKey
-            ? t(item.labelKey)
-            : t(categoryLabelKey(item.categoryId));
-          const icon = item.icon ?? category?.icon;
-          const color = item.color ?? category?.color ?? colors.textSecondary;
-          const iconBackground = `${color}1A`;
+      {categories.length === 0 ? (
+        <Text style={styles.emptyText}>{t('statistics.noCategoryData')}</Text>
+      ) : (
+        <View style={styles.list}>
+          {categories.map((item, index) => {
+            const color = item.color ?? colors.textSecondary;
+            const iconBackground = `${color}1A`;
 
-          return (
-            <View
-              key={`${item.categoryId}-${index}`}
-              style={[styles.row, index < categories.length - 1 && styles.rowBorder]}
-            >
-              <View style={[styles.iconWrap, { backgroundColor: iconBackground }]}>
-                {icon ? (
-                  <HugeiconsIcon icon={icon} size={18} color={color} />
-                ) : null}
-              </View>
-
-              <View style={styles.content}>
-                <View style={styles.topLine}>
-                  <Text style={styles.name}>{label}</Text>
-                  <Text style={styles.meta}>
-                    {formatCompactAmount(item.amount, t('common.egp'))}{' '}
-                    {formatPercentage(item.percentage)}
-                  </Text>
+            return (
+              <View
+                key={item.categoryId}
+                style={[styles.row, index < categories.length - 1 && styles.rowBorder]}
+              >
+                <View style={[styles.iconWrap, { backgroundColor: iconBackground }]}>
+                  {item.icon ? (
+                    <HugeiconsIcon icon={item.icon} size={18} color={color} />
+                  ) : null}
                 </View>
-                <ProgressBar progress={item.percentage / 100} />
+
+                <View style={styles.content}>
+                  <View style={styles.topLine}>
+                    <Text style={styles.name}>{item.name}</Text>
+                    <Text style={styles.meta}>
+                      {formatCompactAmount(item.amount, t('common.egp'))}{' '}
+                      {formatPercentage(item.percentage)}
+                    </Text>
+                  </View>
+                  <ProgressBar progress={item.percentage / 100} />
+                </View>
               </View>
-            </View>
-          );
-        })}
-      </View>
+            );
+          })}
+        </View>
+      )}
     </View>
   );
 };
@@ -89,6 +82,14 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     color: colors.textSecondary,
     marginTop: -4,
+  },
+  emptyText: {
+    fontFamily: 'Changa_400Regular',
+    fontSize: 14,
+    lineHeight: 20,
+    color: colors.textSecondary,
+    textAlign: 'center',
+    paddingVertical: 12,
   },
   list: {
     gap: 0,

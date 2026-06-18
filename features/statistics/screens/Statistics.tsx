@@ -9,29 +9,35 @@ import {
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { screenLayout } from '@/theme/screen-layout';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import {
+  ActivityIndicator,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import CategoryBreakdown from '../components/CategoryBreakdown';
 import DateNavigator from '../components/DateNavigator';
 import PeriodToggle from '../components/PeriodToggle';
 import SummaryCards from '../components/SummaryCards';
 import TrendBarChart from '../components/TrendBarChart';
-import {
-  STATISTICS_BY_PERIOD,
-  type StatisticsPeriod,
-} from '../data/mock-statistics';
+import { shiftPeriodAnchor } from '../lib/period-range';
 import { formatTrendLabel } from '../lib/format-trend-label';
+import { useStatistics } from '../hooks/useStatistics';
+import type { StatisticsPeriod } from '../types/statistics.types';
 
 const Statistics = () => {
   const { t } = useTranslation();
   const { onTabPress, onAddPress } = useNavbarNavigation('statistics');
   const [period, setPeriod] = useState<StatisticsPeriod>('month');
+  const [anchorDate, setAnchorDate] = useState(() => new Date());
+  const { stats, isLoading } = useStatistics(period, anchorDate);
+
   const [fontsLoaded] = useFonts({
     Changa_400Regular,
     Changa_500Medium,
   });
-
-  const stats = useMemo(() => STATISTICS_BY_PERIOD[period], [period]);
 
   const trendData = useMemo(
     () =>
@@ -41,6 +47,11 @@ const Statistics = () => {
       })),
     [stats.trend, t],
   );
+
+  const handlePeriodChange = (nextPeriod: StatisticsPeriod) => {
+    setPeriod(nextPeriod);
+    setAnchorDate(new Date());
+  };
 
   if (!fontsLoaded) {
     return null;
@@ -56,28 +67,44 @@ const Statistics = () => {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        <PeriodToggle value={period} onChange={setPeriod} />
+        <PeriodToggle value={period} onChange={handlePeriodChange} />
 
-        <DateNavigator label={stats.dateLabel} />
-
-        <SummaryCards
-          totalSpent={stats.totalSpent}
-          totalIncome={stats.totalIncome}
+        <DateNavigator
+          label={stats.dateLabel}
+          onPrevious={() =>
+            setAnchorDate((current) => shiftPeriodAnchor(current, period, -1))
+          }
+          onNext={() =>
+            setAnchorDate((current) => shiftPeriodAnchor(current, period, 1))
+          }
         />
 
-        <CategoryBreakdown
-          categories={stats.categories}
-          totalSpent={stats.totalSpent}
-        />
+        {isLoading ? (
+          <View style={styles.loadingWrap}>
+            <ActivityIndicator color={colors.primary} />
+          </View>
+        ) : (
+          <>
+            <SummaryCards
+              totalSpent={stats.totalSpent}
+              totalIncome={stats.totalIncome}
+            />
 
-        <TrendBarChart
-          title={t(stats.titleKey)}
-          subtitle={stats.trendSubtitle}
-          maxValue={stats.trendMax}
-          data={trendData}
-          isWeeklyChart={period === 'week'}
-          isMonthlyChart={period === 'month'}
-        />
+            <CategoryBreakdown
+              categories={stats.categories}
+              totalSpent={stats.totalSpent}
+            />
+
+            <TrendBarChart
+              title={t(stats.titleKey)}
+              subtitle={stats.trendSubtitle}
+              maxValue={stats.trendMax}
+              data={trendData}
+              isWeeklyChart={period === 'week'}
+              isMonthlyChart={period === 'month'}
+            />
+          </>
+        )}
       </ScrollView>
 
       <Navbar
@@ -101,6 +128,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingBottom: 96,
     gap: 16,
+  },
+  loadingWrap: {
+    paddingVertical: 32,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
 

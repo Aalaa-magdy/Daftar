@@ -1,5 +1,5 @@
 import type { TFunction } from 'i18next';
-import type { TrendPoint } from '../data/mock-statistics';
+import type { TrendPoint } from '../types/statistics.types';
 
 const MONTH_LABEL_KEYS = new Set([
   'statistics.months.jan',

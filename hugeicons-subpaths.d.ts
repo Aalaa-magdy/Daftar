@@ -561,6 +561,13 @@ declare module '@hugeicons/core-free-icons/Logout02Icon' {
   export default icon;
 }
 
+declare module '@hugeicons/core-free-icons/ArrowLeft01Icon' {
+  import type { IconSvgElement } from '@hugeicons/react-native';
+
+  const icon: IconSvgElement;
+  export default icon;
+}
+
 declare module '@hugeicons/core-free-icons/ArrowRight01Icon' {
   import type { IconSvgElement } from '@hugeicons/react-native';
 

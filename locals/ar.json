@@ -162,6 +162,7 @@
     "yearlyTrend": "الاتجاه السنوي",
     "weekLabel": "الأسبوع {{number}}",
     "gaming": "ألعاب",
+    "noCategoryData": "لا توجد مصروفات حسب الفئة لهذه الفترة.",
     "months": {
       "jan": "ينا",
       "feb": "فبر",

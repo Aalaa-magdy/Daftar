@@ -1,8 +1,8 @@
 import Button from '@/components/ui/Button';
 import DatePicker from '@/components/ui/DatePicker';
 import Input from '@/components/ui/Input';
+import CategorySelectGrid from '@/features/categories/components/CategorySelectGrid';
 import FormField from '@/features/transaction/components/FormField';
-import { EXPENSE_CATEGORIES } from '@/features/transaction/data/form-options';
 import { formatDisplayDate } from '@/features/transaction/lib/format-date';
 import { colors } from '@/theme/colors';
 import {
@@ -37,11 +37,6 @@ interface Props {
   value: HistoryFilterState;
   onClose: () => void;
   onSave: (value: HistoryFilterState) => void;
-}
-
-function categoryLabelKey(categoryId: string) {
-  const key = categoryId === 'self-care' ? 'selfCare' : categoryId;
-  return `transaction.categories.${key}` as const;
 }
 
 const HistoryFilterDialogue = ({ visible, value, onClose, onSave }: Props) => {
@@ -215,37 +210,10 @@ const HistoryFilterDialogue = ({ visible, value, onClose, onSave }: Props) => {
               </View>
 
               <FormField label={t('history.category')}>
-                <View style={styles.categoryGrid}>
-                  {EXPENSE_CATEGORIES.map((category) => {
-                    const isSelected = draft.categoryIds.includes(category.id);
-
-                    return (
-                      <TouchableOpacity
-                        key={category.id}
-                        style={[
-                          styles.categoryChip,
-                          isSelected && styles.categoryChipSelected,
-                        ]}
-                        onPress={() => toggleCategory(category.id)}
-                        activeOpacity={0.8}
-                      >
-                        <HugeiconsIcon
-                          icon={category.icon}
-                          size={18}
-                          color={category.color}
-                        />
-                        <Text
-                          style={[
-                            styles.categoryChipText,
-                            { color: category.color },
-                          ]}
-                        >
-                          {t(categoryLabelKey(category.id))}
-                        </Text>
-                      </TouchableOpacity>
-                    );
-                  })}
-                </View>
+                <CategorySelectGrid
+                  selectedIds={draft.categoryIds}
+                  onToggle={toggleCategory}
+                />
               </FormField>
             </ScrollView>
 
@@ -389,31 +357,6 @@ const styles = StyleSheet.create({
   },
   fieldInput: {
     marginBottom: 0,
-  },
-  categoryGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-  },
-  categoryChip: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    paddingHorizontal: 10,
-    paddingVertical: 8,
-    borderRadius: 8,
-    backgroundColor: colors.backgroundColor,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  categoryChipSelected: {
-    backgroundColor: colors.secondary,
-    borderColor: colors.primary,
-  },
-  categoryChipText: {
-    fontFamily: 'Changa_400Regular',
-    fontSize: 14,
-    lineHeight: 18,
   },
   actions: {
     flexDirection: 'row',

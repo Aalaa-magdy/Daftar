@@ -1,9 +1,5 @@
 import { colors } from '@/theme/colors';
-import {
-  getCategorySelectedStyles,
-  getCategoryUnselectedStyles,
-} from '@/features/categories/lib/category-colors';
-import { resolveCategoryIcon } from '@/features/categories/lib/category-icons';
+import CategoryChip from '@/features/categories/components/CategoryChip';
 import type {
   Category,
   CategoryDialogueMode,
@@ -29,35 +25,6 @@ import { getApiErrorMessage } from '@/lib/api-error';
 import CategoryDeleteDialogue from './CategoryDeleteDialogue';
 import CategoryDialogue from './CategoryDialogue';
 import EditCategoriesDialogue from './EditCategoriesDialogue';
-
-interface CategoryChipProps {
-  category: Category;
-  isSelected: boolean;
-  onPress: () => void;
-}
-
-const CategoryChip = ({ category, isSelected, onPress }: CategoryChipProps) => {
-  const chipColors = isSelected
-    ? getCategorySelectedStyles(category.color)
-    : getCategoryUnselectedStyles();
-
-  return (
-    <TouchableOpacity
-      style={[styles.chip, chipColors]}
-      onPress={onPress}
-      activeOpacity={0.8}
-    >
-      <HugeiconsIcon
-        icon={resolveCategoryIcon(category.icon)}
-        size={18}
-        color={category.color}
-      />
-      <Text style={[styles.chipText, { color: category.color }]}>
-        {category.name}
-      </Text>
-    </TouchableOpacity>
-  );
-};
 
 interface Props {
   selectedId: string | null;
@@ -282,20 +249,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 8,
-  },
-  chip: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    paddingHorizontal: 10,
-    paddingVertical: 8,
-    borderRadius: 8,
-    borderWidth: 1,
-  },
-  chipText: {
-    fontFamily: 'Changa_400Regular',
-    fontSize: 14,
-    lineHeight: 18,
   },
   addChip: {
     flexDirection: 'row',

@@ -6,6 +6,8 @@ export type TrendVariant = 'past' | 'active' | 'placeholder';
 
 export type TrendPoint = {
   label?: string;
+  /** Header shown in the column tooltip (e.g. date range, month, year). */
+  tooltipTitle?: string;
   labelKey?: string;
   labelParams?: Record<string, string | number>;
   value: number;

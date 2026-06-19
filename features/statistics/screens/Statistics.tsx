@@ -44,6 +44,9 @@ const Statistics = () => {
       stats.trend.map((point) => ({
         ...point,
         label: formatTrendLabel(point, t),
+        tooltipTitle: point.tooltipTitle
+          ? formatTrendLabel({ ...point, label: point.tooltipTitle }, t)
+          : undefined,
       })),
     [stats.trend, t],
   );
@@ -100,7 +103,6 @@ const Statistics = () => {
               subtitle={stats.trendSubtitle}
               maxValue={stats.trendMax}
               data={trendData}
-              tooltipPeriodLabel={stats.dateLabel}
               currency={t('common.egp')}
               isWeeklyChart={period === 'week'}
               isMonthlyChart={period === 'month'}

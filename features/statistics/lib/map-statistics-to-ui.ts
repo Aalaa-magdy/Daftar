@@ -71,12 +71,20 @@ function mapTrendPoints(
     trendPoints,
   );
 
-  return trendPoints.map((point, index) => ({
-    label: point.label,
-    value: point.spent,
-    income: point.income,
-    variant: resolveTrendVariant(index, selectedIndex, point.spent),
-  }));
+  return trendPoints.map((point, index) => {
+    const isSelectedWeek =
+      period === 'week' &&
+      index === selectedIndex &&
+      Boolean(data.periodLabel);
+
+    return {
+      label: point.label,
+      tooltipTitle: isSelectedWeek ? data.periodLabel : point.label,
+      value: point.spent,
+      income: point.income,
+      variant: resolveTrendVariant(index, selectedIndex, point.spent),
+    };
+  });
 }
 
 function resolveCategoryMeta(

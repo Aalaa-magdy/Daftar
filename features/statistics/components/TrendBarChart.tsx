@@ -1,7 +1,8 @@
 import { colors } from '@/theme/colors';
 import { useAppDirection } from '@/hooks/useAppDirection';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, Text, View } from 'react-native';
+import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import type { TrendPoint } from '../types/statistics.types';
 
 interface Props {
@@ -9,7 +10,6 @@ interface Props {
   subtitle: string;
   maxValue: number;
   data: TrendPoint[];
-  tooltipPeriodLabel?: string;
   currency?: string;
   isWeeklyChart?: boolean;
   isMonthlyChart?: boolean;
@@ -50,7 +50,6 @@ const TrendBarChart = ({
   subtitle,
   maxValue,
   data,
-  tooltipPeriodLabel,
   currency = 'EGP',
   isWeeklyChart = false,
   isMonthlyChart = false,
@@ -58,8 +57,43 @@ const TrendBarChart = ({
 }: Props) => {
   const { t } = useTranslation();
   const { isRTL } = useAppDirection();
+  const [activeTooltipIndex, setActiveTooltipIndex] = useState<number | null>(
+    null,
+  );
   const ticks = buildTicks(maxValue);
-  const showTooltip = Boolean(tooltipPeriodLabel && (isWeeklyChart || isYearlyChart));
+
+  const columnInteractionProps = (index: number) =>
+    Platform.OS === 'web'
+      ? {
+          onHoverIn: () => setActiveTooltipIndex(index),
+          onHoverOut: () => setActiveTooltipIndex(null),
+        }
+      : {
+          onPressIn: () => setActiveTooltipIndex(index),
+          onPressOut: () => setActiveTooltipIndex(null),
+        };
+
+  const renderTooltip = (point: TrendPoint, index: number) => {
+    if (activeTooltipIndex !== index) {
+      return null;
+    }
+
+    const titleText = point.tooltipTitle ?? point.label ?? '';
+
+    return (
+      <View style={styles.tooltip}>
+        <Text style={styles.tooltipTitle} numberOfLines={2}>
+          {titleText}
+        </Text>
+        <Text style={styles.tooltipAmount} numberOfLines={1}>
+          {t('statistics.chartAmount', {
+            amount: point.value.toLocaleString('en-US'),
+            currency,
+          })}
+        </Text>
+      </View>
+    );
+  };
 
   const renderBarColumn = (point: TrendPoint, index: number) => {
     const columnKey = `${point.label ?? 'point'}-${index}`;
@@ -77,8 +111,15 @@ const TrendBarChart = ({
 
     if (point.variant === 'placeholder') {
       return (
-        <View key={columnKey} style={columnStyle}>
+        <Pressable
+          key={columnKey}
+          style={columnStyle}
+          {...columnInteractionProps(index)}
+          accessibilityRole="button"
+          accessibilityLabel={point.label}
+        >
           <View style={styles.barArea}>
+            {renderTooltip(point, index)}
             <View style={styles.placeholderDot} />
           </View>
           <Text
@@ -89,7 +130,7 @@ const TrendBarChart = ({
           >
             {point.label}
           </Text>
-        </View>
+        </Pressable>
       );
     }
 
@@ -98,19 +139,15 @@ const TrendBarChart = ({
       point.variant === 'active' ? colors.primary : colors.light;
 
     return (
-      <View key={columnKey} style={columnStyle}>
+      <Pressable
+        key={columnKey}
+        style={columnStyle}
+        {...columnInteractionProps(index)}
+        accessibilityRole="button"
+        accessibilityLabel={point.label}
+      >
         <View style={styles.barArea}>
-          {showTooltip && point.variant === 'active' ? (
-            <View style={styles.tooltip}>
-              <Text style={styles.tooltipPeriod}>{tooltipPeriodLabel}</Text>
-              <Text style={styles.tooltipAmount}>
-                {t('statistics.trendAmount', {
-                  amount: point.value.toLocaleString('en-US'),
-                  currency,
-                })}
-              </Text>
-            </View>
-          ) : null}
+          {renderTooltip(point, index)}
           <View
             style={[
               styles.bar,
@@ -132,7 +169,7 @@ const TrendBarChart = ({
         >
           {point.label}
         </Text>
-      </View>
+      </Pressable>
     );
   };
 
@@ -286,35 +323,34 @@ const styles = StyleSheet.create({
   tooltip: {
     position: 'absolute',
     bottom: '100%',
-    marginBottom: 8,
-    minWidth: 140,
+    marginBottom: 6,
+    minWidth: 130,
+    maxWidth: 180,
     backgroundColor: colors.white,
     borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderWidth: 1,
-    borderColor: colors.border,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    elevation: 3,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 12,
+    elevation: 6,
     alignItems: 'center',
-    gap: 2,
-    zIndex: 2,
+    gap: 4,
+    zIndex: 10,
   },
-  tooltipPeriod: {
-    fontFamily: 'Changa_400Regular',
-    fontSize: 12,
-    lineHeight: 16,
-    color: colors.textSecondary,
+  tooltipTitle: {
+    fontFamily: 'Changa_500Medium',
+    fontSize: 14,
+    lineHeight: 18,
+    color: colors.black,
     textAlign: 'center',
   },
   tooltipAmount: {
-    fontFamily: 'Changa_500Medium',
-    fontSize: 13,
-    lineHeight: 18,
-    color: colors.black,
+    fontFamily: 'Changa_400Regular',
+    fontSize: 12,
+    lineHeight: 16,
+    color: colors.primary,
     textAlign: 'center',
   },
   bar: {

@@ -109,12 +109,66 @@ export const CATEGORY_PICKER_ICONS = CATEGORY_ICON_OPTIONS.map((item) => item.ic
 
 export const DEFAULT_CATEGORY_ICON = CATEGORY_PICKER_ICONS[0];
 
-export function resolveCategoryIcon(faIcon: string): IconSvgElement {
-  return (
-    CATEGORY_ICON_OPTIONS.find((item) => item.faIcon === faIcon)?.icon ??
-    DEFAULT_CATEGORY_ICON
-  );
+export function resolveCategoryIcon(icon: string): IconSvgElement {
+  const faMatch = CATEGORY_ICON_OPTIONS.find((item) => item.faIcon === icon);
+  if (faMatch) return faMatch.icon;
+
+  const aliasMatch = CATEGORY_ICON_ALIASES[icon];
+  if (aliasMatch) return aliasMatch;
+
+  return DEFAULT_CATEGORY_ICON;
 }
+
+const CATEGORY_ICON_ALIASES: Record<string, IconSvgElement> = {
+  ShoppingBag: ShoppingBag01Icon,
+  ShoppingCart: ShoppingCart01Icon,
+  GameController: GameController03Icon,
+  GraduationScroll: GraduationScrollIcon,
+  MoneyBag: MoneyBag01Icon,
+  HomeWifi: HomeWifiIcon,
+  House: House03Icon,
+  Health: HealthIcon,
+  Favourite: FavouriteIcon,
+  Wallet: Wallet03Icon,
+  Briefcase: Briefcase01Icon,
+  Bank: BankIcon,
+  Car: Car03Icon,
+  Airplane: Airplane01Icon,
+  Book: Book01Icon,
+  Gift: GiftIcon,
+  Calendar: Calendar03Icon,
+  Coffee: Coffee01Icon,
+  Pizza: Pizza01Icon,
+  Film: Film01Icon,
+  Music: MusicNote01Icon,
+  Camera: Camera01Icon,
+  Bus: Bus01Icon,
+  Dumbbell: Dumbbell01Icon,
+  Stethoscope: StethoscopeIcon,
+  Baby: Baby01Icon,
+  Flower: FlowerIcon,
+  Hamburger: Hamburger02Icon,
+  ChefHat: ChefHatIcon,
+  Cupcake: Cupcake01Icon,
+  DentalTooth: DentalToothIcon,
+  Dress: Dress01Icon,
+  Invoice: InvoiceIcon,
+  DeliveryTruck: DeliveryTruck01Icon,
+  Island: IslandIcon,
+  Wrench: Wrench01Icon,
+  Key: Key01Icon,
+  Headphones: HeadphonesIcon,
+  Laptop: LaptopIcon,
+  Robot: Robot01Icon,
+  OnlineLearning: OnlineLearning01Icon,
+  HairDryer: HairDryerIcon,
+  UserGroup: UserGroupIcon,
+  TennisBall: TennisBallIcon,
+  Plant: Plant01Icon,
+  Agreement: Agreement01Icon,
+  Message: Message01Icon,
+  SourceCode: SourceCodeIcon,
+};
 
 export function resolveFaIcon(icon: IconSvgElement): string {
   return (

@@ -160,6 +160,7 @@
     "weeklyTrend": "Weekly Trend",
     "monthlyTrend": "Monthly Trend",
     "yearlyTrend": "Yearly Trend",
+    "trendAmount": "Amount: {{amount}} {{currency}}",
     "weekLabel": "Week #{{number}}",
     "gaming": "Gaming",
     "noCategoryData": "No spending by category for this period.",

@@ -1,7 +1,7 @@
-import type { HistoryQueryParams } from '@/features/transactions/types/history-query.types';
+import type { StatisticsQueryParams } from '../types/statistics-query.types';
 
 export const statisticsKeys = {
   all: ['statistics'] as const,
-  period: (params: HistoryQueryParams, scope: 'period' | 'trend') =>
+  aggregated: (params: StatisticsQueryParams, scope: 'period' | 'trend') =>
     ['statistics', scope, params] as const,
 };

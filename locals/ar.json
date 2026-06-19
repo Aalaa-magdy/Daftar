@@ -160,6 +160,7 @@
     "weeklyTrend": "الاتجاه الأسبوعي",
     "monthlyTrend": "الاتجاه الشهري",
     "yearlyTrend": "الاتجاه السنوي",
+    "trendAmount": "المبلغ: {{amount}} {{currency}}",
     "weekLabel": "الأسبوع {{number}}",
     "gaming": "ألعاب",
     "noCategoryData": "لا توجد مصروفات حسب الفئة لهذه الفترة.",

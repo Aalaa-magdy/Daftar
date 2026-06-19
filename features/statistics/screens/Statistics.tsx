@@ -92,7 +92,7 @@ const Statistics = () => {
 
             <CategoryBreakdown
               categories={stats.categories}
-              totalSpent={stats.totalSpent}
+              totalSpent={stats.periodTotalSpent}
             />
 
             <TrendBarChart
@@ -100,8 +100,11 @@ const Statistics = () => {
               subtitle={stats.trendSubtitle}
               maxValue={stats.trendMax}
               data={trendData}
+              tooltipPeriodLabel={stats.dateLabel}
+              currency={t('common.egp')}
               isWeeklyChart={period === 'week'}
               isMonthlyChart={period === 'month'}
+              isYearlyChart={period === 'year'}
             />
           </>
         )}

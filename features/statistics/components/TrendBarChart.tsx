@@ -1,5 +1,6 @@
 import { colors } from '@/theme/colors';
 import { useAppDirection } from '@/hooks/useAppDirection';
+import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text, View } from 'react-native';
 import type { TrendPoint } from '../types/statistics.types';
 
@@ -8,8 +9,11 @@ interface Props {
   subtitle: string;
   maxValue: number;
   data: TrendPoint[];
+  tooltipPeriodLabel?: string;
+  currency?: string;
   isWeeklyChart?: boolean;
   isMonthlyChart?: boolean;
+  isYearlyChart?: boolean;
 }
 
 const CHART_HEIGHT = 200;
@@ -46,16 +50,23 @@ const TrendBarChart = ({
   subtitle,
   maxValue,
   data,
+  tooltipPeriodLabel,
+  currency = 'EGP',
   isWeeklyChart = false,
   isMonthlyChart = false,
+  isYearlyChart = false,
 }: Props) => {
+  const { t } = useTranslation();
   const { isRTL } = useAppDirection();
   const ticks = buildTicks(maxValue);
+  const showTooltip = Boolean(tooltipPeriodLabel && (isWeeklyChart || isYearlyChart));
 
-  const renderBarColumn = (point: TrendPoint) => {
+  const renderBarColumn = (point: TrendPoint, index: number) => {
+    const columnKey = `${point.label ?? 'point'}-${index}`;
     const columnStyle = [
       styles.barColumn,
       isWeeklyChart && styles.barColumnWeekly,
+      isYearlyChart && styles.barColumnYearly,
       isMonthlyChart && styles.barColumnMonthly,
     ];
     const labelStyle = [
@@ -66,7 +77,7 @@ const TrendBarChart = ({
 
     if (point.variant === 'placeholder') {
       return (
-        <View key={point.label} style={columnStyle}>
+        <View key={columnKey} style={columnStyle}>
           <View style={styles.barArea}>
             <View style={styles.placeholderDot} />
           </View>
@@ -87,12 +98,24 @@ const TrendBarChart = ({
       point.variant === 'active' ? colors.primary : colors.light;
 
     return (
-      <View key={point.label} style={columnStyle}>
+      <View key={columnKey} style={columnStyle}>
         <View style={styles.barArea}>
+          {showTooltip && point.variant === 'active' ? (
+            <View style={styles.tooltip}>
+              <Text style={styles.tooltipPeriod}>{tooltipPeriodLabel}</Text>
+              <Text style={styles.tooltipAmount}>
+                {t('statistics.trendAmount', {
+                  amount: point.value.toLocaleString('en-US'),
+                  currency,
+                })}
+              </Text>
+            </View>
+          ) : null}
           <View
             style={[
               styles.bar,
               isWeeklyChart && styles.barWeekly,
+              isYearlyChart && styles.barYearly,
               isMonthlyChart && styles.barMonthly,
               {
                 height: barHeight,
@@ -118,10 +141,11 @@ const TrendBarChart = ({
       style={[
         styles.barsRow,
         isWeeklyChart && styles.barsRowWeekly,
+        isYearlyChart && styles.barsRowYearly,
         isMonthlyChart && styles.barsRowMonthly,
       ]}
     >
-      {data.map((point) => renderBarColumn(point))}
+      {data.map((point, index) => renderBarColumn(point, index))}
     </View>
   );
 
@@ -229,6 +253,10 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     gap: 18,
   },
+  barsRowYearly: {
+    justifyContent: 'flex-start',
+    gap: 24,
+  },
   barsRowMonthly: {
     gap: 0,
   },
@@ -241,6 +269,10 @@ const styles = StyleSheet.create({
     flex: 0,
     width: 36,
   },
+  barColumnYearly: {
+    flex: 0,
+    width: 48,
+  },
   barColumnMonthly: {
     flex: 1,
     minWidth: 0,
@@ -251,6 +283,40 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'flex-end',
   },
+  tooltip: {
+    position: 'absolute',
+    bottom: '100%',
+    marginBottom: 8,
+    minWidth: 140,
+    backgroundColor: colors.white,
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderWidth: 1,
+    borderColor: colors.border,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 3,
+    alignItems: 'center',
+    gap: 2,
+    zIndex: 2,
+  },
+  tooltipPeriod: {
+    fontFamily: 'Changa_400Regular',
+    fontSize: 12,
+    lineHeight: 16,
+    color: colors.textSecondary,
+    textAlign: 'center',
+  },
+  tooltipAmount: {
+    fontFamily: 'Changa_500Medium',
+    fontSize: 13,
+    lineHeight: 18,
+    color: colors.black,
+    textAlign: 'center',
+  },
   bar: {
     width: '70%',
     minWidth: 8,
@@ -260,6 +326,10 @@ const styles = StyleSheet.create({
   barWeekly: {
     width: 28,
     minWidth: 28,
+  },
+  barYearly: {
+    width: 36,
+    minWidth: 36,
   },
   barMonthly: {
     width: 10,

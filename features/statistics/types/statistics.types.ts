@@ -9,6 +9,7 @@ export type TrendPoint = {
   labelKey?: string;
   labelParams?: Record<string, string | number>;
   value: number;
+  income?: number;
   variant: TrendVariant;
 };
 
@@ -25,6 +26,7 @@ export type PeriodStatistics = {
   dateLabel: string;
   totalSpent: number;
   totalIncome: number;
+  periodTotalSpent: number;
   categories: CategoryStat[];
   titleKey: string;
   trendSubtitle: string;

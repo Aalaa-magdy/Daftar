@@ -2,24 +2,8 @@ import type {
   CreateTransactionRequest,
   TransactionFormPayload,
 } from '../types/create-transaction.types';
-import type { ApiIncomeType, ApiRepeatType } from '../types/transactions.types';
 import { formatApiDate } from './format-api-date';
-
-const FORM_TO_API_INCOME_TYPE: Record<string, ApiIncomeType> = {
-  salary: 'salary',
-  partTime: 'part-time',
-  freelance: 'freelance',
-  bonus: 'bonus',
-  other: 'other',
-};
-
-function mapIncomeType(value: string): ApiIncomeType {
-  return FORM_TO_API_INCOME_TYPE[value] ?? 'other';
-}
-
-function mapRepeat(value: string | undefined): ApiRepeatType {
-  return value === 'oneTime' ? 'one-time' : 'monthly';
-}
+import { mapFormIncomeType, mapFormRepeat } from './transaction-form-mappers';
 
 export function buildCreateTransactionPayload(
   form: TransactionFormPayload,
@@ -49,9 +33,9 @@ export function buildCreateTransactionPayload(
   return {
     amount,
     transactionType: 'income',
-    incomeType: mapIncomeType(form.incomeType),
+    incomeType: mapFormIncomeType(form.incomeType),
     payDate: date,
-    repeat: mapRepeat(form.repeat),
+    repeat: mapFormRepeat(form.repeat),
     notes,
   };
 }

@@ -7,6 +7,7 @@ import {
 import type { BalanceSummary } from '../types/balance-summary.types';
 import type { CreateTransactionRequest } from '../types/create-transaction.types';
 import type { HistoryQueryParams } from '../types/history-query.types';
+import type { UpdateTransactionRequest } from '../types/update-transaction.types';
 import type { Transaction } from '../types/transactions.types';
 
 function buildHistoryParams(params: HistoryQueryParams) {
@@ -59,5 +60,20 @@ export const transactionsApi = {
   create: async (data: CreateTransactionRequest): Promise<Transaction> => {
     const response = await apiClient.post<unknown>('/transactions', data);
     return unwrapTransaction(response.data);
+  },
+
+  update: async (
+    id: string,
+    data: UpdateTransactionRequest,
+  ): Promise<Transaction> => {
+    const response = await apiClient.patch<unknown>(
+      `/transactions/${id}`,
+      data,
+    );
+    return unwrapTransaction(response.data);
+  },
+
+  delete: async (id: string): Promise<void> => {
+    await apiClient.delete(`/transactions/${id}`);
   },
 };

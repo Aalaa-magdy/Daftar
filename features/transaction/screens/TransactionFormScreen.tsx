@@ -1,5 +1,14 @@
 import { buildCreateTransactionPayload } from '@/features/transactions/lib/build-create-transaction-payload';
-import { useCreateTransaction } from '@/features/transactions/hooks';
+import {
+  buildUpdateTransactionPayload,
+  mapTransactionToForm,
+} from '@/features/transactions/lib/transaction-form-mappers';
+import {
+  useCreateTransaction,
+  useDeleteTransaction,
+  useTransaction,
+  useUpdateTransaction,
+} from '@/features/transactions/hooks';
 import { getApiErrorMessage } from '@/lib/api-error';
 import Button from '@/components/ui/Button';
 import DatePicker from '@/components/ui/DatePicker';
@@ -20,6 +29,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Alert,
+  ActivityIndicator,
   Keyboard,
   Modal,
   Pressable,
@@ -50,9 +60,19 @@ const fieldIcon = (icon: IconSvgElement) => (
 const TransactionFormScreen = () => {
   const router = useRouter();
   const { t } = useTranslation();
-  const { kind: initialKind, isEdit } = useTransactionFormMode();
+  const { id, kind: initialKind, isEdit } = useTransactionFormMode();
   const { mutate: createTransaction, isPending: isCreating } =
     useCreateTransaction();
+  const { mutate: updateTransaction, isPending: isUpdating } =
+    useUpdateTransaction();
+  const { mutate: deleteTransaction, isPending: isDeleting } =
+    useDeleteTransaction();
+  const {
+    data: existingTransaction,
+    isLoading: isLoadingTransaction,
+    isError: isTransactionLoadError,
+    refetch: refetchTransaction,
+  } = useTransaction(isEdit ? id : null);
 
   const [kind, setKind] = useState<TransactionKind>(initialKind);
   const [amount, setAmount] = useState('');
@@ -102,21 +122,17 @@ const TransactionFormScreen = () => {
   }, [initialKind]);
 
   useEffect(() => {
-    if (!isEdit) return;
+    if (!isEdit || !existingTransaction) return;
 
-    if (initialKind === 'expense') {
-      setAmount('3000');
-      setCategoryId('education');
-      setDate(new Date(2026, 4, 27));
-      setNote('');
-      return;
-    }
-
-    setIncomeType('partTime');
-    setAmount('10000');
-    setDate(new Date(2026, 5, 1));
-    setRepeat('monthly');
-  }, [isEdit, initialKind]);
+    const formValues = mapTransactionToForm(existingTransaction);
+    setKind(formValues.kind);
+    setAmount(formValues.amount);
+    setCategoryId(formValues.categoryId ?? null);
+    setIncomeType(formValues.incomeType ?? '');
+    setDate(formValues.date);
+    setRepeat(formValues.repeat ?? 'monthly');
+    setNote(formValues.note ?? '');
+  }, [isEdit, existingTransaction]);
 
   const dateDisplay = date ? formatDisplayDate(date) : '';
 
@@ -142,8 +158,30 @@ const TransactionFormScreen = () => {
       ? t('transaction.saveIncome')
       : t('transaction.saveExpense');
 
+  const isSaving = isCreating || isUpdating || isDeleting;
+
   if (!fontsLoaded) {
     return null;
+  }
+
+  if (isEdit && isLoadingTransaction) {
+    return (
+      <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
+        <View style={styles.loadingWrap}>
+          <ActivityIndicator size="large" color={colors.primary} />
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  if (isEdit && isTransactionLoadError) {
+    return (
+      <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
+        <View style={styles.loadingWrap}>
+          <Button title={t('common.retry')} onPress={() => refetchTransaction()} />
+        </View>
+      </SafeAreaView>
+    );
   }
 
   const togglePicker = (key: Exclude<PickerKey, null>) => {
@@ -154,8 +192,32 @@ const TransactionFormScreen = () => {
     if (!isFormComplete || !date) return;
 
     if (isEdit) {
-      // TODO: update transaction by id
-      router.back();
+      try {
+        const payload = buildUpdateTransactionPayload({
+          kind,
+          amount,
+          categoryId,
+          incomeType,
+          date,
+          repeat,
+          note,
+        });
+
+        updateTransaction(
+          { id, data: payload },
+          {
+            onSuccess: () => router.back(),
+            onError: (error) => {
+              Alert.alert(t('common.error'), getApiErrorMessage(error));
+            },
+          },
+        );
+      } catch (error) {
+        Alert.alert(
+          t('common.error'),
+          error instanceof Error ? error.message : t('common.error'),
+        );
+      }
       return;
     }
 
@@ -185,9 +247,16 @@ const TransactionFormScreen = () => {
   };
 
   const handleDelete = () => {
-    // TODO: delete transaction by id
-    setShowDeleteDialogue(false);
-    router.back();
+    deleteTransaction(id, {
+      onSuccess: () => {
+        setShowDeleteDialogue(false);
+        router.back();
+      },
+      onError: (error) => {
+        setShowDeleteDialogue(false);
+        Alert.alert(t('common.error'), getApiErrorMessage(error));
+      },
+    });
   };
 
   return (
@@ -334,7 +403,7 @@ const TransactionFormScreen = () => {
           <Button
             title={saveLabel}
             onPress={handleSubmit}
-            disabled={!isFormComplete || isCreating}
+            disabled={!isFormComplete || isSaving}
           />
         </View>
         </KeyboardAwareScrollView>
@@ -391,6 +460,11 @@ const styles = StyleSheet.create({
   },
   buttonWrap: {
     marginTop: 24,
+  },
+  loadingWrap: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   pickerModalRoot: {
     flex: 1,

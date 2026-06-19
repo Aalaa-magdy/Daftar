@@ -33,7 +33,13 @@ export const EXPENSE_CATEGORIES: ExpenseCategory[] = [
   { id: 'education', icon: OnlineLearning01Icon, color: '#444CE7' },
 ];
 
-export const INCOME_TYPES = ['partTime', 'freelance', 'bonus', 'other'] as const;
+export const INCOME_TYPES = [
+  'salary',
+  'partTime',
+  'freelance',
+  'bonus',
+  'other',
+] as const;
 
 export const REPEAT_OPTIONS = ['monthly', 'oneTime'] as const;
 

@@ -6,11 +6,9 @@ import { sortTransactionsByRecent } from '../lib/sort-transactions-by-recent';
 import type { TransactionListItem } from '../types/transactions.types';
 import { useTransactions } from './useTransactions';
 
-type Options = {
-  limit?: number;
-};
+export const RECENT_TRANSACTIONS_LIMIT = 5;
 
-export const useTransactionList = (options?: Options) => {
+export const useRecentTransactions = () => {
   const { t, i18n } = useTranslation();
   const {
     data: transactions = [],
@@ -23,19 +21,18 @@ export const useTransactionList = (options?: Options) => {
   const { data: categories = [] } = useCategories();
 
   const items = useMemo(() => {
-    let sorted = sortTransactionsByRecent(transactions);
-
-    if (options?.limit != null) {
-      sorted = sorted.slice(0, options.limit);
-    }
+    const recent = sortTransactionsByRecent(transactions).slice(
+      0,
+      RECENT_TRANSACTIONS_LIMIT,
+    );
 
     return mapTransactionsToListItems(
-      sorted,
+      recent,
       categories,
       t,
       i18n.language,
     );
-  }, [transactions, categories, t, i18n.language, options?.limit]);
+  }, [transactions, categories, t, i18n.language]);
 
   const isLoading = isAuthChecking || isTransactionsLoading;
 

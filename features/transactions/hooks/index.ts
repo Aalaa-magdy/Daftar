@@ -1,6 +1,7 @@
 export { useTransactions } from './useTransactions';
 export { useTransactionsHistory } from './useTransactionsHistory';
 export { useTransactionList } from './useTransactionList';
+export { useRecentTransactions, RECENT_TRANSACTIONS_LIMIT } from './useRecentTransactions';
 export { useTransactionHistoryList } from './useTransactionHistoryList';
 export { useBalanceSummary } from './useBalanceSummary';
 export { useCreateTransaction } from './useCreateTransaction';

@@ -1,5 +1,5 @@
-import { useRouter } from 'expo-router';
-import { useMemo } from 'react';
+import { useRouter, useFocusEffect } from 'expo-router';
+import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   ActivityIndicator,
@@ -28,18 +28,23 @@ import TransactionCard, {
 } from '../components/TransactionCard';
 import Navbar from '../components/Navbar';
 import { useNavbarNavigation } from '../hooks/useNavbarNavigation';
-import { useTransactionList } from '@/features/transactions/hooks';
+import { useRecentTransactions } from '@/features/transactions/hooks';
 import { groupTransactionsByDate } from '@/features/history/lib/group-transactions';
-
-const HOME_TRANSACTION_LIMIT = 5;
 
 const Home = () => {
   const router = useRouter();
   const { t } = useTranslation();
   const { onTabPress, onAddPress } = useNavbarNavigation('home');
-  const { items, isLoading, isEmpty, isError, isGuest, refetch } = useTransactionList({
-    limit: HOME_TRANSACTION_LIMIT,
-  });
+  const { items, isLoading, isEmpty, isError, isGuest, refetch } =
+    useRecentTransactions();
+
+  useFocusEffect(
+    useCallback(() => {
+      if (!isGuest) {
+        refetch();
+      }
+    }, [isGuest, refetch]),
+  );
 
   const groups = useMemo(() => groupTransactionsByDate(items), [items]);
 

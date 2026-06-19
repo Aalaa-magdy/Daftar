@@ -6,6 +6,7 @@ import type {
   Transaction,
   TransactionListItem,
 } from '../types/transactions.types';
+import { sortTransactionsByRecent } from './sort-transactions-by-recent';
 
 function formatTransactionTime(date: Date, language: string): string {
   return date.toLocaleTimeString(language === 'ar' ? 'ar-EG' : 'en-US', {
@@ -84,9 +85,7 @@ export function mapTransactionsToListItems(
   t: TFunction,
   language: string,
 ): TransactionListItem[] {
-  return transactions
-    .map((transaction) =>
-      mapTransactionToListItem(transaction, categories, t, language),
-    )
-    .sort((a, b) => b.date.getTime() - a.date.getTime());
+  return sortTransactionsByRecent(transactions).map((transaction) =>
+    mapTransactionToListItem(transaction, categories, t, language),
+  );
 }

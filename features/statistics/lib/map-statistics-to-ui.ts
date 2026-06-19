@@ -9,10 +9,12 @@ import type {
   TrendVariant,
 } from '../types/statistics.types';
 import { formatPeriodLabel } from './format-period-label';
+import { getPeriodRange } from './period-range';
 import {
   getTrendPoints,
   getTrendSelectedIndex,
 } from './trend-utils';
+import type { ApiStatisticsTrendPoint } from '../types/statistics-response.types';
 
 function computeTrendMax(values: number[]) {
   const max = Math.max(...values, 0);
@@ -32,12 +34,67 @@ function computeTrendMax(values: number[]) {
   return Math.max(rounded, max);
 }
 
+function resolveWeeklySelectedIndex(
+  data: StatisticsData,
+  anchorDate: Date,
+  trendPoints: ApiStatisticsTrendPoint[],
+): number {
+  const apiIndex = getTrendSelectedIndex(data.trend);
+  const maxIndex = Math.max(trendPoints.length - 1, 0);
+  const clamp = (index: number) =>
+    Math.min(Math.max(index, 0), maxIndex);
+
+  if (apiIndex != null) {
+    const apiSpent = trendPoints[apiIndex]?.spent ?? 0;
+    if (apiSpent === data.totalSpent || data.totalSpent === 0) {
+      return clamp(apiIndex);
+    }
+  }
+
+  if (data.totalSpent > 0) {
+    const matchIndex = trendPoints.findIndex(
+      (point) => point.spent === data.totalSpent,
+    );
+    if (matchIndex >= 0) {
+      return clamp(matchIndex);
+    }
+  }
+
+  if (apiIndex != null) {
+    return clamp(apiIndex);
+  }
+
+  const { to } = getPeriodRange(anchorDate, 'week');
+  return clamp(Math.floor((to.getDate() - 1) / 7));
+}
+
+function resolveWeeklyTrendValue(
+  index: number,
+  selectedIndex: number,
+  point: ApiStatisticsTrendPoint,
+  totalSpent: number,
+): number {
+  if (index === selectedIndex) {
+    return totalSpent > 0 ? totalSpent : point.spent;
+  }
+
+  if (totalSpent > 0 && point.spent === totalSpent) {
+    return 0;
+  }
+
+  return point.spent;
+}
+
 function resolveSelectedIndex(
   data: StatisticsData,
   period: StatisticsPeriod,
   anchorDate: Date,
   trendPoints: ReturnType<typeof getTrendPoints>,
 ): number {
+  if (period === 'week') {
+    return resolveWeeklySelectedIndex(data, anchorDate, trendPoints);
+  }
+
   const selectedIndex = getTrendSelectedIndex(data.trend);
   if (selectedIndex != null) {
     return selectedIndex;
@@ -52,14 +109,6 @@ function resolveSelectedIndex(
       (point) => Number(point.label) === anchorDate.getFullYear(),
     );
     return index >= 0 ? index : Math.max(trendPoints.length - 1, 0);
-  }
-
-  if (period === 'week') {
-    const weekIndex = Math.floor((anchorDate.getDate() - 1) / 7);
-    return Math.min(
-      Math.max(weekIndex, 0),
-      Math.max(trendPoints.length - 1, 0),
-    );
   }
 
   return 0;
@@ -101,15 +150,25 @@ function mapTrendPoints(
       index === selectedIndex &&
       Boolean(data.periodLabel);
 
+    const value =
+      period === 'week'
+        ? resolveWeeklyTrendValue(
+            index,
+            selectedIndex,
+            point,
+            data.totalSpent,
+          )
+        : point.spent;
+
     return {
       label: point.label,
       tooltipTitle: isSelectedWeek ? data.periodLabel : point.label,
-      value: point.spent,
+      value,
       income: point.income,
       variant: resolveTrendVariant(
         index,
         selectedIndex,
-        point.spent,
+        value,
         period,
       ),
     };

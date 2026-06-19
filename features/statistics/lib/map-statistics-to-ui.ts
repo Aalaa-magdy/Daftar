@@ -54,6 +54,14 @@ function resolveSelectedIndex(
     return index >= 0 ? index : Math.max(trendPoints.length - 1, 0);
   }
 
+  if (period === 'week') {
+    const weekIndex = Math.floor((anchorDate.getDate() - 1) / 7);
+    return Math.min(
+      Math.max(weekIndex, 0),
+      Math.max(trendPoints.length - 1, 0),
+    );
+  }
+
   return 0;
 }
 
@@ -61,8 +69,15 @@ function resolveTrendVariant(
   index: number,
   selectedIndex: number,
   spent: number,
+  period: StatisticsPeriod,
 ): TrendVariant {
   if (index === selectedIndex) return 'active';
+
+  // Weekly trend compares all weeks in the month; show bars whenever data exists.
+  if (period === 'week') {
+    return spent > 0 ? 'past' : 'placeholder';
+  }
+
   if (index > selectedIndex) return 'placeholder';
   return spent > 0 ? 'past' : 'placeholder';
 }
@@ -91,7 +106,12 @@ function mapTrendPoints(
       tooltipTitle: isSelectedWeek ? data.periodLabel : point.label,
       value: point.spent,
       income: point.income,
-      variant: resolveTrendVariant(index, selectedIndex, point.spent),
+      variant: resolveTrendVariant(
+        index,
+        selectedIndex,
+        point.spent,
+        period,
+      ),
     };
   });
 }

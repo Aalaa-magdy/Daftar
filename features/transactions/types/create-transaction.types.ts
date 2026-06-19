@@ -12,6 +12,8 @@ export type CreateIncomeTransactionRequest = {
   amount: number;
   transactionType: 'income';
   incomeType: ApiIncomeType;
+  /** Some backends persist income on `date` while accepting `payDate` on create. */
+  date: string;
   payDate: string;
   repeat: ApiRepeatType;
   notes?: string;

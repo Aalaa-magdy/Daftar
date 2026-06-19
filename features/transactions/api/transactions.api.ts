@@ -57,9 +57,8 @@ export const transactionsApi = {
     return normalizeTransactionList(response.data);
   },
 
-  create: async (data: CreateTransactionRequest): Promise<Transaction> => {
-    const response = await apiClient.post<unknown>('/transactions', data);
-    return unwrapTransaction(response.data);
+  create: async (data: CreateTransactionRequest): Promise<void> => {
+    await apiClient.post('/transactions', data);
   },
 
   update: async (

@@ -45,6 +45,13 @@ function formatTick(value: number): string {
   return String(value);
 }
 
+/** Align y-axis labels with grid lines inside the chart layer. */
+function getYAxisLabelBottom(value: number, maxValue: number): number {
+  const chartOffset = X_LABEL_HEIGHT;
+  const scaled = (value / maxValue) * CHART_HEIGHT;
+  return chartOffset + scaled - 7;
+}
+
 const TrendBarChart = ({
   title,
   subtitle,
@@ -62,6 +69,15 @@ const TrendBarChart = ({
   );
   const ticks = buildTicks(maxValue);
 
+  const getBarHeight = (value: number) =>
+    Math.min(
+      CHART_HEIGHT,
+      Math.max(6, (value / maxValue) * CHART_HEIGHT),
+    );
+
+  const getScaleBottom = (value: number) =>
+    (value / maxValue) * CHART_HEIGHT;
+
   const columnInteractionProps = (index: number) =>
     Platform.OS === 'web'
       ? {
@@ -69,8 +85,10 @@ const TrendBarChart = ({
           onHoverOut: () => setActiveTooltipIndex(null),
         }
       : {
-          onPressIn: () => setActiveTooltipIndex(index),
-          onPressOut: () => setActiveTooltipIndex(null),
+          onPress: () =>
+            setActiveTooltipIndex((current) =>
+              current === index ? null : index,
+            ),
         };
 
   const renderTooltip = (point: TrendPoint, index: number) => {
@@ -95,19 +113,42 @@ const TrendBarChart = ({
     );
   };
 
-  const renderBarColumn = (point: TrendPoint, index: number) => {
+  const columnStyle = [
+    styles.barColumn,
+    isWeeklyChart && styles.barColumnWeekly,
+    isYearlyChart && styles.barColumnYearly,
+    isMonthlyChart && styles.barColumnMonthly,
+  ];
+
+  const xLabelColumnStyle = [
+    styles.xLabelColumn,
+    isWeeklyChart && styles.barColumnWeekly,
+    isYearlyChart && styles.barColumnYearly,
+    isMonthlyChart && styles.barColumnMonthly,
+  ];
+
+  const labelStyle = [
+    styles.xLabel,
+    isMonthlyChart && styles.xLabelMonthly,
+    isRTL && styles.xLabelRtl,
+  ];
+
+  const barsRowStyle = [
+    styles.barsRow,
+    isWeeklyChart && styles.barsRowWeekly,
+    isYearlyChart && styles.barsRowYearly,
+    isMonthlyChart && styles.barsRowMonthly,
+  ];
+
+  const xLabelsRowStyle = [
+    styles.xLabelsRow,
+    isWeeklyChart && styles.barsRowWeekly,
+    isYearlyChart && styles.barsRowYearly,
+    isMonthlyChart && styles.barsRowMonthly,
+  ];
+
+  const renderBar = (point: TrendPoint, index: number) => {
     const columnKey = `${point.label ?? 'point'}-${index}`;
-    const columnStyle = [
-      styles.barColumn,
-      isWeeklyChart && styles.barColumnWeekly,
-      isYearlyChart && styles.barColumnYearly,
-      isMonthlyChart && styles.barColumnMonthly,
-    ];
-    const labelStyle = [
-      styles.xLabel,
-      isMonthlyChart && styles.xLabelMonthly,
-      isRTL && styles.xLabelRtl,
-    ];
 
     if (point.variant === 'placeholder') {
       return (
@@ -118,35 +159,30 @@ const TrendBarChart = ({
           accessibilityRole="button"
           accessibilityLabel={point.label}
         >
-          <View style={styles.barArea}>
+          <View style={styles.markerWrap}>
             {renderTooltip(point, index)}
             <View style={styles.placeholderDot} />
           </View>
-          <Text
-            style={labelStyle}
-            numberOfLines={1}
-            adjustsFontSizeToFit
-            minimumFontScale={0.75}
-          >
-            {point.label}
-          </Text>
         </Pressable>
       );
     }
 
-    const barHeight = Math.max(6, (point.value / maxValue) * CHART_HEIGHT);
+    const barHeight = getBarHeight(point.value);
     const barColor =
       point.variant === 'active' ? colors.primary : colors.light;
 
     return (
       <Pressable
         key={columnKey}
-        style={columnStyle}
+        style={[
+          columnStyle,
+          activeTooltipIndex === index && styles.barColumnActive,
+        ]}
         {...columnInteractionProps(index)}
         accessibilityRole="button"
         accessibilityLabel={point.label}
       >
-        <View style={styles.barArea}>
+        <View style={[styles.barWrap, { height: barHeight }]}>
           {renderTooltip(point, index)}
           <View
             style={[
@@ -161,43 +197,38 @@ const TrendBarChart = ({
             ]}
           />
         </View>
-        <Text
-          style={labelStyle}
-          numberOfLines={1}
-          adjustsFontSizeToFit
-          minimumFontScale={0.75}
-        >
-          {point.label}
-        </Text>
       </Pressable>
     );
   };
 
-  const barsRow = (
+  const renderXLabel = (point: TrendPoint, index: number) => (
     <View
-      style={[
-        styles.barsRow,
-        isWeeklyChart && styles.barsRowWeekly,
-        isYearlyChart && styles.barsRowYearly,
-        isMonthlyChart && styles.barsRowMonthly,
-      ]}
+      key={`label-${point.label ?? 'point'}-${index}`}
+      style={xLabelColumnStyle}
     >
-      {data.map((point, index) => renderBarColumn(point, index))}
+      <Text
+        style={labelStyle}
+        numberOfLines={1}
+        adjustsFontSizeToFit
+        minimumFontScale={0.75}
+      >
+        {point.label}
+      </Text>
     </View>
   );
 
   const plotContent = (
     <View style={styles.plotArea}>
-      {ticks.map((tick) => (
-        <View
-          key={`grid-${tick}`}
-          style={[
-            styles.gridLine,
-            { bottom: `${(tick / maxValue) * 100}%` },
-          ]}
-        />
-      ))}
-      {barsRow}
+      <View style={styles.chartLayer}>
+        {ticks.map((tick) => (
+          <View
+            key={`grid-${tick}`}
+            style={[styles.gridLine, { bottom: getScaleBottom(tick) }]}
+          />
+        ))}
+        <View style={barsRowStyle}>{data.map(renderBar)}</View>
+      </View>
+      <View style={xLabelsRowStyle}>{data.map(renderXLabel)}</View>
     </View>
   );
 
@@ -209,7 +240,13 @@ const TrendBarChart = ({
       <View style={[styles.chartWrap, { direction: 'ltr' }]}>
         <View style={styles.yAxis}>
           {ticks.map((tick) => (
-            <Text key={tick} style={styles.yLabel}>
+            <Text
+              key={tick}
+              style={[
+                styles.yLabel,
+                { bottom: getYAxisLabelBottom(tick, maxValue) },
+              ]}
+            >
               {formatTick(tick)}
             </Text>
           ))}
@@ -227,6 +264,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 12,
     gap: 12,
+    overflow: 'visible',
   },
   title: {
     fontFamily: 'Changa_500Medium',
@@ -250,10 +288,11 @@ const styles = StyleSheet.create({
   yAxis: {
     width: 32,
     height: CHART_HEIGHT + X_LABEL_HEIGHT,
-    justifyContent: 'space-between',
-    paddingBottom: X_LABEL_HEIGHT,
+    position: 'relative',
   },
   yLabel: {
+    position: 'absolute',
+    right: 0,
     fontFamily: 'Changa_400Regular',
     fontSize: 11,
     lineHeight: 14,
@@ -262,10 +301,16 @@ const styles = StyleSheet.create({
   },
   plotAreaFlex: {
     flex: 1,
+    overflow: 'visible',
   },
   plotArea: {
     height: CHART_HEIGHT + X_LABEL_HEIGHT,
+    overflow: 'visible',
+  },
+  chartLayer: {
+    height: CHART_HEIGHT,
     position: 'relative',
+    overflow: 'visible',
   },
   gridLine: {
     position: 'absolute',
@@ -276,15 +321,19 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
   },
   barsRow: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: X_LABEL_HEIGHT,
-    height: CHART_HEIGHT,
+    ...StyleSheet.absoluteFillObject,
     flexDirection: 'row',
     alignItems: 'flex-end',
     justifyContent: 'space-between',
     gap: 4,
+  },
+  xLabelsRow: {
+    height: X_LABEL_HEIGHT,
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    gap: 4,
+    paddingTop: 8,
   },
   barsRowWeekly: {
     justifyContent: 'flex-start',
@@ -298,6 +347,14 @@ const styles = StyleSheet.create({
     gap: 0,
   },
   barColumn: {
+    flex: 1,
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    minWidth: 0,
+    position: 'relative',
+  },
+  xLabelColumn: {
     flex: 1,
     alignItems: 'center',
     minWidth: 0,
@@ -314,8 +371,16 @@ const styles = StyleSheet.create({
     flex: 1,
     minWidth: 0,
   },
-  barArea: {
-    height: CHART_HEIGHT,
+  barColumnActive: {
+    zIndex: 20,
+  },
+  markerWrap: {
+    position: 'relative',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  barWrap: {
+    position: 'relative',
     width: '100%',
     alignItems: 'center',
     justifyContent: 'flex-end',
@@ -324,6 +389,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: '100%',
     marginBottom: 6,
+    alignSelf: 'center',
     minWidth: 130,
     maxWidth: 180,
     backgroundColor: colors.white,
@@ -334,10 +400,10 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 12,
-    elevation: 6,
+    elevation: 8,
     alignItems: 'center',
     gap: 4,
-    zIndex: 10,
+    zIndex: 100,
   },
   tooltipTitle: {
     fontFamily: 'Changa_500Medium',
@@ -381,7 +447,6 @@ const styles = StyleSheet.create({
     marginBottom: 2,
   },
   xLabel: {
-    marginTop: 8,
     width: '100%',
     minHeight: 20,
     fontFamily: 'Changa_400Regular',

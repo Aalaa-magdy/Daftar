@@ -17,10 +17,19 @@ import {
 function computeTrendMax(values: number[]) {
   const max = Math.max(...values, 0);
   if (max <= 0) return 1000;
-  if (max <= 8000) return Math.ceil(max / 1000) * 1000;
-  if (max <= 12000) return Math.ceil(max / 2000) * 2000;
-  if (max <= 50000) return Math.ceil(max / 10000) * 10000;
-  return Math.ceil(max / 20000) * 20000;
+
+  let rounded: number;
+  if (max <= 8000) {
+    rounded = Math.ceil(max / 1000) * 1000;
+  } else if (max <= 12000) {
+    rounded = Math.ceil(max / 2000) * 2000;
+  } else if (max <= 50000) {
+    rounded = Math.ceil(max / 10000) * 10000;
+  } else {
+    rounded = Math.ceil(max / 20000) * 20000;
+  }
+
+  return Math.max(rounded, max);
 }
 
 function resolveSelectedIndex(

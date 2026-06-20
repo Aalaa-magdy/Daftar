@@ -13,7 +13,7 @@ import {
   signInWithNativeGoogle,
 } from '@/features/auth/lib/native-google-signin';
 import { storeAuthTokens } from '@/features/auth/lib/auth-storage';
-import { PROFILE_QUERY_KEY } from '@/features/profile/hooks/useProfile';
+import { PROFILE_QUERY_KEY } from '@/features/profile/hooks';
 import { transactionKeys } from '@/features/transactions/hooks/query-keys';
 import { queryClient } from '@/lib/query-client';
 import { getApiErrorMessage } from '@/lib/api-error';

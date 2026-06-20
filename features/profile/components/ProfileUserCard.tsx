@@ -1,16 +1,16 @@
 import { colors } from '@/theme/colors';
 import { ActivityIndicator, Image, StyleSheet, Text, View } from 'react-native';
-import { useProfile } from '../hooks/useProfile';
-
-const fallbackAvatar = require('@/assets/images/profile.jpg');
+import { useProfile } from '../hooks';
+import { resolveProfileAvatarSource } from '../lib/profile-avatar';
 
 const ProfileUserCard = () => {
   const { data: profile, isLoading } = useProfile();
+  const avatarSource = resolveProfileAvatarSource(profile?.profilePicture);
 
   return (
     <View style={styles.card}>
       <View style={styles.avatarWrap}>
-        <Image source={fallbackAvatar} style={styles.avatar} />
+        <Image source={avatarSource} style={styles.avatar} resizeMode="cover" />
       </View>
 
       <View style={styles.info}>

@@ -1,10 +1,10 @@
 import {
-  handleRefreshFailure,
-  refreshAccessToken,
-  shouldSkipTokenRefresh,
+    handleRefreshFailure,
+    refreshAccessToken,
+    shouldSkipTokenRefresh,
 } from '@/features/auth/lib/token-refresh';
-import axios, { type InternalAxiosRequestConfig } from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios, { type InternalAxiosRequestConfig } from 'axios';
 
 const API_BASE_URL =
   process.env.EXPO_PUBLIC_API_URL ?? 'http://localhost:3000';
@@ -18,6 +18,14 @@ export const apiClient = axios.create({
 });
 
 async function attachAccessToken(config: InternalAxiosRequestConfig) {
+  if (config.data instanceof FormData) {
+    if (typeof config.headers.delete === 'function') {
+      config.headers.delete('Content-Type');
+    } else if (config.headers) {
+      delete config.headers['Content-Type'];
+    }
+  }
+
   const token = (await AsyncStorage.getItem('accessToken'))?.trim();
   if (!token) return config;
 

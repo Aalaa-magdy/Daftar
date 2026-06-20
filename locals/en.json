@@ -259,6 +259,9 @@
     "deleteAccountConfirmTitle": "Are you sure you want to delete your account?",
     "deleteAccountConfirmSubtitle": "Your data and progress will be permanently deleted. This action cannot be undone.",
     "yesDeleteAccount": "Yes, Delete Account",
+    "deleteAccountError": "Could not delete your account. Please try again.",
+    "profilePictureUploadError": "Could not upload your profile picture. Please try again.",
+    "profilePicturePermissionDenied": "Photo library access is required to change your profile picture.",
     "sections": {
       "profileSettings": "Profile Settings",
       "appSettings": "App Settings",

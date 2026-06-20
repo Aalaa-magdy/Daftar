@@ -1,20 +1,20 @@
-import {
-  Changa_400Regular,
-  Changa_500Medium,
-  useFonts,
-} from '@expo-google-fonts/changa';
-import { colors } from '@/theme/colors';
 import SoloLogo from '@/assets/images/SoloLogo.svg';
-import { useProfile } from '@/features/profile/hooks/useProfile';
-import { useTranslation } from 'react-i18next';
+import { useProfile } from '@/features/profile/hooks';
+import { resolveProfileAvatarSource } from '@/features/profile/lib/profile-avatar';
+import { colors } from '@/theme/colors';
+import {
+    Changa_400Regular,
+    Changa_500Medium,
+    useFonts,
+} from '@expo-google-fonts/changa';
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Image, StyleSheet, Text, View } from 'react-native';
-
-const fallbackAvatar = require('@/assets/images/profile.jpg');
 
 const HomeHeader = () => {
   const { t } = useTranslation();
   const { data: profile, isLoading, isGuest } = useProfile();
+  const avatarSource = resolveProfileAvatarSource(profile?.profilePicture);
   const [fontsLoaded] = useFonts({
     Changa_400Regular,
     Changa_500Medium,
@@ -40,7 +40,7 @@ const HomeHeader = () => {
     <View style={styles.container}>
       <View style={styles.header}>
         <View style={styles.imageWrapper}>
-          <Image source={fallbackAvatar} style={styles.image} />
+          <Image source={avatarSource} style={styles.image} />
         </View>
 
         <View style={styles.profileInfo}>

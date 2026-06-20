@@ -259,6 +259,9 @@
     "deleteAccountConfirmTitle": "هل أنت متأكد أنك تريد حذف حسابك؟",
     "deleteAccountConfirmSubtitle": "سيتم حذف بياناتك وتقدمك نهائيًا. لا يمكن التراجع عن هذا الإجراء.",
     "yesDeleteAccount": "نعم، احذف الحساب",
+    "deleteAccountError": "تعذر حذف حسابك. يرجى المحاولة مرة أخرى.",
+    "profilePictureUploadError": "تعذر رفع صورة الملف الشخصي. يرجى المحاولة مرة أخرى.",
+    "profilePicturePermissionDenied": "يلزم الوصول إلى مكتبة الصور لتغيير صورة الملف الشخصي.",
     "sections": {
       "profileSettings": "إعدادات الملف الشخصي",
       "appSettings": "إعدادات التطبيق",

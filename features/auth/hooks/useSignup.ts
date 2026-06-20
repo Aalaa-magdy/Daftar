@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { authApi } from '@/features/auth/api/auth.api';
 import { storeAuthTokens } from '@/features/auth/lib/auth-storage';
-import { PROFILE_QUERY_KEY } from '@/features/profile/hooks/useProfile';
+import { PROFILE_QUERY_KEY } from '@/features/profile/hooks';
 import { transactionKeys } from '@/features/transactions/hooks/query-keys';
 import { AuthResponse, SignupRequest } from '@/features/auth/types/auth.types';
 

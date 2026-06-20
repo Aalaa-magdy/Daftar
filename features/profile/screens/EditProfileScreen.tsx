@@ -1,5 +1,7 @@
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
+import FormField from '@/features/transaction/components/FormField';
+import TransactionHeader from '@/features/transaction/components/TransactionHeader';
 import { colors } from '@/theme/colors';
 import {
   Changa_400Regular,
@@ -11,10 +13,12 @@ import Mail01Icon from '@hugeicons/core-free-icons/Mail01Icon';
 import PencilEdit02Icon from '@hugeicons/core-free-icons/PencilEdit02Icon';
 import User03Icon from '@hugeicons/core-free-icons/User03Icon';
 import { HugeiconsIcon, type IconSvgElement } from '@hugeicons/react-native';
-import { useRouter } from 'expo-router';
-import { useState } from 'react';
+import { useRouter, type Href } from 'expo-router';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
+  ActivityIndicator,
+  Alert,
   Image,
   ScrollView,
   StyleSheet,
@@ -23,10 +27,14 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import FormField from '@/features/transaction/components/FormField';
-import TransactionHeader from '@/features/transaction/components/TransactionHeader';
 import DeleteAccountDialogue from '../components/DeleteAccountDialogue';
-import { PROFILE_USER } from '../data/profile-menu';
+import {
+  useDeleteAccount,
+  useProfile,
+  useUploadProfilePicture,
+} from '../hooks';
+import { pickProfilePicture } from '../lib/pick-profile-picture';
+import { resolveProfileAvatarSource } from '../lib/profile-avatar';
 
 const fieldIcon = (icon: IconSvgElement) => (
   <HugeiconsIcon icon={icon} size={22} />
@@ -35,8 +43,14 @@ const fieldIcon = (icon: IconSvgElement) => (
 const EditProfileScreen = () => {
   const router = useRouter();
   const { t } = useTranslation();
-  const [name, setName] = useState(PROFILE_USER.name);
-  const [email, setEmail] = useState(PROFILE_USER.email);
+  const { data: profile, isLoading: isProfileLoading } = useProfile();
+  const { mutate: uploadProfilePicture, isPending: isUploadingPicture } =
+    useUploadProfilePicture();
+  const { mutate: deleteAccount, isPending: isDeletingAccount } =
+    useDeleteAccount();
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [avatarUri, setAvatarUri] = useState<string | null>(null);
   const [deleteVisible, setDeleteVisible] = useState(false);
 
   const [fontsLoaded] = useFonts({
@@ -44,12 +58,18 @@ const EditProfileScreen = () => {
     Changa_500Medium,
   });
 
+  useEffect(() => {
+    if (!profile) return;
+    setName(profile.name);
+    setEmail(profile.email);
+    setAvatarUri(profile.profilePicture ?? null);
+  }, [profile]);
+
   if (!fontsLoaded) {
     return null;
   }
 
-  const isEmailVerified =
-    email.trim().toLowerCase() === PROFILE_USER.email.toLowerCase();
+  const isEmailVerified = profile?.isEmailVerified ?? false;
 
   const goToVerifyEmail = () => {
     router.push({ pathname: '/verify-email', params: { email } });
@@ -59,10 +79,45 @@ const EditProfileScreen = () => {
     goToVerifyEmail();
   };
 
-  const handleDeleteAccount = () => {
-    setDeleteVisible(false);
-    router.replace('/signin');
+  const handleChangePhoto = async () => {
+    const result = await pickProfilePicture();
+
+    if (result.status === 'cancelled') {
+      return;
+    }
+
+    if (result.status === 'permission_denied') {
+      Alert.alert(
+        t('common.error'),
+        t('profile.profilePicturePermissionDenied'),
+      );
+      return;
+    }
+
+    uploadProfilePicture(result.asset, {
+      onSuccess: (updatedProfile) => {
+        setAvatarUri(updatedProfile.profilePicture ?? result.asset.uri);
+      },
+      onError: () => {
+        Alert.alert(t('common.error'), t('profile.profilePictureUploadError'));
+      },
+    });
   };
+
+  const handleDeleteAccount = () => {
+    deleteAccount(undefined, {
+      onSuccess: () => {
+        setDeleteVisible(false);
+        router.replace('/signin' as Href);
+      },
+      onError: () => {
+        setDeleteVisible(false);
+        Alert.alert(t('common.error'), t('profile.deleteAccountError'));
+      },
+    });
+  };
+
+  const avatarSource = resolveProfileAvatarSource(avatarUri);
 
   return (
     <SafeAreaView style={styles.safe} edges={['top', 'left', 'right']}>
@@ -79,7 +134,16 @@ const EditProfileScreen = () => {
 
         <View style={styles.avatarSection}>
           <View style={styles.avatarWrap}>
-            <Image source={PROFILE_USER.avatar} style={styles.avatar} />
+            {isProfileLoading ? (
+              <ActivityIndicator color={colors.primary} style={styles.avatarLoader} />
+            ) : (
+              <Image source={avatarSource} style={styles.avatar} />
+            )}
+            {isUploadingPicture ? (
+              <View style={styles.avatarOverlay}>
+                <ActivityIndicator color={colors.white} />
+              </View>
+            ) : null}
           </View>
 
           <TouchableOpacity
@@ -87,6 +151,8 @@ const EditProfileScreen = () => {
             activeOpacity={0.85}
             accessibilityRole="button"
             accessibilityLabel={t('profile.changeProfilePictureA11y')}
+            onPress={handleChangePhoto}
+            disabled={isUploadingPicture}
           >
             <HugeiconsIcon icon={PencilEdit02Icon} size={16} color={colors.primary} />
             <Text style={styles.changePhotoText}>{t('profile.changeProfilePicture')}</Text>
@@ -134,6 +200,7 @@ const EditProfileScreen = () => {
           accessibilityRole="button"
           accessibilityLabel={t('profile.deleteAccountA11y')}
           onPress={() => setDeleteVisible(true)}
+          disabled={isDeletingAccount}
         >
           <HugeiconsIcon icon={Delete02Icon} size={20} color={colors.red} />
           <Text style={styles.deleteAccountText}>{t('profile.deleteAccount')}</Text>
@@ -144,8 +211,9 @@ const EditProfileScreen = () => {
 
       <DeleteAccountDialogue
         visible={deleteVisible}
-        onClose={() => setDeleteVisible(false)}
+        onClose={() => !isDeletingAccount && setDeleteVisible(false)}
         onConfirm={handleDeleteAccount}
+        isConfirming={isDeletingAccount}
       />
     </SafeAreaView>
   );
@@ -176,11 +244,24 @@ const styles = StyleSheet.create({
     height: 120,
     borderRadius: 60,
     overflow: 'hidden',
+    position: 'relative',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.white,
   },
   avatar: {
     width: 120,
     height: 120,
     borderRadius: 60,
+  },
+  avatarLoader: {
+    flex: 1,
+  },
+  avatarOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0, 0, 0, 0.35)',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   changePhotoButton: {
     flexDirection: 'row',

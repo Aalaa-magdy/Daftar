@@ -41,10 +41,39 @@ export function normalizeUser(raw: unknown): UserProfile | null {
     isActive: nested.isActive !== false,
     totalIncome: Number(nested.totalIncome ?? 0),
     totalExpense: Number(nested.totalExpense ?? 0),
+    profilePicture: readProfilePictureUrl(nested),
     createdAt: String(nested.createdAt ?? ''),
     updatedAt: String(nested.updatedAt ?? ''),
     lastLoginAt: String(nested.lastLoginAt ?? ''),
   };
+}
+
+function readOptionalString(
+  record: Record<string, unknown>,
+  keys: string[],
+): string | undefined {
+  for (const key of keys) {
+    const value = record[key];
+    if (typeof value === 'string' && value.trim()) {
+      return value.trim();
+    }
+  }
+
+  return undefined;
+}
+
+export function readProfilePictureUrl(raw: unknown): string | undefined {
+  const nested = pickUserRecord(raw);
+  if (!nested) return undefined;
+
+  return readOptionalString(nested, [
+    'profilePicture',
+    'profilePictureUrl',
+    'avatar',
+    'avatarUrl',
+    'imageUrl',
+    'url',
+  ]);
 }
 
 export function unwrapUserResponse(data: unknown): UserProfile {

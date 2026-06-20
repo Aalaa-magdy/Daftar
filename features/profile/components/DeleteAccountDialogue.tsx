@@ -14,15 +14,22 @@ import {
   Text,
   TouchableOpacity,
   View,
+  ActivityIndicator,
 } from 'react-native';
 
 interface Props {
   visible: boolean;
   onClose: () => void;
   onConfirm: () => void;
+  isConfirming?: boolean;
 }
 
-const DeleteAccountDialogue = ({ visible, onClose, onConfirm }: Props) => {
+const DeleteAccountDialogue = ({
+  visible,
+  onClose,
+  onConfirm,
+  isConfirming = false,
+}: Props) => {
   const { t } = useTranslation();
   const [fontsLoaded] = useFonts({
     Changa_400Regular,
@@ -61,14 +68,20 @@ const DeleteAccountDialogue = ({ visible, onClose, onConfirm }: Props) => {
               style={styles.confirmButton}
               activeOpacity={0.85}
               onPress={onConfirm}
+              disabled={isConfirming}
             >
-              <Text style={styles.confirmText}>{t('profile.yesDeleteAccount')}</Text>
+              {isConfirming ? (
+                <ActivityIndicator color={colors.white} />
+              ) : (
+                <Text style={styles.confirmText}>{t('profile.yesDeleteAccount')}</Text>
+              )}
             </TouchableOpacity>
 
             <TouchableOpacity
               style={styles.cancelButton}
               activeOpacity={0.85}
               onPress={onClose}
+              disabled={isConfirming}
             >
               <Text style={styles.cancelText}>{t('common.noCancel')}</Text>
             </TouchableOpacity>

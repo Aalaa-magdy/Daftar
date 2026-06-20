@@ -3,15 +3,16 @@ import { useQuery } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { userApi } from '../api/user.api';
 import type { UserProfile } from '../types/user.types';
+import { profileKeys } from './query-keys';
 
-export const PROFILE_QUERY_KEY = ['user', 'me'] as const;
+export { PROFILE_QUERY_KEY, profileKeys } from './query-keys';
 
 export const useProfile = () => {
   const { isAuthenticated, isGuest, isAuthChecking } =
     useAuthenticatedSession();
 
   const query = useQuery<UserProfile, AxiosError>({
-    queryKey: PROFILE_QUERY_KEY,
+    queryKey: profileKeys.me,
     queryFn: () => userApi.getMe(),
     enabled: isAuthenticated,
     refetchOnMount: 'always',

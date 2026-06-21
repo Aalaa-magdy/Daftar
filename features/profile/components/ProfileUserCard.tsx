@@ -5,7 +5,7 @@ import { resolveProfileAvatarSource } from '../lib/profile-avatar';
 
 const ProfileUserCard = () => {
   const { data: profile, isLoading } = useProfile();
-  const avatarSource = resolveProfileAvatarSource(profile?.profilePicture);
+  const avatarSource = resolveProfileAvatarSource(profile?.profileImage);
 
   return (
     <View style={styles.card}>

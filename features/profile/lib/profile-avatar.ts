@@ -1,7 +1,7 @@
 export const FALLBACK_PROFILE_AVATAR = require('@/assets/images/profile.jpg');
 
-export function resolveProfileAvatarSource(profilePicture?: string | null) {
-  const url = profilePicture?.trim();
+export function resolveProfileAvatarSource(profileImage?: string | null) {
+  const url = profileImage?.trim();
 
   if (url) {
     return { uri: url };

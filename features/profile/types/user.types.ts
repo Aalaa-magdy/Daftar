@@ -9,7 +9,7 @@ export interface UserProfile {
   isActive: boolean;
   totalIncome: number;
   totalExpense: number;
-  profilePicture?: string | null;
+  profileImage?: string | null;
   createdAt: string;
   updatedAt: string;
   lastLoginAt: string;

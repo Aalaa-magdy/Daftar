@@ -18,7 +18,6 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   ActivityIndicator,
-  Alert,
   Image,
   ScrollView,
   StyleSheet,
@@ -28,13 +27,9 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import DeleteAccountDialogue from '../components/DeleteAccountDialogue';
-import {
-  useDeleteAccount,
-  useProfile,
-  useUploadProfilePicture,
-} from '../hooks';
-import { pickProfilePicture } from '../lib/pick-profile-picture';
-import { resolveProfileAvatarSource } from '../lib/profile-avatar';
+import { useDeleteAccount, useProfile, useUploadProfilePicture } from '../hooks';
+
+const FALLBACK_AVATAR = require('@/assets/images/profile.jpg');
 
 const fieldIcon = (icon: IconSvgElement) => (
   <HugeiconsIcon icon={icon} size={22} />
@@ -43,65 +38,33 @@ const fieldIcon = (icon: IconSvgElement) => (
 const EditProfileScreen = () => {
   const router = useRouter();
   const { t } = useTranslation();
+
   const { data: profile, isLoading: isProfileLoading } = useProfile();
-  const { mutate: uploadProfilePicture, isPending: isUploadingPicture } =
-    useUploadProfilePicture();
-  const { mutate: deleteAccount, isPending: isDeletingAccount } =
-    useDeleteAccount();
+  const { upload, isPending: isUploadingPicture } = useUploadProfilePicture();
+  const { mutate: deleteAccount, isPending: isDeletingAccount } = useDeleteAccount();
+
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
-  const [avatarUri, setAvatarUri] = useState<string | null>(null);
   const [deleteVisible, setDeleteVisible] = useState(false);
 
-  const [fontsLoaded] = useFonts({
-    Changa_400Regular,
-    Changa_500Medium,
-  });
+  const [fontsLoaded] = useFonts({ Changa_400Regular, Changa_500Medium });
 
   useEffect(() => {
     if (!profile) return;
     setName(profile.name);
     setEmail(profile.email);
-    setAvatarUri(profile.profilePicture ?? null);
   }, [profile]);
 
-  if (!fontsLoaded) {
-    return null;
-  }
+  if (!fontsLoaded) return null;
 
   const isEmailVerified = profile?.isEmailVerified ?? false;
 
+  const avatarSource = profile?.profileImage
+    ? { uri: profile.profileImage }
+    : FALLBACK_AVATAR;
+
   const goToVerifyEmail = () => {
     router.push({ pathname: '/verify-email', params: { email } });
-  };
-
-  const handleSave = () => {
-    goToVerifyEmail();
-  };
-
-  const handleChangePhoto = async () => {
-    const result = await pickProfilePicture();
-
-    if (result.status === 'cancelled') {
-      return;
-    }
-
-    if (result.status === 'permission_denied') {
-      Alert.alert(
-        t('common.error'),
-        t('profile.profilePicturePermissionDenied'),
-      );
-      return;
-    }
-
-    uploadProfilePicture(result.asset, {
-      onSuccess: (updatedProfile) => {
-        setAvatarUri(updatedProfile.profilePicture ?? result.asset.uri);
-      },
-      onError: () => {
-        Alert.alert(t('common.error'), t('profile.profilePictureUploadError'));
-      },
-    });
   };
 
   const handleDeleteAccount = () => {
@@ -112,12 +75,9 @@ const EditProfileScreen = () => {
       },
       onError: () => {
         setDeleteVisible(false);
-        Alert.alert(t('common.error'), t('profile.deleteAccountError'));
       },
     });
   };
-
-  const avatarSource = resolveProfileAvatarSource(avatarUri);
 
   return (
     <SafeAreaView style={styles.safe} edges={['top', 'left', 'right']}>
@@ -132,12 +92,13 @@ const EditProfileScreen = () => {
           onBack={() => router.back()}
         />
 
+        {/* ─── Avatar ─────────────────────────────────────────────────────── */}
         <View style={styles.avatarSection}>
           <View style={styles.avatarWrap}>
             {isProfileLoading ? (
               <ActivityIndicator color={colors.primary} style={styles.avatarLoader} />
             ) : (
-              <Image source={avatarSource} style={styles.avatar} />
+              <Image source={avatarSource} style={styles.avatar} resizeMode="cover" />
             )}
             {isUploadingPicture ? (
               <View style={styles.avatarOverlay}>
@@ -149,9 +110,7 @@ const EditProfileScreen = () => {
           <TouchableOpacity
             style={styles.changePhotoButton}
             activeOpacity={0.85}
-            accessibilityRole="button"
-            accessibilityLabel={t('profile.changeProfilePictureA11y')}
-            onPress={handleChangePhoto}
+            onPress={() => upload()}
             disabled={isUploadingPicture}
           >
             <HugeiconsIcon icon={PencilEdit02Icon} size={16} color={colors.primary} />
@@ -159,6 +118,7 @@ const EditProfileScreen = () => {
           </TouchableOpacity>
         </View>
 
+        {/* ─── Form ───────────────────────────────────────────────────────── */}
         <View style={styles.form}>
           <FormField label={t('common.name')}>
             <Input
@@ -181,12 +141,7 @@ const EditProfileScreen = () => {
               {isEmailVerified ? (
                 <Text style={styles.verifiedText}>{t('common.verified')}</Text>
               ) : (
-                <TouchableOpacity
-                  activeOpacity={0.7}
-                  accessibilityRole="link"
-                  accessibilityLabel={t('profile.verifyEmailA11y')}
-                  onPress={goToVerifyEmail}
-                >
+                <TouchableOpacity activeOpacity={0.7} onPress={goToVerifyEmail}>
                   <Text style={styles.verifyLink}>{t('profile.verifyEmail')}</Text>
                 </TouchableOpacity>
               )}
@@ -194,11 +149,10 @@ const EditProfileScreen = () => {
           </FormField>
         </View>
 
+        {/* ─── Delete account ──────────────────────────────────────────────── */}
         <TouchableOpacity
           style={styles.deleteAccount}
           activeOpacity={0.7}
-          accessibilityRole="button"
-          accessibilityLabel={t('profile.deleteAccountA11y')}
           onPress={() => setDeleteVisible(true)}
           disabled={isDeletingAccount}
         >
@@ -206,7 +160,7 @@ const EditProfileScreen = () => {
           <Text style={styles.deleteAccountText}>{t('profile.deleteAccount')}</Text>
         </TouchableOpacity>
 
-        <Button title={t('common.saveChanges')} onPress={handleSave} />
+        <Button title={t('common.saveChanges')} onPress={goToVerifyEmail} />
       </ScrollView>
 
       <DeleteAccountDialogue
@@ -230,7 +184,6 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     flexGrow: 1,
-    backgroundColor: colors.backgroundColor,
     paddingHorizontal: 10,
     paddingBottom: 32,
   },
@@ -259,7 +212,7 @@ const styles = StyleSheet.create({
   },
   avatarOverlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0, 0, 0, 0.35)',
+    backgroundColor: 'rgba(0,0,0,0.35)',
     alignItems: 'center',
     justifyContent: 'center',
   },

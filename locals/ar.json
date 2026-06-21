@@ -261,6 +261,12 @@
     "yesDeleteAccount": "نعم، احذف الحساب",
     "deleteAccountError": "تعذر حذف حسابك. يرجى المحاولة مرة أخرى.",
     "updateProfileError": "تعذر تحديث ملفك الشخصي. يرجى المحاولة مرة أخرى.",
+    "requestVerificationError": "تعذر إرسال رسالة التحقق. يرجى المحاولة مرة أخرى.",
+    "verifyEmailError": "تعذر التحقق من بريدك الإلكتروني. يرجى التحقق من الرمز والمحاولة مرة أخرى.",
+    "emailVerifiedSuccess": "تم التحقق من بريدك الإلكتروني بنجاح.",
+    "verifyCurrentEmailTitle": "تحقق من بريدك الإلكتروني",
+    "verifyCurrentEmailBeforeChange": "تحقق من بريدك الإلكتروني الحالي قبل تغييره إلى عنوان جديد.",
+    "saveNewEmailBeforeVerify": "احفظ بريدك الإلكتروني الجديد أولاً، ثم تحقق منه باستخدام الرمز المرسل إلى بريدك.",
     "profilePictureUploadError": "تعذر رفع صورة الملف الشخصي. يرجى المحاولة مرة أخرى.",
     "profilePicturePermissionDenied": "يلزم الوصول إلى مكتبة الصور لتغيير صورة الملف الشخصي.",
     "sections": {

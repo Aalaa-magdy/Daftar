@@ -60,21 +60,59 @@ const EditProfileScreen = () => {
 
   if (!fontsLoaded) return null;
 
-  const isEmailVerified = profile?.isEmailVerified ?? false;
+  const trimmedEmail = email.trim();
+  const savedEmail = profile?.email.trim() ?? '';
+  const isEmailEdited = trimmedEmail !== savedEmail;
+  const isAccountEmailVerified = profile?.isEmailVerified ?? false;
+  const showVerifiedStatus = !isEmailEdited && isAccountEmailVerified;
 
   const avatarSource = profile?.profileImage
     ? { uri: profile.profileImage }
     : FALLBACK_AVATAR;
 
+  const openVerifyEmail = (emailToVerify: string) => {
+    router.push({
+      pathname: '/verify-email',
+      params: { email: emailToVerify },
+    });
+  };
+
+  const resolveVerificationEmail = (): string | null => {
+    if (!isAccountEmailVerified) {
+      return savedEmail || null;
+    }
+
+    if (isEmailEdited) {
+      return trimmedEmail || null;
+    }
+
+    return savedEmail || null;
+  };
+
   const goToVerifyEmail = () => {
-    router.push({ pathname: '/verify-email', params: { email } });
+    if (!profile) return;
+
+    const emailToVerify = resolveVerificationEmail();
+    if (!emailToVerify) return;
+
+    if (isEmailEdited && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailToVerify)) {
+      Alert.alert(t('auth.validationError'), t('auth.invalidEmail'));
+      return;
+    }
+
+    openVerifyEmail(emailToVerify);
+  };
+
+  const handleProfileUpdateError = (error: unknown) => {
+    const message = getApiErrorMessage(error, t('profile.updateProfileError'));
+
+    Alert.alert(t('common.error'), message, [{ text: t('common.dismiss') }]);
   };
 
   const handleSaveChanges = () => {
     if (!profile) return;
 
     const trimmedName = name.trim();
-    const trimmedEmail = email.trim();
 
     if (!trimmedName) {
       Alert.alert(t('auth.validationError'), t('auth.nameRequired'));
@@ -91,37 +129,42 @@ const EditProfileScreen = () => {
       return;
     }
 
-    const hasChanges =
-      trimmedName !== profile.name.trim() || trimmedEmail !== profile.email.trim();
+    const nameChanged = trimmedName !== profile.name.trim();
+    const emailChanged = trimmedEmail !== profile.email.trim();
 
-    if (!hasChanges) {
+    if (!nameChanged && !emailChanged) {
       router.back();
       return;
     }
 
+    if (!isAccountEmailVerified) {
+      openVerifyEmail(savedEmail);
+      return;
+    }
+
+    if (emailChanged && isAccountEmailVerified) {
+      if (nameChanged) {
+        updateProfile(
+          { name: trimmedName, email: savedEmail },
+          {
+            onSuccess: () => openVerifyEmail(trimmedEmail),
+            onError: handleProfileUpdateError,
+          },
+        );
+        return;
+      }
+
+      openVerifyEmail(trimmedEmail);
+      return;
+    }
+
     updateProfile(
-      { name: trimmedName, email: trimmedEmail },
+      { name: trimmedName, email: savedEmail },
       {
-        onSuccess: (updatedProfile) => {
-          const emailChanged =
-            updatedProfile.email.trim() !== profile.email.trim();
-
-          if (emailChanged && !updatedProfile.isEmailVerified) {
-            router.push({
-              pathname: '/verify-email',
-              params: { email: updatedProfile.email },
-            });
-            return;
-          }
-
+        onSuccess: () => {
           router.back();
         },
-        onError: (error) => {
-          Alert.alert(
-            t('common.error'),
-            getApiErrorMessage(error, t('profile.updateProfileError')),
-          );
-        },
+        onError: handleProfileUpdateError,
       },
     );
   };
@@ -197,7 +240,7 @@ const EditProfileScreen = () => {
               containerStyle={styles.inputNoMargin}
             />
             <View style={styles.emailStatusRow}>
-              {isEmailVerified ? (
+              {showVerifiedStatus ? (
                 <Text style={styles.verifiedText}>{t('common.verified')}</Text>
               ) : (
                 <TouchableOpacity activeOpacity={0.7} onPress={goToVerifyEmail}>

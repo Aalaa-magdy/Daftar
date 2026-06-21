@@ -1,7 +1,13 @@
 import { apiClient } from '@/lib/axios';
 import { Platform } from 'react-native';
 import { readProfilePictureUrl, unwrapUserResponse } from '../lib/normalize-user';
-import type { ProfilePicturePickerAsset, UpdateProfileRequest, UserProfile } from '../types/user.types';
+import type {
+  ProfilePicturePickerAsset,
+  RequestEmailVerificationRequest,
+  UpdateProfileRequest,
+  VerifyEmailRequest,
+  UserProfile,
+} from '../types/user.types';
 
 function resolveMimeType(asset: ProfilePicturePickerAsset): string {
   if (asset.mimeType?.trim()) {
@@ -54,6 +60,22 @@ export const userApi = {
   updateMe: async (data: UpdateProfileRequest): Promise<UserProfile> => {
     const response = await apiClient.patch<unknown>('/users/me', data);
     return unwrapUserResponse(response.data);
+  },
+
+  requestEmailVerification: async (
+    data: RequestEmailVerificationRequest,
+  ): Promise<void> => {
+    await apiClient.post('/users/request-email-verification', data);
+  },
+
+  verifyEmail: async (data: VerifyEmailRequest): Promise<UserProfile | null> => {
+    const response = await apiClient.post<unknown>('/users/verify-email', data);
+
+    try {
+      return unwrapUserResponse(response.data);
+    } catch {
+      return null;
+    }
   },
 
   /** POST /users/profile-picture — multipart field `file` → { imageUrl } */

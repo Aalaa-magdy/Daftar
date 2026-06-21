@@ -261,6 +261,12 @@
     "yesDeleteAccount": "Yes, Delete Account",
     "deleteAccountError": "Could not delete your account. Please try again.",
     "updateProfileError": "Could not update your profile. Please try again.",
+    "requestVerificationError": "Could not send the verification email. Please try again.",
+    "verifyEmailError": "Could not verify your email. Please check the code and try again.",
+    "emailVerifiedSuccess": "Your email has been verified successfully.",
+    "verifyCurrentEmailTitle": "Verify your email",
+    "verifyCurrentEmailBeforeChange": "Verify your current email before changing it to a new address.",
+    "saveNewEmailBeforeVerify": "Save your new email first, then verify it from the code sent to your inbox.",
     "profilePictureUploadError": "Could not upload your profile picture. Please try again.",
     "profilePicturePermissionDenied": "Photo library access is required to change your profile picture.",
     "sections": {

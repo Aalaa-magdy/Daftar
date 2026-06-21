@@ -3,6 +3,20 @@ export type UpdateProfileRequest = {
   email: string;
 };
 
+export type RequestEmailVerificationRequest = {
+  email: string;
+};
+
+export type VerifyEmailRequest = {
+  code: string;
+};
+
+export type VerifyEmailVariables = {
+  code: string;
+  /** New email being verified (when changing address). Applied after code succeeds. */
+  pendingEmail?: string;
+};
+
 export type ProfilePicturePickerAsset = {
   uri: string;
   mimeType?: string | null;

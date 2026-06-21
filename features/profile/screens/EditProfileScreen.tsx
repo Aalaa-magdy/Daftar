@@ -1,3 +1,4 @@
+import { getApiErrorMessage } from '@/lib/api-error';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import FormField from '@/features/transaction/components/FormField';
@@ -18,6 +19,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   ActivityIndicator,
+  Alert,
   Image,
   ScrollView,
   StyleSheet,
@@ -27,7 +29,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import DeleteAccountDialogue from '../components/DeleteAccountDialogue';
-import { useDeleteAccount, useProfile, useUploadProfilePicture } from '../hooks';
+import { useDeleteAccount, useProfile, useUpdateProfile, useUploadProfilePicture } from '../hooks';
 
 const FALLBACK_AVATAR = require('@/assets/images/profile.jpg');
 
@@ -42,6 +44,7 @@ const EditProfileScreen = () => {
   const { data: profile, isLoading: isProfileLoading } = useProfile();
   const { upload, isPending: isUploadingPicture } = useUploadProfilePicture();
   const { mutate: deleteAccount, isPending: isDeletingAccount } = useDeleteAccount();
+  const { mutate: updateProfile, isPending: isUpdatingProfile } = useUpdateProfile();
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -65,6 +68,62 @@ const EditProfileScreen = () => {
 
   const goToVerifyEmail = () => {
     router.push({ pathname: '/verify-email', params: { email } });
+  };
+
+  const handleSaveChanges = () => {
+    if (!profile) return;
+
+    const trimmedName = name.trim();
+    const trimmedEmail = email.trim();
+
+    if (!trimmedName) {
+      Alert.alert(t('auth.validationError'), t('auth.nameRequired'));
+      return;
+    }
+
+    if (!trimmedEmail) {
+      Alert.alert(t('auth.validationError'), t('auth.emailRequired'));
+      return;
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) {
+      Alert.alert(t('auth.validationError'), t('auth.invalidEmail'));
+      return;
+    }
+
+    const hasChanges =
+      trimmedName !== profile.name.trim() || trimmedEmail !== profile.email.trim();
+
+    if (!hasChanges) {
+      router.back();
+      return;
+    }
+
+    updateProfile(
+      { name: trimmedName, email: trimmedEmail },
+      {
+        onSuccess: (updatedProfile) => {
+          const emailChanged =
+            updatedProfile.email.trim() !== profile.email.trim();
+
+          if (emailChanged && !updatedProfile.isEmailVerified) {
+            router.push({
+              pathname: '/verify-email',
+              params: { email: updatedProfile.email },
+            });
+            return;
+          }
+
+          router.back();
+        },
+        onError: (error) => {
+          Alert.alert(
+            t('common.error'),
+            getApiErrorMessage(error, t('profile.updateProfileError')),
+          );
+        },
+      },
+    );
   };
 
   const handleDeleteAccount = () => {
@@ -160,7 +219,11 @@ const EditProfileScreen = () => {
           <Text style={styles.deleteAccountText}>{t('profile.deleteAccount')}</Text>
         </TouchableOpacity>
 
-        <Button title={t('common.saveChanges')} onPress={goToVerifyEmail} />
+        <Button
+          title={t('common.saveChanges')}
+          onPress={handleSaveChanges}
+          disabled={isUpdatingProfile || isProfileLoading}
+        />
       </ScrollView>
 
       <DeleteAccountDialogue

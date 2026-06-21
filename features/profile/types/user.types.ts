@@ -1,3 +1,8 @@
+export type UpdateProfileRequest = {
+  name: string;
+  email: string;
+};
+
 export type ProfilePicturePickerAsset = {
   uri: string;
   mimeType?: string | null;

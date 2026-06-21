@@ -260,6 +260,7 @@
     "deleteAccountConfirmSubtitle": "سيتم حذف بياناتك وتقدمك نهائيًا. لا يمكن التراجع عن هذا الإجراء.",
     "yesDeleteAccount": "نعم، احذف الحساب",
     "deleteAccountError": "تعذر حذف حسابك. يرجى المحاولة مرة أخرى.",
+    "updateProfileError": "تعذر تحديث ملفك الشخصي. يرجى المحاولة مرة أخرى.",
     "profilePictureUploadError": "تعذر رفع صورة الملف الشخصي. يرجى المحاولة مرة أخرى.",
     "profilePicturePermissionDenied": "يلزم الوصول إلى مكتبة الصور لتغيير صورة الملف الشخصي.",
     "sections": {

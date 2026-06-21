@@ -1,7 +1,7 @@
 import { apiClient } from '@/lib/axios';
 import { Platform } from 'react-native';
 import { readProfilePictureUrl, unwrapUserResponse } from '../lib/normalize-user';
-import type { ProfilePicturePickerAsset, UserProfile } from '../types/user.types';
+import type { ProfilePicturePickerAsset, UpdateProfileRequest, UserProfile } from '../types/user.types';
 
 function resolveMimeType(asset: ProfilePicturePickerAsset): string {
   if (asset.mimeType?.trim()) {
@@ -49,6 +49,11 @@ export const userApi = {
 
   deleteAccount: async (): Promise<void> => {
     await apiClient.delete('/users/me');
+  },
+
+  updateMe: async (data: UpdateProfileRequest): Promise<UserProfile> => {
+    const response = await apiClient.patch<unknown>('/users/me', data);
+    return unwrapUserResponse(response.data);
   },
 
   /** POST /users/profile-picture — multipart field `file` → { imageUrl } */

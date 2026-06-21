@@ -77,6 +77,10 @@ apiClient.interceptors.response.use(
       return Promise.reject(error);
     }
 
+    if (originalRequest.data instanceof FormData) {
+      return Promise.reject(error);
+    }
+
     const authHeader = getAuthorizationHeader(originalRequest);
     if (!authHeader) {
       return Promise.reject(error);

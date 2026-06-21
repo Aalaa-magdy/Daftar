@@ -67,11 +67,12 @@ export function readProfilePictureUrl(raw: unknown): string | undefined {
   if (!nested) return undefined;
 
   return readOptionalString(nested, [
+    'imageUrl',
     'profileImage',
+    'profilePicture',
     'profilePictureUrl',
     'avatar',
     'avatarUrl',
-    'imageUrl',
     'url',
   ]);
 }

@@ -1,41 +1,39 @@
-import { apiClient } from "@/lib/axios";
-import type { UserProfile } from "../types/user.types";
+import { apiClient } from '@/lib/axios';
+import { buildProfilePictureFormData } from '../lib/build-profile-picture-form-data';
+import { readProfilePictureUrl, unwrapUserResponse } from '../lib/normalize-user';
+import type { ProfilePicturePickerAsset } from '../types/profile-picture.types';
+import type { UserProfile } from '../types/user.types';
 
 export const userApi = {
   getMe: async (): Promise<UserProfile> => {
-    const response = await apiClient.get<UserProfile>("/users/me");
-    return response.data;
+    const response = await apiClient.get<unknown>('/users/me');
+    return unwrapUserResponse(response.data);
   },
 
   deleteAccount: async (): Promise<void> => {
-    await apiClient.delete("/users/me");
+    await apiClient.delete('/users/me');
   },
 
-  uploadProfilePicture: async (uri: string): Promise<unknown> => {
-    const extension = uri.split(".").pop()?.toLowerCase() ?? "jpg";
-    const mimeType =
-      extension === "png"
-        ? "image/png"
-        : extension === "webp"
-          ? "image/webp"
-          : "image/jpeg";
-
-    const formData = new FormData();
-    formData.append("file", {
-      uri: uri.replace("file://", ""),
-      name: `profile.${extension}`,
-      type: mimeType,
-    } as unknown as Blob);
+  /**
+   * POST /users/profile-picture
+   * Swagger: multipart field `file` → { imageUrl: string }
+   */
+  uploadProfilePicture: async (
+    asset: ProfilePicturePickerAsset,
+  ): Promise<string> => {
+    const formData = buildProfilePictureFormData(asset);
 
     const response = await apiClient.post<unknown>(
-      "/users/profile-picture",
+      '/users/profile-picture',
       formData,
-      {
-        headers: { "Content-Type": "multipart/form-data" },
-        timeout: 60_000,
-      },
+      { timeout: 60_000 },
     );
 
-    return response.data;
+    const imageUrl = readProfilePictureUrl(response.data);
+    if (!imageUrl) {
+      throw new Error('Upload succeeded but imageUrl was missing from the response');
+    }
+
+    return imageUrl;
   },
 };

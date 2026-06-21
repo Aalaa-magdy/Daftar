@@ -1,8 +1,45 @@
 import { apiClient } from '@/lib/axios';
-import { buildProfilePictureFormData } from '../lib/build-profile-picture-form-data';
+import { Platform } from 'react-native';
 import { readProfilePictureUrl, unwrapUserResponse } from '../lib/normalize-user';
-import type { ProfilePicturePickerAsset } from '../types/profile-picture.types';
-import type { UserProfile } from '../types/user.types';
+import type { ProfilePicturePickerAsset, UserProfile } from '../types/user.types';
+
+function resolveMimeType(asset: ProfilePicturePickerAsset): string {
+  if (asset.mimeType?.trim()) {
+    return asset.mimeType.trim();
+  }
+
+  const lowerUri = asset.uri.toLowerCase();
+  if (lowerUri.includes('.png')) return 'image/png';
+  if (lowerUri.includes('.webp')) return 'image/webp';
+  if (lowerUri.includes('.heic')) return 'image/heic';
+
+  return 'image/jpeg';
+}
+
+function resolveFileName(asset: ProfilePicturePickerAsset, mimeType: string): string {
+  if (asset.fileName?.trim()) {
+    return asset.fileName.trim();
+  }
+
+  const extension = mimeType.split('/')[1]?.replace('jpeg', 'jpg') ?? 'jpg';
+  return `profile.${extension}`;
+}
+
+function buildProfilePictureFormData(asset: ProfilePicturePickerAsset): FormData {
+  const mimeType = resolveMimeType(asset);
+  const fileName = resolveFileName(asset, mimeType);
+  const uri =
+    Platform.OS === 'ios' ? asset.uri.replace('file://', '') : asset.uri;
+
+  const formData = new FormData();
+  formData.append('file', {
+    uri,
+    name: fileName,
+    type: mimeType,
+  } as unknown as Blob);
+
+  return formData;
+}
 
 export const userApi = {
   getMe: async (): Promise<UserProfile> => {
@@ -14,18 +51,13 @@ export const userApi = {
     await apiClient.delete('/users/me');
   },
 
-  /**
-   * POST /users/profile-picture
-   * Swagger: multipart field `file` → { imageUrl: string }
-   */
+  /** POST /users/profile-picture — multipart field `file` → { imageUrl } */
   uploadProfilePicture: async (
     asset: ProfilePicturePickerAsset,
   ): Promise<string> => {
-    const formData = buildProfilePictureFormData(asset);
-
     const response = await apiClient.post<unknown>(
       '/users/profile-picture',
-      formData,
+      buildProfilePictureFormData(asset),
       { timeout: 60_000 },
     );
 

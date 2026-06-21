@@ -72,6 +72,17 @@ export interface LogoutResponse {
   message: string;
 }
 
+// ─── Change Password ──────────────────────────────────────────────────────────
+
+export interface ChangePasswordRequest {
+  currentPassword: string;
+  newPassword: string;
+}
+
+export interface ChangePasswordResponse {
+  message?: string;
+}
+
 // ─── Shared responses ─────────────────────────────────────────────────────────
 
 export interface AuthSuccessResponse {

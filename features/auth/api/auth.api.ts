@@ -15,6 +15,8 @@ import {
   RefreshTokenRequest,
   RefreshTokenResponse,
   LogoutResponse,
+  ChangePasswordRequest,
+  ChangePasswordResponse,
 } from '@/features/auth/types/auth.types';
 
 export const authApi = {
@@ -64,6 +66,16 @@ export const authApi = {
 
   logout: async (data?: RefreshTokenRequest): Promise<LogoutResponse> => {
     const response = await apiClient.post<LogoutResponse>('/auth/logout', data ?? {});
+    return response.data;
+  },
+
+  changePassword: async (
+    data: ChangePasswordRequest,
+  ): Promise<ChangePasswordResponse> => {
+    const response = await apiClient.patch<ChangePasswordResponse>(
+      '/auth/change-password',
+      data,
+    );
     return response.data;
   },
 };

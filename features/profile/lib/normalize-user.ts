@@ -41,7 +41,7 @@ export function normalizeUser(raw: unknown): UserProfile | null {
     isActive: nested.isActive !== false,
     totalIncome: Number(nested.totalIncome ?? 0),
     totalExpense: Number(nested.totalExpense ?? 0),
-    profilePicture: readProfilePictureUrl(nested),
+    profileImage: readProfilePictureUrl(nested),
     createdAt: String(nested.createdAt ?? ''),
     updatedAt: String(nested.updatedAt ?? ''),
     lastLoginAt: String(nested.lastLoginAt ?? ''),
@@ -67,7 +67,7 @@ export function readProfilePictureUrl(raw: unknown): string | undefined {
   if (!nested) return undefined;
 
   return readOptionalString(nested, [
-    'profilePicture',
+    'profileImage',
     'profilePictureUrl',
     'avatar',
     'avatarUrl',

@@ -11,10 +11,10 @@ export async function resolveProfilePictureUploadResult(
     return user;
   }
 
-  const profilePicture = readProfilePictureUrl(data);
-  if (profilePicture) {
+  const profileImage = readProfilePictureUrl(data);
+  if (profileImage) {
     const current = await refetchProfile();
-    return { ...current, profilePicture };
+    return { ...current, profileImage };
   }
 
   return refetchProfile();

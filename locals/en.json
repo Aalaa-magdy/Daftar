@@ -124,9 +124,12 @@
   },
   "manageIncome": {
     "title": "Income",
+    "editTitle": "Edit Recurring Income",
     "empty": "No recurring income yet.",
     "loadError": "Could not load recurring income.",
     "signInRequired": "Sign in to manage your income.",
+    "deleteConfirm": "Are you sure you want to stop this recurring income?",
+    "paydayReadOnlyHelper": "Payday is set when this income was created.",
     "scheduleMonthly": "{{day}} of every month",
     "scheduleWeekly": "Every week",
     "scheduleYearly": "Every year"

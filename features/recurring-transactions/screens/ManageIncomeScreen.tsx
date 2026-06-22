@@ -20,6 +20,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import RecurringIncomeCard from '../components/RecurringIncomeCard';
+import { editRecurringIncomeHref } from '../lib/recurring-links';
 import { useRecurringIncomeList } from '../hooks';
 
 const ManageIncomeScreen = () => {
@@ -79,7 +80,11 @@ const ManageIncomeScreen = () => {
         ) : (
           <View style={styles.list}>
             {items.map((item) => (
-              <RecurringIncomeCard key={item.id} item={item} />
+              <RecurringIncomeCard
+                key={item.id}
+                item={item}
+                onEdit={() => router.push(editRecurringIncomeHref(item.id))}
+              />
             ))}
           </View>
         )}

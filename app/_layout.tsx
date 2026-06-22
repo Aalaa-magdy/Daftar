@@ -29,6 +29,7 @@ function AppShell() {
         <Stack.Screen name="reset-password" />
         <Stack.Screen name="set-salary" />
         <Stack.Screen name="manage-income" />
+        <Stack.Screen name="recurring-transaction/[id]" />
         <Stack.Screen name="home" />
         <Stack.Screen name="history" />
         <Stack.Screen name="statistics" />

@@ -124,9 +124,12 @@
   },
   "manageIncome": {
     "title": "الدخل",
+    "editTitle": "تعديل الدخل المتكرر",
     "empty": "لا يوجد دخل متكرر بعد.",
     "loadError": "تعذّر تحميل الدخل المتكرر.",
     "signInRequired": "سجّل الدخول لإدارة دخلك.",
+    "deleteConfirm": "هل أنت متأكد أنك تريد إيقاف هذا الدخل المتكرر؟",
+    "paydayReadOnlyHelper": "يُحدَّد يوم الدفع عند إنشاء هذا الدخل.",
     "scheduleMonthly": "{{day}} من كل شهر",
     "scheduleWeekly": "كل أسبوع",
     "scheduleYearly": "كل سنة"

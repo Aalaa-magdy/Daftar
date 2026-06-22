@@ -2,6 +2,7 @@ import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import {
   applyLayoutDirection,
+  persistLanguage,
   resolveInitialLanguage,
   type AppLanguage,
 } from '@/lib/language';
@@ -35,6 +36,9 @@ export async function initI18n() {
         interpolation: {
           escapeValue: false,
         },
+        react: {
+          useSuspense: false,
+        },
       });
     } else {
       await i18n.changeLanguage(language);
@@ -47,9 +51,8 @@ export async function initI18n() {
 }
 
 export async function changeAppLanguage(language: AppLanguage) {
+  applyLayoutDirection(language);
   await i18n.changeLanguage(language);
-
-  const { persistLanguage } = await import('@/lib/language');
   await persistLanguage(language);
 }
 

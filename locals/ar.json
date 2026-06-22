@@ -112,6 +112,7 @@
     "showAmounts": "إظهار المبالغ",
     "addExpense": "إضافة مصروف",
     "addIncome": "إضافة دخل",
+    "manageIncome": "إدارة الدخل",
     "history": "السجل",
     "viewAll": "عرض الكل",
     "noTransactions": "لا توجد معاملات بعد.",
@@ -120,6 +121,15 @@
     "defaultTransactionTitle": "تسوق",
     "defaultRepeat": "شهري",
     "defaultNote": "دورة React Native"
+  },
+  "manageIncome": {
+    "title": "الدخل",
+    "empty": "لا يوجد دخل متكرر بعد.",
+    "loadError": "تعذّر تحميل الدخل المتكرر.",
+    "signInRequired": "سجّل الدخول لإدارة دخلك.",
+    "scheduleMonthly": "{{day}} من كل شهر",
+    "scheduleWeekly": "كل أسبوع",
+    "scheduleYearly": "كل سنة"
   },
   "nav": {
     "home": "الرئيسية",

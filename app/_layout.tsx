@@ -11,9 +11,43 @@ export const unstable_settings = {
   initialRouteName: 'index',
 };
 
+function AppShell() {
+  const { i18n: i18nInstance } = useTranslation();
+  const isRTL = i18nInstance.language === 'ar';
+
+  return (
+    <View
+      key={i18nInstance.language}
+      style={{ flex: 1, direction: isRTL ? 'rtl' : 'ltr' }}
+    >
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="index" />
+        <Stack.Screen name="onboarding" />
+        <Stack.Screen name="lastOnboarding" />
+        <Stack.Screen name="signup" />
+        <Stack.Screen name="signin" />
+        <Stack.Screen name="reset-password" />
+        <Stack.Screen name="set-salary" />
+        <Stack.Screen name="manage-income" />
+        <Stack.Screen name="home" />
+        <Stack.Screen name="history" />
+        <Stack.Screen name="statistics" />
+        <Stack.Screen name="profile" />
+        <Stack.Screen name="edit-profile" />
+        <Stack.Screen name="verify-email" />
+        <Stack.Screen name="change-password" />
+        <Stack.Screen name="faq" />
+        <Stack.Screen name="terms" />
+        <Stack.Screen name="privacy-policy" />
+        <Stack.Screen name="language" />
+        <Stack.Screen name="transaction/[id]" />
+      </Stack>
+    </View>
+  );
+}
+
 export default function RootLayout() {
-  const [i18nReady, setI18nReady] = useState(false);
-  const { i18n } = useTranslation();
+  const [i18nReady, setI18nReady] = useState(i18n.isInitialized);
 
   useEffect(() => {
     initI18n()
@@ -25,50 +59,23 @@ export default function RootLayout() {
       });
   }, []);
 
-  const isRTL = i18n.language === 'ar';
-
   return (
     <I18nextProvider i18n={i18n}>
       <QueryClientProvider client={queryClient}>
-      {!i18nReady ? (
-        <View
-          style={{
-            flex: 1,
-            alignItems: 'center',
-            justifyContent: 'center',
-            backgroundColor: colors.white,
-          }}
-        >
-          <ActivityIndicator color={colors.primary} />
-        </View>
-      ) : (
-        <View
-          key={i18n.language}
-          style={{ flex: 1, direction: isRTL ? 'rtl' : 'ltr' }}
-        >
-          <Stack screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="index" />
-            <Stack.Screen name="onboarding" />
-            <Stack.Screen name="lastOnboarding" />
-            <Stack.Screen name="signup" />
-            <Stack.Screen name="signin" />
-            <Stack.Screen name="reset-password" />
-            <Stack.Screen name="set-salary" />
-            <Stack.Screen name="home" />
-            <Stack.Screen name="history" />
-            <Stack.Screen name="statistics" />
-            <Stack.Screen name="profile" />
-            <Stack.Screen name="edit-profile" />
-            <Stack.Screen name="verify-email" />
-            <Stack.Screen name="change-password" />
-            <Stack.Screen name="faq" />
-            <Stack.Screen name="terms" />
-            <Stack.Screen name="privacy-policy" />
-            <Stack.Screen name="language" />
-            <Stack.Screen name="transaction/[id]" />
-          </Stack>
-        </View>
-      )}
+        {!i18nReady ? (
+          <View
+            style={{
+              flex: 1,
+              alignItems: 'center',
+              justifyContent: 'center',
+              backgroundColor: colors.white,
+            }}
+          >
+            <ActivityIndicator color={colors.primary} />
+          </View>
+        ) : (
+          <AppShell />
+        )}
       </QueryClientProvider>
     </I18nextProvider>
   );

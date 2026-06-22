@@ -22,6 +22,7 @@ import {
 } from '@expo-google-fonts/changa';
 import { HugeiconsIcon } from '@hugeicons/react-native';
 import Add01Icon from '@hugeicons/core-free-icons/Add01Icon';
+import { PreferenceHorizontalIcon } from '@hugeicons/core-free-icons';
 import TextLinkButton from '@/components/ui/TextLinkButton';
 import TransactionCard, {
   TransactionDateHeader,
@@ -85,6 +86,19 @@ const Home = () => {
             <Text style={styles.buttonText}>{t('home.addIncome')}</Text>
           </TouchableOpacity>
         </View>
+
+        <TouchableOpacity
+          style={styles.manageIncomeButton}
+          activeOpacity={0.8}
+          onPress={() => router.push('/manage-income')}
+        >
+          <HugeiconsIcon
+            icon={PreferenceHorizontalIcon}
+            size={24}
+            color={colors.primary}
+          />
+          <Text style={styles.buttonText}>{t('home.manageIncome')}</Text>
+        </TouchableOpacity>
 
         <View style={styles.intro}>
           <Text style={styles.introText}>{t('home.history')}</Text>
@@ -183,7 +197,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   expenseButton: {
-    borderColor: colors.border,
+    backgroundColor: colors.secondary,
+    borderColor: colors.secondary,
   },
   incomeButton: {
     backgroundColor: colors.secondary,
@@ -194,6 +209,18 @@ const styles = StyleSheet.create({
     fontSize: 17,
     lineHeight: 24,
     fontFamily: 'Changa_500Medium',
+  },
+  manageIncomeButton: {
+    width: '90%',
+    height: 48,
+    borderRadius: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    borderWidth: 1,
+    borderColor: colors.border,
+    marginTop: 8,
   },
   intro: {
     width: '94%',

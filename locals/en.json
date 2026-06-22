@@ -112,6 +112,7 @@
     "showAmounts": "Show amounts",
     "addExpense": "Add Expense",
     "addIncome": "Add Income",
+    "manageIncome": "Manage Income",
     "history": "History",
     "viewAll": "View All",
     "noTransactions": "No transactions yet.",
@@ -120,6 +121,15 @@
     "defaultTransactionTitle": "Shopping",
     "defaultRepeat": "Monthly",
     "defaultNote": "React Native Course"
+  },
+  "manageIncome": {
+    "title": "Income",
+    "empty": "No recurring income yet.",
+    "loadError": "Could not load recurring income.",
+    "signInRequired": "Sign in to manage your income.",
+    "scheduleMonthly": "{{day}} of every month",
+    "scheduleWeekly": "Every week",
+    "scheduleYearly": "Every year"
   },
   "nav": {
     "home": "Home",

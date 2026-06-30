@@ -24,6 +24,11 @@ function ensureConfigured() {
 export async function signInWithNativeGoogle(): Promise<string> {
   ensureConfigured();
   await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
+  try {
+    await GoogleSignin.signOut();
+  } catch {
+    // ignore — there may be no cached session
+  }
 
   const result = await GoogleSignin.signIn();
   if (result.type === 'cancelled') {

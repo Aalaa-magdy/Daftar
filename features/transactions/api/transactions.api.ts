@@ -39,7 +39,6 @@ export const transactionsApi = {
   /** Recent transactions for the home screen (no filters). */
   list: async (): Promise<Transaction[]> => {
     const response = await apiClient.get<unknown>('/transactions');
-    console.log('response', response.data);
     return normalizeTransactionList(response.data);
   },
 
@@ -59,7 +58,6 @@ export const transactionsApi = {
   },
 
   create: async (data: CreateTransactionRequest): Promise<void> => {
-    // console.log('data', data);
     await apiClient.post('/transactions', data);
   },
 

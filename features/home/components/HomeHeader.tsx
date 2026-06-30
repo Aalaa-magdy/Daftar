@@ -14,7 +14,6 @@ import { ActivityIndicator, Image, StyleSheet, Text, View } from 'react-native';
 const HomeHeader = () => {
   const { t } = useTranslation();
   const { data: profile, isLoading, isGuest } = useProfile();
-  console.log('profile', profile);
   const avatarSource = resolveProfileAvatarSource(profile?.profileImage);
 
   const [fontsLoaded] = useFonts({

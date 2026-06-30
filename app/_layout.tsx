@@ -27,7 +27,6 @@ function AppShell() {
         <Stack.Screen name="signup" />
         <Stack.Screen name="signin" />
         <Stack.Screen name="reset-password" />
-        <Stack.Screen name="set-salary" />
         <Stack.Screen name="manage-income" />
         <Stack.Screen name="recurring-transaction/[id]" />
         <Stack.Screen name="home" />

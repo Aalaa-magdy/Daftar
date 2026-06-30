@@ -9,7 +9,6 @@ import {
 import Header from "@/components/ui/Header";
 import Button from "@/components/ui/Button";
 import GoogleButton from "@/components/ui/GoogleButton";
-import TextLinkButton from "@/components/ui/TextLinkButton";
 import {
   Changa_400Regular,
   Changa_500Medium
@@ -18,27 +17,18 @@ import { useRouter, type Href } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { useAppDirection } from "@/hooks/useAppDirection";
 import { useGoogleAuth } from "@/features/auth/hooks";
-import { clearAuthTokens } from "@/features/auth/lib/auth-storage";
-import { setGuestMode, setOnboardingCompleted } from "@/features/auth/lib/app-session";
 
 const LastOnboarding = () => {
   const { t } = useTranslation();
   const { directionStyle } = useAppDirection();
   const router = useRouter();
   const { signInWithGoogle, isPending } = useGoogleAuth({
-    onSuccess: () => router.replace("/set-salary" as Href),
+    onSuccess: () => router.replace("/home" as Href),
   });
   const [fontsLoaded] = useFonts({
     Changa_400Regular,
     Changa_500Medium
   });
-
-  const handleContinueAsGuest = async () => {
-    await clearAuthTokens();
-    await setGuestMode(true);
-    await setOnboardingCompleted();
-    router.replace("/home" as Href);
-  };
 
   if (!fontsLoaded) {
     return null;
@@ -69,12 +59,6 @@ const LastOnboarding = () => {
           >
             <Text style={styles.secondaryButtonText}>{t("auth.signIn")}</Text>
           </TouchableOpacity>
-
-          <TextLinkButton
-            title={t("onboarding.continueAsGuest")}
-            variant="block"
-            onPress={handleContinueAsGuest}
-          />
         </View>
       </View>
     </SafeAreaView>

@@ -15,6 +15,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface Props {
   visible: boolean;
@@ -24,6 +25,7 @@ interface Props {
 
 const LogoutDialogue = ({ visible, onClose, onConfirm }: Props) => {
   const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
   const [fontsLoaded] = useFonts({
     Changa_400Regular,
     Changa_500Medium,
@@ -42,7 +44,7 @@ const LogoutDialogue = ({ visible, onClose, onConfirm }: Props) => {
     >
       <View style={styles.root}>
         <Pressable style={styles.backdrop} onPress={onClose} />
-        <View style={styles.sheet}>
+        <View style={[styles.sheet, { paddingBottom: insets.bottom + 36 }]}>
           <View style={styles.handle} />
 
           <View style={styles.iconWrap}>
@@ -89,7 +91,6 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     paddingHorizontal: 20,
-    paddingBottom: 28,
     paddingTop: 12,
     alignItems: 'center',
     gap: 12,

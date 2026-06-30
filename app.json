@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Daftr",
+    "name": "Daftar",
     "slug": "Daftr",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -38,6 +38,12 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "6b6ae142-d36e-40c9-93c1-0ca65a0734d5"
+      }
     }
   }
 }

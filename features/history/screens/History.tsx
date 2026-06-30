@@ -29,17 +29,19 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import HistoryFilterDialogue from '../components/HistoryFilterDialogue';
 import { groupTransactionsByDate } from '../lib/group-transactions';
 import { DEFAULT_HISTORY_FILTER } from '../types/history-filter';
+import { useRequireAuth } from '@/features/auth/hooks';
 import { useTransactionHistoryList } from '@/features/transactions/hooks';
 
 const History = () => {
   const { t } = useTranslation();
+  const { isAuthenticated, isAuthChecking } = useRequireAuth();
   const { onTabPress, onAddPress } = useNavbarNavigation('history');
 
   const [typeFilter, setTypeFilter] = useState<TransactionFilter>('all');
   const [historyFilter, setHistoryFilter] = useState(DEFAULT_HISTORY_FILTER);
   const [filterDialogVisible, setFilterDialogVisible] = useState(false);
 
-  const { items, isLoading, isEmpty, isError, isGuest, hasActiveFilters, refetch } =
+  const { items, isLoading, isEmpty, isError, hasActiveFilters, refetch } =
     useTransactionHistoryList({
       typeFilter,
       historyFilter,
@@ -55,7 +57,7 @@ const History = () => {
     [items],
   );
 
-  if (!fontsLoaded) {
+  if (!fontsLoaded || isAuthChecking || !isAuthenticated) {
     return null;
   }
 
@@ -93,10 +95,6 @@ const History = () => {
         {isLoading ? (
           <View style={styles.stateWrap}>
             <ActivityIndicator color={colors.primary} />
-          </View>
-        ) : isGuest ? (
-          <View style={styles.stateWrap}>
-            <Text style={styles.emptyText}>{t('history.signInForTransactions')}</Text>
           </View>
         ) : isError ? (
           <View style={styles.stateWrap}>

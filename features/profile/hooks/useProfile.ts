@@ -8,8 +8,7 @@ import { profileKeys } from './query-keys';
 export { PROFILE_QUERY_KEY, profileKeys } from './query-keys';
 
 export const useProfile = () => {
-  const { isAuthenticated, isGuest, isAuthChecking } =
-    useAuthenticatedSession();
+  const { isAuthenticated, isAuthChecking } = useAuthenticatedSession();
 
   const query = useQuery<UserProfile, AxiosError>({
     queryKey: profileKeys.me,
@@ -23,9 +22,7 @@ export const useProfile = () => {
   return {
     ...query,
     data: isAuthenticated ? query.data : undefined,
-    isGuest,
     isAuthChecking,
-    isLoading:
-      isAuthChecking || (isAuthenticated && query.isLoading),
+    isLoading: isAuthChecking || (isAuthenticated && query.isLoading),
   };
 };

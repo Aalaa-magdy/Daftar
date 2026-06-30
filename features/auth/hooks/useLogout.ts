@@ -3,12 +3,10 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { authApi } from '@/features/auth/api/auth.api';
 import { clearAuthTokens } from '@/features/auth/lib/auth-storage';
-import { setGuestMode } from '@/features/auth/lib/app-session';
 import { LogoutResponse } from '@/features/auth/types/auth.types';
 
 async function clearLocalSession() {
   await clearAuthTokens();
-  await setGuestMode(false);
 }
 
 export const useLogout = () => {

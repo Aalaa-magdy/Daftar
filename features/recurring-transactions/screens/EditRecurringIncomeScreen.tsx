@@ -29,6 +29,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { useRequireAuth } from '@/features/auth/hooks';
 import DeleteRecurringIncomeDialogue from '../components/DeleteRecurringIncomeDialogue';
 import {
   useDeleteRecurringTransaction,
@@ -69,6 +70,7 @@ function parseDayOfMonthInput(text: string): number | null {
 const EditRecurringIncomeScreen = () => {
   const router = useRouter();
   const { t } = useTranslation();
+  const { isAuthenticated, isAuthChecking } = useRequireAuth();
   const { id: rawId } = useLocalSearchParams<{ id: string | string[] }>();
   const id = resolveParam(rawId) ?? '';
 
@@ -148,7 +150,7 @@ const EditRecurringIncomeScreen = () => {
 
   const isSaving = isUpdating || isDeleting;
 
-  if (!fontsLoaded) {
+  if (!fontsLoaded || isAuthChecking || !isAuthenticated) {
     return null;
   }
 

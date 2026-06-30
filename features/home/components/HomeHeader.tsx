@@ -13,7 +13,7 @@ import { ActivityIndicator, Image, StyleSheet, Text, View } from 'react-native';
 
 const HomeHeader = () => {
   const { t } = useTranslation();
-  const { data: profile, isLoading, isGuest } = useProfile();
+  const { data: profile, isLoading } = useProfile();
   const avatarSource = resolveProfileAvatarSource(profile?.profileImage);
 
   const [fontsLoaded] = useFonts({
@@ -22,10 +22,6 @@ const HomeHeader = () => {
   });
 
   const displayName = useMemo(() => {
-    if (isGuest) {
-      return t('common.guest');
-    }
-
     const name = profile?.name?.trim();
     if (name) return name;
 
@@ -33,7 +29,7 @@ const HomeHeader = () => {
     if (email) return email.split('@')[0];
 
     return '';
-  }, [isGuest, profile?.name, profile?.email, t]);
+  }, [profile?.name, profile?.email]);
 
   if (!fontsLoaded) return null;
 

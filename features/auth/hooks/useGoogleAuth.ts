@@ -1,22 +1,22 @@
-import { useCallback, useEffect, useState } from 'react';
-import { Alert, Platform } from 'react-native';
-import Constants from 'expo-constants';
-import * as WebBrowser from 'expo-web-browser';
-import * as Google from 'expo-auth-session/providers/google';
 import { authApi } from '@/features/auth/api/auth.api';
+import { storeAuthTokens } from '@/features/auth/lib/auth-storage';
 import {
-  getGoogleAuthRequestConfig,
-  isGoogleAuthConfigured,
+    getGoogleAuthRequestConfig,
+    isGoogleAuthConfigured,
 } from '@/features/auth/lib/google-auth-config';
 import {
-  getNativeGoogleSignInErrorMessage,
-  signInWithNativeGoogle,
+    getNativeGoogleSignInErrorMessage,
+    signInWithNativeGoogle,
 } from '@/features/auth/lib/native-google-signin';
-import { storeAuthTokens } from '@/features/auth/lib/auth-storage';
 import { PROFILE_QUERY_KEY } from '@/features/profile/hooks';
 import { transactionKeys } from '@/features/transactions/hooks/query-keys';
-import { queryClient } from '@/lib/query-client';
 import { getApiErrorMessage } from '@/lib/api-error';
+import { queryClient } from '@/lib/query-client';
+import * as Google from 'expo-auth-session/providers/google';
+import Constants from 'expo-constants';
+import * as WebBrowser from 'expo-web-browser';
+import { useCallback, useEffect, useState } from 'react';
+import { Alert, Platform } from 'react-native';
 
 WebBrowser.maybeCompleteAuthSession();
 

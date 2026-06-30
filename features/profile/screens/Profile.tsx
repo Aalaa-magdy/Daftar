@@ -1,4 +1,4 @@
-import { useLogout } from '@/features/auth/hooks';
+import { useLogout, useRequireAuth } from '@/features/auth/hooks';
 import Navbar from '@/features/home/components/Navbar';import { useNavbarNavigation } from '@/features/home/hooks/useNavbarNavigation';
 import { colors } from '@/theme/colors';
 import {
@@ -29,6 +29,7 @@ import { PROFILE_MENU_SECTIONS } from '../data/profile-menu';
 const Profile = () => {
   const router = useRouter();
   const { t } = useTranslation();
+  const { isAuthenticated, isAuthChecking } = useRequireAuth();
   const { passwordChanged } = useLocalSearchParams<{ passwordChanged?: string }>();
   const { onTabPress, onAddPress } = useNavbarNavigation('profile');
   const { mutate: logout, isPending: isLoggingOut } = useLogout();
@@ -46,7 +47,7 @@ const Profile = () => {
     }
   }, [passwordChanged, router]);
 
-  if (!fontsLoaded) {
+  if (!fontsLoaded || isAuthChecking || !isAuthenticated) {
     return null;
   }
 
@@ -55,7 +56,7 @@ const Profile = () => {
 
     logout(undefined, {
       onSettled: () => {
-        router.replace('/lastOnboarding' as Href);
+        router.replace('/signin' as Href);
       },
     });
   };

@@ -6,7 +6,7 @@ import { transactionKeys } from './query-keys';
 import { useTransactionAuth } from './useTransactionAuth';
 
 export const useTransactions = () => {
-  const { isAuthenticated, isGuest, isAuthChecking } = useTransactionAuth();
+  const { isAuthenticated, isAuthChecking } = useTransactionAuth();
 
   const query = useQuery<Transaction[], AxiosError>({
     queryKey: transactionKeys.all,
@@ -20,7 +20,6 @@ export const useTransactions = () => {
   return {
     ...query,
     data: isAuthenticated ? query.data : undefined,
-    isGuest,
     isAuthChecking,
     isLoading:
       isAuthChecking || (isAuthenticated && query.isLoading),

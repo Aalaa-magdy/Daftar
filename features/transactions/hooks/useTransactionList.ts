@@ -16,7 +16,6 @@ export const useTransactionList = (options?: Options) => {
     data: transactions = [],
     isLoading: isTransactionsLoading,
     isError,
-    isGuest,
     isAuthChecking,
     refetch,
   } = useTransactions();
@@ -43,8 +42,7 @@ export const useTransactionList = (options?: Options) => {
     items,
     isLoading,
     isError,
-    isGuest,
-    isEmpty: !isGuest && !isLoading && !isError && items.length === 0,
+    isEmpty: !isLoading && !isError && items.length === 0,
     refetch,
   };
 };

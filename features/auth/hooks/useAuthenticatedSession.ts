@@ -1,25 +1,12 @@
-import {
-  hasAccessToken,
-  isGuestMode,
-  setGuestMode,
-} from '@/features/auth/lib/app-session';
+import { hasAccessToken } from '@/features/auth/lib/app-session';
 import { useFocusEffect } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 
-export type AuthSessionState = 'checking' | 'authenticated' | 'guest';
+export type AuthSessionState = 'checking' | 'authenticated' | 'unauthenticated';
 
-async function resolveAuthState(): Promise<'authenticated' | 'guest'> {
+async function resolveAuthState(): Promise<'authenticated' | 'unauthenticated'> {
   const hasToken = await hasAccessToken();
-
-  if (hasToken) {
-    const guest = await isGuestMode();
-    if (guest) {
-      await setGuestMode(false);
-    }
-    return 'authenticated';
-  }
-
-  return 'guest';
+  return hasToken ? 'authenticated' : 'unauthenticated';
 }
 
 /** Shared auth gate for API-backed hooks (profile, transactions, categories). */
@@ -48,7 +35,6 @@ export function useAuthenticatedSession() {
 
   return {
     authState,
-    isGuest: authState === 'guest',
     isAuthChecking: authState === 'checking',
     isAuthenticated: authState === 'authenticated',
   };

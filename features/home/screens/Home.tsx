@@ -29,22 +29,22 @@ import TransactionCard, {
 } from '../components/TransactionCard';
 import Navbar from '../components/Navbar';
 import { useNavbarNavigation } from '../hooks/useNavbarNavigation';
+import { useRequireAuth } from '@/features/auth/hooks';
 import { useRecentTransactions } from '@/features/transactions/hooks';
 import { groupTransactionsByDate } from '@/features/history/lib/group-transactions';
 
 const Home = () => {
   const router = useRouter();
   const { t } = useTranslation();
+  const { isAuthenticated, isAuthChecking } = useRequireAuth();
   const { onTabPress, onAddPress } = useNavbarNavigation('home');
-  const { items, isLoading, isEmpty, isError, isGuest, refetch } =
+  const { items, isLoading, isEmpty, isError, refetch } =
     useRecentTransactions();
 
   useFocusEffect(
     useCallback(() => {
-      if (!isGuest) {
-        refetch();
-      }
-    }, [isGuest, refetch]),
+      refetch();
+    }, [refetch]),
   );
 
   const groups = useMemo(() => groupTransactionsByDate(items), [items]);
@@ -54,7 +54,7 @@ const Home = () => {
     Changa_500Medium,
   });
 
-  if (!fontsLoaded) {
+  if (!fontsLoaded || isAuthChecking || !isAuthenticated) {
     return null;
   }
 
@@ -114,10 +114,6 @@ const Home = () => {
         {isLoading ? (
           <View style={styles.stateWrap}>
             <ActivityIndicator color={colors.primary} />
-          </View>
-        ) : isGuest ? (
-          <View style={styles.stateWrap}>
-            <Text style={styles.emptyText}>{t('home.signInForTransactions')}</Text>
           </View>
         ) : isError ? (
           <View style={styles.stateWrap}>

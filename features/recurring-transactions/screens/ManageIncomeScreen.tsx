@@ -21,12 +21,14 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import RecurringIncomeCard from '../components/RecurringIncomeCard';
 import { editRecurringIncomeHref } from '../lib/recurring-links';
+import { useRequireAuth } from '@/features/auth/hooks';
 import { useRecurringIncomeList } from '../hooks';
 
 const ManageIncomeScreen = () => {
   const router = useRouter();
   const { t } = useTranslation();
-  const { items, isLoading, isEmpty, isError, isGuest, refetch } =
+  const { isAuthenticated, isAuthChecking } = useRequireAuth();
+  const { items, isLoading, isEmpty, isError, refetch } =
     useRecurringIncomeList();
 
   const [fontsLoaded] = useFonts({
@@ -36,13 +38,11 @@ const ManageIncomeScreen = () => {
 
   useFocusEffect(
     useCallback(() => {
-      if (!isGuest) {
-        refetch();
-      }
-    }, [isGuest, refetch]),
+      refetch();
+    }, [refetch]),
   );
 
-  if (!fontsLoaded) {
+  if (!fontsLoaded || isAuthChecking || !isAuthenticated) {
     return null;
   }
 
@@ -61,10 +61,6 @@ const ManageIncomeScreen = () => {
         {isLoading ? (
           <View style={styles.stateWrap}>
             <ActivityIndicator color={colors.primary} />
-          </View>
-        ) : isGuest ? (
-          <View style={styles.stateWrap}>
-            <Text style={styles.stateText}>{t('manageIncome.signInRequired')}</Text>
           </View>
         ) : isError ? (
           <View style={styles.stateWrap}>

@@ -6,7 +6,7 @@ import { transactionKeys } from './query-keys';
 import { useTransactionAuth } from './useTransactionAuth';
 
 export const useBalanceSummary = () => {
-  const { isAuthenticated, isGuest, isAuthChecking } = useTransactionAuth();
+  const { isAuthenticated, isAuthChecking } = useTransactionAuth();
 
   const query = useQuery<BalanceSummary, AxiosError>({
     queryKey: transactionKeys.balanceSummary,
@@ -20,7 +20,6 @@ export const useBalanceSummary = () => {
   return {
     ...query,
     data: isAuthenticated ? query.data : undefined,
-    isGuest,
     isAuthChecking,
     isLoading:
       isAuthChecking || (isAuthenticated && query.isLoading),

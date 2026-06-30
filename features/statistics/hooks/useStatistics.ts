@@ -30,8 +30,7 @@ export const useStatistics = (
   anchorDate: Date,
 ) => {
   const { i18n } = useTranslation();
-  const { isAuthenticated, isGuest, isAuthChecking } =
-    useAuthenticatedSession();
+  const { isAuthenticated, isAuthChecking } = useAuthenticatedSession();
 
   const queryParams = useMemo(
     () => buildStatisticsQueryParams(period, anchorDate),
@@ -79,7 +78,6 @@ export const useStatistics = (
   return {
     stats,
     isLoading,
-    isGuest,
     isError: statisticsQuery.isError,
     refetch: () => {
       void statisticsQuery.refetch();

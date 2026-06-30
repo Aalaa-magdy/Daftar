@@ -30,6 +30,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import DeleteAccountDialogue from '../components/DeleteAccountDialogue';
 import { useDeleteAccount, useProfile, useUpdateProfile, useUploadProfilePicture } from '../hooks';
+import { useRequireAuth } from '@/features/auth/hooks';
 
 const FALLBACK_AVATAR = require('@/assets/images/profile.jpg');
 
@@ -40,6 +41,7 @@ const fieldIcon = (icon: IconSvgElement) => (
 const EditProfileScreen = () => {
   const router = useRouter();
   const { t } = useTranslation();
+  const { isAuthenticated, isAuthChecking } = useRequireAuth();
 
   const { data: profile, isLoading: isProfileLoading } = useProfile();
   const { upload, isPending: isUploadingPicture } = useUploadProfilePicture();
@@ -58,7 +60,7 @@ const EditProfileScreen = () => {
     setEmail(profile.email);
   }, [profile]);
 
-  if (!fontsLoaded) return null;
+  if (!fontsLoaded || isAuthChecking || !isAuthenticated) return null;
 
   const trimmedEmail = email.trim();
   const savedEmail = profile?.email.trim() ?? '';

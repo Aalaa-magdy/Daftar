@@ -1,6 +1,6 @@
 import Button from '@/components/ui/Button';
 import PasswordInput from '@/components/ui/PasswordInput';
-import { useChangePassword } from '@/features/auth/hooks';
+import { useChangePassword, useRequireAuth } from '@/features/auth/hooks';
 import ResetHeader from '@/features/reset-password/components/ResetHeader';
 import { getApiErrorMessage } from '@/lib/api-error';
 import { colors } from '@/theme/colors';
@@ -33,6 +33,7 @@ const fieldIcon = (icon: IconSvgElement) => (
 const ChangePasswordScreen = () => {
   const router = useRouter();
   const { t } = useTranslation();
+  const { isAuthenticated, isAuthChecking } = useRequireAuth();
   const { mutate: changePassword, isPending } = useChangePassword();
 
   const [currentPassword, setCurrentPassword] = useState('');
@@ -45,7 +46,7 @@ const ChangePasswordScreen = () => {
     Changa_500Medium,
   });
 
-  if (!fontsLoaded) {
+  if (!fontsLoaded || isAuthChecking || !isAuthenticated) {
     return null;
   }
 

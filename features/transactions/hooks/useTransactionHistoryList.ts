@@ -28,7 +28,6 @@ export const useTransactionHistoryList = ({
     data: transactions = [],
     isLoading: isTransactionsLoading,
     isError,
-    isGuest,
     isAuthChecking,
     refetch,
   } = useTransactionsHistory(params);
@@ -59,8 +58,7 @@ export const useTransactionHistoryList = ({
     items,
     isLoading,
     isError,
-    isGuest,
-    isEmpty: !isGuest && !isLoading && !isError && items.length === 0,
+    isEmpty: !isLoading && !isError && items.length === 0,
     hasActiveFilters,
     refetch,
   };

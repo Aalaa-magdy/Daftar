@@ -12,7 +12,7 @@ import { recurringTransactionKeys } from './query-keys';
 export const useRecurringIncomeList = () => {
   const queryClient = useQueryClient();
   const { t, i18n } = useTranslation();
-  const { isAuthenticated, isGuest, isAuthChecking } = useTransactionAuth();
+  const { isAuthenticated, isAuthChecking } = useTransactionAuth();
 
   const query = useQuery({
     queryKey: recurringTransactionKeys.all,
@@ -42,8 +42,7 @@ export const useRecurringIncomeList = () => {
     items,
     isLoading,
     isError: query.isError,
-    isGuest,
-    isEmpty: !isGuest && !isLoading && !query.isError && items.length === 0,
+    isEmpty: !isLoading && !query.isError && items.length === 0,
     refetch: query.refetch,
   };
 };

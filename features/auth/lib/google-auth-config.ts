@@ -1,7 +1,7 @@
-import Constants from 'expo-constants';
-import { Platform } from 'react-native';
 import { makeRedirectUri } from 'expo-auth-session';
 import type { GoogleAuthRequestConfig } from 'expo-auth-session/providers/google';
+import Constants from 'expo-constants';
+import { Platform } from 'react-native';
 
 const webClientId = process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID ?? '';
 const androidClientId =

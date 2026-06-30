@@ -3,6 +3,7 @@ import {
   buildUpdateTransactionPayload,
   mapTransactionToForm,
 } from '@/features/transactions/lib/transaction-form-mappers';
+import { useRequireAuth } from '@/features/auth/hooks';
 import {
   useCreateTransaction,
   useDeleteTransaction,
@@ -60,6 +61,7 @@ const fieldIcon = (icon: IconSvgElement) => (
 const TransactionFormScreen = () => {
   const router = useRouter();
   const { t } = useTranslation();
+  const { isAuthenticated, isAuthChecking } = useRequireAuth();
   const { id, kind: initialKind, isEdit } = useTransactionFormMode();
   const { mutate: createTransaction, isPending: isCreating } =
     useCreateTransaction();
@@ -160,7 +162,7 @@ const TransactionFormScreen = () => {
 
   const isSaving = isCreating || isUpdating || isDeleting;
 
-  if (!fontsLoaded) {
+  if (!fontsLoaded || isAuthChecking || !isAuthenticated) {
     return null;
   }
 

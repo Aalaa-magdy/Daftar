@@ -6,8 +6,7 @@ import { Category } from '@/features/categories/types/categories.types';
 import { categoryKeys } from './query-keys';
 
 export const useCategories = () => {
-  const { isAuthenticated, isGuest, isAuthChecking } =
-    useAuthenticatedSession();
+  const { isAuthenticated, isAuthChecking } = useAuthenticatedSession();
 
   const query = useQuery<Category[], AxiosError>({
     queryKey: categoryKeys.all,
@@ -20,10 +19,9 @@ export const useCategories = () => {
 
   return {
     ...query,
-    isGuest,
     isAuthChecking,
-    isAuthRequired: isGuest,
+    isAuthRequired: !isAuthChecking && !isAuthenticated,
     isLoading: isAuthChecking || (isAuthenticated && query.isLoading),
-    isError: isGuest || query.isError,
+    isError: query.isError,
   };
 };

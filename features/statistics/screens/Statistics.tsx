@@ -24,11 +24,13 @@ import SummaryCards from '../components/SummaryCards';
 import TrendBarChart from '../components/TrendBarChart';
 import { shiftPeriodAnchor } from '../lib/period-range';
 import { formatTrendLabel } from '../lib/format-trend-label';
+import { useRequireAuth } from '@/features/auth/hooks';
 import { useStatistics } from '../hooks/useStatistics';
 import type { StatisticsPeriod } from '../types/statistics.types';
 
 const Statistics = () => {
   const { t } = useTranslation();
+  const { isAuthenticated, isAuthChecking } = useRequireAuth();
   const { onTabPress, onAddPress } = useNavbarNavigation('statistics');
   const [period, setPeriod] = useState<StatisticsPeriod>('month');
   const [anchorDate, setAnchorDate] = useState(() => new Date());
@@ -56,7 +58,7 @@ const Statistics = () => {
     setAnchorDate(new Date());
   };
 
-  if (!fontsLoaded) {
+  if (!fontsLoaded || isAuthChecking || !isAuthenticated) {
     return null;
   }
 

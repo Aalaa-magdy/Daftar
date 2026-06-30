@@ -60,7 +60,7 @@ const TransactionCard = ({
   type,
   title,
   amount = type === 'income' ? 3000 : 4000,
-  time = '4:45',
+  time,
   note,
   repeat,
   categoryIcon = Calendar03Icon,
@@ -84,8 +84,7 @@ const TransactionCard = ({
   const isIncome = type === 'income';
   const displayTitle = title ?? t('home.defaultTransactionTitle');
   const displayRepeat = repeat ?? t('home.defaultRepeat');
-  const expenseNote =
-    note ?? (type === 'expense' ? t('home.defaultNote') : undefined);
+  const expenseNote = note?.trim() || undefined;
 
   return (
     <View style={[styles.container, containerStyle]}>

@@ -1,20 +1,29 @@
 import { useTransactionAuth } from '@/features/transactions/hooks/useTransactionAuth';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { recurringTransactionsApi } from '../api/recurring-transactions.api';
 import { mapRecurringIncomeListItems } from '../lib/map-recurring-income-list-item';
+import { mergeRecurringTransactionListWithCache } from '../lib/merge-recurring-transaction-update';
 import type { RecurringIncomeListItem } from '../types/recurring-transaction.types';
 import { recurringTransactionKeys } from './query-keys';
 
 export const useRecurringIncomeList = () => {
+  const queryClient = useQueryClient();
   const { t, i18n } = useTranslation();
   const { isAuthenticated, isGuest, isAuthChecking } = useTransactionAuth();
 
   const query = useQuery({
     queryKey: recurringTransactionKeys.all,
-    queryFn: () => recurringTransactionsApi.list(),
+    queryFn: async () => {
+      const fresh = await recurringTransactionsApi.list();
+      const cached = queryClient.getQueryData<typeof fresh>(
+        recurringTransactionKeys.all,
+      );
+
+      return mergeRecurringTransactionListWithCache(fresh, cached);
+    },
     enabled: isAuthenticated,
     refetchOnMount: 'always',
     retry: (failureCount, error: AxiosError) =>

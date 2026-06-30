@@ -13,12 +13,30 @@ const API_TO_FORM_INCOME_TYPE: Record<string, string> = {
   other: 'other',
 };
 
-export const RECURRING_FREQUENCY_OPTIONS = [
-  'monthly',
-  'weekly',
-  'yearly',
-  'one-time',
-] as const;
+export const RECURRING_FREQUENCY_OPTIONS = ['monthly', 'one-time'] as const;
+
+export function readDayOfMonthFromDate(value: string): number {
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) return 1;
+  return parsed.getUTCDate();
+}
+
+export function resolveDayOfMonth(
+  transaction: Pick<
+    RecurringTransaction,
+    'dayOfMonth' | 'startDate' | 'nextRunDate'
+  >,
+): number {
+  if (
+    transaction.dayOfMonth != null &&
+    transaction.dayOfMonth >= 1 &&
+    transaction.dayOfMonth <= 31
+  ) {
+    return transaction.dayOfMonth;
+  }
+
+  return readDayOfMonthFromDate(transaction.startDate || transaction.nextRunDate);
+}
 
 export function mapRecurringIncomeTypeToForm(
   value: string | undefined,
@@ -30,13 +48,10 @@ export function mapRecurringIncomeTypeToForm(
 export function mapRecurringTransactionToForm(
   transaction: RecurringTransaction,
 ): RecurringIncomeFormValues {
-  const parsedDate = new Date(transaction.startDate || transaction.nextRunDate);
-
   return {
     incomeType: mapRecurringIncomeTypeToForm(transaction.incomeType),
     amount: String(transaction.amount),
-    date: Number.isNaN(parsedDate.getTime()) ? null : parsedDate,
-    frequency: transaction.frequency,
+    dayOfMonth: resolveDayOfMonth(transaction),
     note: transaction.notes ?? '',
   };
 }
@@ -46,6 +61,7 @@ export function buildUpdateRecurringIncomePayload(
 ): UpdateRecurringTransactionRequest {
   const amount = Number(form.amount);
   const notes = form.note.trim() || undefined;
+  const dayOfMonth = Math.trunc(form.dayOfMonth);
 
   if (!Number.isFinite(amount) || amount <= 0) {
     throw new Error('Amount must be greater than zero');
@@ -55,11 +71,14 @@ export function buildUpdateRecurringIncomePayload(
     throw new Error('Income type is required');
   }
 
+  if (!Number.isFinite(dayOfMonth) || dayOfMonth < 1 || dayOfMonth > 31) {
+    throw new Error('Day of month must be between 1 and 31');
+  }
+
   return {
     amount,
     incomeType: mapFormIncomeType(form.incomeType),
-    frequency: form.frequency,
+    dayOfMonth,
     notes,
-    isActive: true,
   };
 }

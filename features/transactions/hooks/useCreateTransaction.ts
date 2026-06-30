@@ -7,6 +7,7 @@ export const useCreateTransaction = () => {
   const queryClient = useQueryClient();
 
   return useMutation<void, AxiosError, CreateTransactionRequest>({
+    
     mutationFn: (data) => transactionsApi.create(data),
     onSuccess: () => {
       invalidateTransactionQueries(queryClient);

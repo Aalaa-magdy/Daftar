@@ -129,7 +129,9 @@
     "loadError": "تعذّر تحميل الدخل المتكرر.",
     "signInRequired": "سجّل الدخول لإدارة دخلك.",
     "deleteConfirm": "هل أنت متأكد أنك تريد إيقاف هذا الدخل المتكرر؟",
+    "dayOfMonthPlaceholder": "يوم الشهر (1-31)",
     "paydayReadOnlyHelper": "يُحدَّد يوم الدفع عند إنشاء هذا الدخل.",
+    "frequencyReadOnlyHelper": "لا يمكن تغيير جدول التكرار من هنا.",
     "scheduleMonthly": "{{day}} من كل شهر",
     "scheduleWeekly": "كل أسبوع",
     "scheduleYearly": "كل سنة"

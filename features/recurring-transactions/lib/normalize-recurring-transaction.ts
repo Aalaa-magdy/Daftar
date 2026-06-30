@@ -34,15 +34,28 @@ function readIncomeType(value: unknown): RecurringIncomeType | undefined {
 }
 
 function readFrequency(value: unknown): RecurringFrequency {
-  if (value === 'weekly' || value === 'yearly' || value === 'one-time') {
-    return value;
-  }
-
-  return 'monthly';
+  return value === 'one-time' ? 'one-time' : 'monthly';
 }
 
 function readType(value: unknown): RecurringTransactionType {
   return value === 'expense' ? 'expense' : 'income';
+}
+
+function readDayOfMonth(record: Record<string, unknown>): number | undefined {
+  const raw = record.dayOfMonth;
+
+  if (typeof raw === 'number' && raw >= 1 && raw <= 31) {
+    return Math.trunc(raw);
+  }
+
+  if (typeof raw === 'string') {
+    const parsed = Number(raw);
+    if (Number.isFinite(parsed) && parsed >= 1 && parsed <= 31) {
+      return Math.trunc(parsed);
+    }
+  }
+
+  return undefined;
 }
 
 export function normalizeRecurringTransaction(raw: unknown): RecurringTransaction | null {
@@ -54,14 +67,18 @@ export function normalizeRecurringTransaction(raw: unknown): RecurringTransactio
 
   if (id == null || userId == null) return null;
 
+  const startDate = String(record.startDate ?? '');
+  const nextRunDate = String(record.nextRunDate ?? '');
+
   return {
     id: String(id),
     userId: String(userId),
     amount: Number(record.amount ?? 0),
     type: readType(record.type),
     frequency: readFrequency(record.frequency),
-    startDate: String(record.startDate ?? ''),
-    nextRunDate: String(record.nextRunDate ?? ''),
+    startDate,
+    nextRunDate,
+    dayOfMonth: readDayOfMonth(record),
     lastGeneratedAt:
       record.lastGeneratedAt != null ? String(record.lastGeneratedAt) : undefined,
     isActive: record.isActive !== false,

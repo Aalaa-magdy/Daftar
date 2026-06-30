@@ -1,4 +1,4 @@
-export type RecurringFrequency = 'monthly' | 'weekly' | 'yearly' | 'one-time';
+export type RecurringFrequency = 'monthly' | 'one-time';
 
 export type RecurringTransactionType = 'income' | 'expense';
 
@@ -17,6 +17,7 @@ export type RecurringTransaction = {
   frequency: RecurringFrequency;
   startDate: string;
   nextRunDate: string;
+  dayOfMonth?: number;
   lastGeneratedAt?: string;
   isActive: boolean;
   notes?: string;

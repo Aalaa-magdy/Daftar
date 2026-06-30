@@ -1,7 +1,6 @@
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import { INCOME_TYPES } from '@/features/transaction/data/form-options';
-import { formatDisplayDate } from '@/features/transaction/lib/format-date';
 import FormField from '@/features/transaction/components/FormField';
 import SelectField from '@/features/transaction/components/SelectField';
 import TransactionHeader from '@/features/transaction/components/TransactionHeader';
@@ -18,7 +17,7 @@ import MoneyBag01Icon from '@hugeicons/core-free-icons/MoneyBag01Icon';
 import RepeatIcon from '@hugeicons/core-free-icons/RepeatIcon';
 import { HugeiconsIcon, type IconSvgElement } from '@hugeicons/react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   ActivityIndicator,
@@ -39,11 +38,10 @@ import {
 import {
   buildUpdateRecurringIncomePayload,
   mapRecurringTransactionToForm,
-  RECURRING_FREQUENCY_OPTIONS,
 } from '../lib/recurring-form-mappers';
 import type { RecurringFrequency } from '../types/recurring-transaction.types';
 
-type PickerKey = 'incomeType' | 'frequency' | null;
+type PickerKey = 'incomeType' | null;
 
 const fieldIcon = (icon: IconSvgElement) => (
   <HugeiconsIcon icon={icon} size={22} color={colors.captionMuted} />
@@ -55,10 +53,17 @@ function resolveParam(value: string | string[] | undefined): string | undefined 
 }
 
 function frequencyLabelKey(frequency: RecurringFrequency): string {
-  if (frequency === 'monthly') return 'common.monthly';
-  if (frequency === 'weekly') return 'manageIncome.scheduleWeekly';
-  if (frequency === 'yearly') return 'manageIncome.scheduleYearly';
-  return 'common.oneTime';
+  return frequency === 'one-time' ? 'common.oneTime' : 'common.monthly';
+}
+
+function parseDayOfMonthInput(text: string): number | null {
+  const digits = text.replace(/\D/g, '');
+  if (!digits) return null;
+
+  const value = Number(digits);
+  if (!Number.isFinite(value)) return null;
+
+  return Math.min(Math.max(Math.trunc(value), 1), 31);
 }
 
 const EditRecurringIncomeScreen = () => {
@@ -80,7 +85,7 @@ const EditRecurringIncomeScreen = () => {
 
   const [incomeType, setIncomeType] = useState('');
   const [amount, setAmount] = useState('');
-  const [frequency, setFrequency] = useState<RecurringFrequency>('monthly');
+  const [dayOfMonth, setDayOfMonth] = useState('');
   const [note, setNote] = useState('');
   const [activePicker, setActivePicker] = useState<PickerKey>(null);
   const [showDeleteDialogue, setShowDeleteDialogue] = useState(false);
@@ -95,11 +100,6 @@ const EditRecurringIncomeScreen = () => {
     [t],
   );
 
-  const frequencyLabels = useMemo(
-    () => RECURRING_FREQUENCY_OPTIONS.map((key) => t(frequencyLabelKey(key))),
-    [t],
-  );
-
   const incomeTypeDisplay = useMemo(() => {
     const index = INCOME_TYPES.indexOf(
       incomeType as (typeof INCOME_TYPES)[number],
@@ -108,29 +108,42 @@ const EditRecurringIncomeScreen = () => {
   }, [incomeType, incomeTypeLabels]);
 
   const frequencyDisplay = useMemo(() => {
-    const index = RECURRING_FREQUENCY_OPTIONS.indexOf(frequency);
-    return index >= 0 ? frequencyLabels[index] : '';
-  }, [frequency, frequencyLabels]);
-
-  const paydayDisplay = useMemo(() => {
     if (!recurringIncome) return '';
-    const parsed = new Date(recurringIncome.startDate || recurringIncome.nextRunDate);
-    return Number.isNaN(parsed.getTime()) ? '' : formatDisplayDate(parsed);
-  }, [recurringIncome]);
+    return t(frequencyLabelKey(recurringIncome.frequency));
+  }, [recurringIncome, t]);
+
+  const parsedDayOfMonth = useMemo(() => parseDayOfMonthInput(dayOfMonth), [dayOfMonth]);
+  const hydratedKeyRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    hydratedKeyRef.current = null;
+  }, [id]);
 
   useEffect(() => {
     if (!recurringIncome) return;
 
+    const hydrationKey = [
+      recurringIncome.id,
+      recurringIncome.updatedAt ?? '',
+      recurringIncome.dayOfMonth ?? '',
+      recurringIncome.amount,
+      recurringIncome.notes ?? '',
+      recurringIncome.incomeType ?? '',
+    ].join(':');
+
+    if (hydratedKeyRef.current === hydrationKey) return;
+
     const formValues = mapRecurringTransactionToForm(recurringIncome);
     setIncomeType(formValues.incomeType);
     setAmount(formValues.amount);
-    setFrequency(formValues.frequency);
+    setDayOfMonth(String(formValues.dayOfMonth));
     setNote(formValues.note);
+    hydratedKeyRef.current = hydrationKey;
   }, [recurringIncome]);
 
   const isFormComplete = useMemo(
-    () => Boolean(amount.trim() && incomeType),
-    [amount, incomeType],
+    () => Boolean(amount.trim() && incomeType && parsedDayOfMonth != null),
+    [amount, incomeType, parsedDayOfMonth],
   );
 
   const isSaving = isUpdating || isDeleting;
@@ -164,14 +177,13 @@ const EditRecurringIncomeScreen = () => {
   };
 
   const handleSubmit = () => {
-    if (!isFormComplete) return;
+    if (!isFormComplete || parsedDayOfMonth == null) return;
 
     try {
       const payload = buildUpdateRecurringIncomePayload({
         incomeType,
         amount,
-        date: null,
-        frequency,
+        dayOfMonth: parsedDayOfMonth,
         note,
       });
 
@@ -252,31 +264,44 @@ const EditRecurringIncomeScreen = () => {
 
           <FormField
             label={t('transaction.payday')}
-            helper={t('manageIncome.paydayReadOnlyHelper')}
+            required
+            helper={t('transaction.paydayHelper')}
           >
             <Input
-              placeholder={t('common.datePlaceholder')}
-              value={paydayDisplay}
-              editable={false}
+              placeholder={t('manageIncome.dayOfMonthPlaceholder')}
+              value={dayOfMonth}
+              onChangeText={(text) => {
+                const digits = text.replace(/\D/g, '').slice(0, 2);
+                if (!digits) {
+                  setDayOfMonth('');
+                  return;
+                }
+
+                const value = Number(digits);
+                if (value > 31) {
+                  setDayOfMonth('31');
+                  return;
+                }
+
+                setDayOfMonth(String(value));
+              }}
+              keyboardType="number-pad"
+              maxLength={2}
               icon={fieldIcon(Calendar03Icon)}
               containerStyle={styles.fieldInput}
             />
           </FormField>
 
-          <FormField label={t('transaction.repeat')} required>
-            <SelectField
-              value={frequencyDisplay}
+          <FormField
+            label={t('transaction.repeat')}
+            helper={t('manageIncome.frequencyReadOnlyHelper')}
+          >
+            <Input
               placeholder={t('common.monthly')}
-              options={frequencyLabels}
-              onSelect={(label) => {
-                const index = frequencyLabels.indexOf(label);
-                if (index >= 0) {
-                  setFrequency(RECURRING_FREQUENCY_OPTIONS[index]);
-                }
-              }}
+              value={frequencyDisplay}
+              editable={false}
               icon={fieldIcon(RepeatIcon)}
-              open={activePicker === 'frequency'}
-              onToggle={() => togglePicker('frequency')}
+              containerStyle={styles.fieldInput}
             />
           </FormField>
 

@@ -1,15 +1,11 @@
-import type {
-  RecurringFrequency,
-  RecurringIncomeType,
-} from './recurring-transaction.types';
+import type { RecurringIncomeType } from './recurring-transaction.types';
 
 export type UpdateRecurringTransactionRequest = {
   amount?: number;
   categoryId?: string;
   notes?: string;
-  frequency?: RecurringFrequency;
-  isActive?: boolean;
   incomeType?: RecurringIncomeType;
+  dayOfMonth?: number;
 };
 
 export type UpdateRecurringTransactionVariables = {
@@ -20,7 +16,6 @@ export type UpdateRecurringTransactionVariables = {
 export type RecurringIncomeFormValues = {
   incomeType: string;
   amount: string;
-  date: Date | null;
-  frequency: RecurringFrequency;
+  dayOfMonth: number;
   note: string;
 };

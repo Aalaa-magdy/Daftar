@@ -129,7 +129,9 @@
     "loadError": "Could not load recurring income.",
     "signInRequired": "Sign in to manage your income.",
     "deleteConfirm": "Are you sure you want to stop this recurring income?",
+    "dayOfMonthPlaceholder": "Day of month (1-31)",
     "paydayReadOnlyHelper": "Payday is set when this income was created.",
+    "frequencyReadOnlyHelper": "Repeat schedule cannot be changed here.",
     "scheduleMonthly": "{{day}} of every month",
     "scheduleWeekly": "Every week",
     "scheduleYearly": "Every year"

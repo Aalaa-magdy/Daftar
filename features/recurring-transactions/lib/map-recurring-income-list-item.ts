@@ -1,4 +1,5 @@
 import type { TFunction } from 'i18next';
+import { resolveDayOfMonth } from './recurring-form-mappers';
 import type {
   RecurringIncomeListItem,
   RecurringIncomeType,
@@ -17,12 +18,6 @@ function formatOrdinalDay(day: number, language: string): string {
   if (remainderTen === 2 && remainderHundred !== 12) return `${day}nd`;
   if (remainderTen === 3 && remainderHundred !== 13) return `${day}rd`;
   return `${day}th`;
-}
-
-function readDayFromDate(value: string): number {
-  const parsed = new Date(value);
-  if (Number.isNaN(parsed.getTime())) return 1;
-  return parsed.getUTCDate();
 }
 
 function incomeTypeLabelKey(incomeType: RecurringIncomeType): string {
@@ -52,19 +47,11 @@ function resolveScheduleLabel(
   t: TFunction,
   language: string,
 ): string {
-  const day = readDayFromDate(item.startDate || item.nextRunDate);
+  const day = resolveDayOfMonth(item);
   const ordinalDay = formatOrdinalDay(day, language);
 
   if (item.frequency === 'monthly') {
     return t('manageIncome.scheduleMonthly', { day: ordinalDay });
-  }
-
-  if (item.frequency === 'weekly') {
-    return t('manageIncome.scheduleWeekly');
-  }
-
-  if (item.frequency === 'yearly') {
-    return t('manageIncome.scheduleYearly');
   }
 
   return t('common.oneTime');

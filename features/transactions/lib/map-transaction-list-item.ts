@@ -6,14 +6,11 @@ import type {
   Transaction,
   TransactionListItem,
 } from '../types/transactions.types';
+import {
+  formatTransactionTime,
+  resolveTransactionTimeSource,
+} from './format-transaction-time';
 import { sortTransactionsByRecent } from './sort-transactions-by-recent';
-
-function formatTransactionTime(date: Date, language: string): string {
-  return date.toLocaleTimeString(language === 'ar' ? 'ar-EG' : 'en-US', {
-    hour: 'numeric',
-    minute: '2-digit',
-  });
-}
 
 function incomeTypeLabel(
   incomeType: Transaction['incomeType'],
@@ -66,7 +63,7 @@ export function mapTransactionToListItem(
       ? category?.name ?? transaction.notes?.trim() ?? t('common.expense')
       : incomeTypeLabel(transaction.incomeType, t),
     amount: transaction.amount,
-    time: formatTransactionTime(date, language),
+    time: formatTransactionTime(resolveTransactionTimeSource(transaction), language),
     date,
     note: isExpense ? transaction.notes?.trim() : undefined,
     repeat: !isExpense ? repeatLabel(transaction.repeat, t) : undefined,

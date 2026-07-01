@@ -1,43 +1,39 @@
-import { useRouter, useFocusEffect } from 'expo-router';
+import TextLinkButton from '@/components/ui/TextLinkButton';
+import { useRequireAuth } from '@/features/auth/hooks';
+import { groupTransactionsByDate } from '@/features/history/lib/group-transactions';
+import { addTransactionHref } from '@/features/transaction/lib/transaction-links';
+import { useRecentTransactions } from '@/features/transactions/hooks';
+import { colors } from '@/theme/colors';
+import {
+    Changa_400Regular,
+    Changa_500Medium,
+    useFonts,
+} from '@expo-google-fonts/changa';
+import { PreferenceHorizontalIcon } from '@hugeicons/core-free-icons';
+import Add01Icon from '@hugeicons/core-free-icons/Add01Icon';
+import { HugeiconsIcon } from '@hugeicons/react-native';
+import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  ActivityIndicator,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
+    ActivityIndicator,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { screenLayout } from '@/theme/screen-layout';
 import HomeHeader from '../components/HomeHeader';
 import HomeInfo from '../components/HomeInfo';
-import { colors } from '@/theme/colors';
-import { addTransactionHref } from '@/features/transaction/lib/transaction-links';
-import {
-  Changa_400Regular,
-  Changa_500Medium,
-  useFonts,
-} from '@expo-google-fonts/changa';
-import { HugeiconsIcon } from '@hugeicons/react-native';
-import Add01Icon from '@hugeicons/core-free-icons/Add01Icon';
-import { PreferenceHorizontalIcon } from '@hugeicons/core-free-icons';
-import TextLinkButton from '@/components/ui/TextLinkButton';
 import TransactionCard, {
-  TransactionDateHeader,
+    TransactionDateHeader,
 } from '../components/TransactionCard';
-import Navbar from '../components/Navbar';
-import { useNavbarNavigation } from '../hooks/useNavbarNavigation';
-import { useRequireAuth } from '@/features/auth/hooks';
-import { useRecentTransactions } from '@/features/transactions/hooks';
-import { groupTransactionsByDate } from '@/features/history/lib/group-transactions';
 
 const Home = () => {
   const router = useRouter();
   const { t } = useTranslation();
   const { isAuthenticated, isAuthChecking } = useRequireAuth();
-  const { onTabPress, onAddPress } = useNavbarNavigation('home');
   const { items, isLoading, isEmpty, isError, refetch } =
     useRecentTransactions();
 
@@ -106,7 +102,7 @@ const Home = () => {
             <TextLinkButton
               title={t('home.viewAll')}
               variant="inline"
-              onPress={() => router.push('/history')}
+              onPress={() => router.navigate('/history')}
             />
           </View>
         </View>
@@ -154,11 +150,6 @@ const Home = () => {
           ))
         )}
       </ScrollView>
-      <Navbar
-        activeTab="home"
-        onTabPress={onTabPress}
-        onAddPress={onAddPress}
-      />
     </SafeAreaView>
   );
 };
@@ -174,7 +165,7 @@ const styles = StyleSheet.create({
   scrollContent: {
     alignItems: 'center',
     gap: 8,
-    paddingBottom: 16,
+    paddingBottom: 96,
   },
   buttons: {
     flexDirection: 'row',

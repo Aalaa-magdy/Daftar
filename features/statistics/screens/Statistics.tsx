@@ -1,5 +1,3 @@
-import Navbar from '@/features/home/components/Navbar';
-import { useNavbarNavigation } from '@/features/home/hooks/useNavbarNavigation';
 import { colors } from '@/theme/colors';
 import {
   Changa_400Regular,
@@ -31,7 +29,6 @@ import type { StatisticsPeriod } from '../types/statistics.types';
 const Statistics = () => {
   const { t } = useTranslation();
   const { isAuthenticated, isAuthChecking } = useRequireAuth();
-  const { onTabPress, onAddPress } = useNavbarNavigation('statistics');
   const [period, setPeriod] = useState<StatisticsPeriod>('month');
   const [anchorDate, setAnchorDate] = useState(() => new Date());
   const { stats, isLoading } = useStatistics(period, anchorDate);
@@ -113,12 +110,6 @@ const Statistics = () => {
           </>
         )}
       </ScrollView>
-
-      <Navbar
-        activeTab="statistics"
-        onTabPress={onTabPress}
-        onAddPress={onAddPress}
-      />
     </SafeAreaView>
   );
 };

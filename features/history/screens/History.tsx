@@ -1,8 +1,6 @@
 import TransactionCard, {
   TransactionDateHeader,
 } from '@/features/home/components/TransactionCard';
-import Navbar from '@/features/home/components/Navbar';
-import { useNavbarNavigation } from '@/features/home/hooks/useNavbarNavigation';
 import TransactionTypeToggle, {
   type TransactionFilter,
 } from '@/features/transaction/components/TransactionTypeToggle';
@@ -35,7 +33,6 @@ import { useTransactionHistoryList } from '@/features/transactions/hooks';
 const History = () => {
   const { t } = useTranslation();
   const { isAuthenticated, isAuthChecking } = useRequireAuth();
-  const { onTabPress, onAddPress } = useNavbarNavigation('history');
 
   const [typeFilter, setTypeFilter] = useState<TransactionFilter>('all');
   const [historyFilter, setHistoryFilter] = useState(DEFAULT_HISTORY_FILTER);
@@ -142,12 +139,6 @@ const History = () => {
           ))
         )}
       </ScrollView>
-
-      <Navbar
-        activeTab="history"
-        onTabPress={onTabPress}
-        onAddPress={onAddPress}
-      />
 
       <HistoryFilterDialogue
         visible={filterDialogVisible}

@@ -1,14 +1,14 @@
-import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import * as SplashScreen from 'expo-splash-screen';
-import { useEffect, useState } from 'react';
-import { ActivityIndicator, View } from 'react-native';
-import { I18nextProvider, useTranslation } from 'react-i18next';
-import { QueryClientProvider } from '@tanstack/react-query';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
 import i18n, { initI18n } from '@/lib/i18n';
 import { queryClient } from '@/lib/query-client';
 import { colors } from '@/theme/colors';
+import { QueryClientProvider } from '@tanstack/react-query';
+import { Stack } from 'expo-router';
+import * as SplashScreen from 'expo-splash-screen';
+import { StatusBar } from 'expo-status-bar';
+import { useEffect, useState } from 'react';
+import { I18nextProvider, useTranslation } from 'react-i18next';
+import { ActivityIndicator, View } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -34,10 +34,7 @@ function AppShell() {
         <Stack.Screen name="reset-password" />
         <Stack.Screen name="manage-income" />
         <Stack.Screen name="recurring-transaction/[id]" />
-        <Stack.Screen name="home" />
-        <Stack.Screen name="history" />
-        <Stack.Screen name="statistics" />
-        <Stack.Screen name="profile" />
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="edit-profile" />
         <Stack.Screen name="verify-email" />
         <Stack.Screen name="change-password" />

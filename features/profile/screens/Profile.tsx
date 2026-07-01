@@ -1,5 +1,4 @@
 import { useLogout, useRequireAuth } from '@/features/auth/hooks';
-import Navbar from '@/features/home/components/Navbar';import { useNavbarNavigation } from '@/features/home/hooks/useNavbarNavigation';
 import { colors } from '@/theme/colors';
 import {
   Changa_400Regular,
@@ -31,7 +30,6 @@ const Profile = () => {
   const { t } = useTranslation();
   const { isAuthenticated, isAuthChecking } = useRequireAuth();
   const { passwordChanged } = useLocalSearchParams<{ passwordChanged?: string }>();
-  const { onTabPress, onAddPress } = useNavbarNavigation('profile');
   const { mutate: logout, isPending: isLoggingOut } = useLogout();
   const [logoutVisible, setLogoutVisible] = useState(false);
   const [showSuccessBanner, setShowSuccessBanner] = useState(false);
@@ -123,12 +121,6 @@ const Profile = () => {
           <HugeiconsIcon icon={Logout03Icon} size={20} color={colors.red} />
         </TouchableOpacity>
       </ScrollView>
-
-      <Navbar
-        activeTab="profile"
-        onTabPress={onTabPress}
-        onAddPress={onAddPress}
-      />
 
       <LogoutDialogue
         visible={logoutVisible}

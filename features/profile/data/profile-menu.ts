@@ -4,7 +4,7 @@ import LanguageCircleIcon from '@hugeicons/core-free-icons/LanguageCircleIcon';
 import MessageQuestionIcon from '@hugeicons/core-free-icons/MessageQuestionIcon';
 import Settings01Icon from '@hugeicons/core-free-icons/Settings01Icon';
 import SquareLockPasswordIcon from '@hugeicons/core-free-icons/SquareLockPasswordIcon';
-import StarIcon from '@hugeicons/core-free-icons/StarIcon';
+// import StarIcon from '@hugeicons/core-free-icons/StarIcon';
 import type { IconSvgElement } from '@hugeicons/react-native';
 
 export type ProfileMenuItem = {
@@ -51,11 +51,11 @@ export const PROFILE_MENU_SECTIONS: ProfileMenuSection[] = [
     id: 'help-support',
     titleKey: 'profile.sections.helpSupport',
     items: [
-      {
-        id: 'rate-us',
-        labelKey: 'profile.menu.rateUs',
-        icon: StarIcon,
-      },
+      // {
+      //   id: 'rate-us',
+      //   labelKey: 'profile.menu.rateUs',
+      //   icon: StarIcon,
+      // },
       {
         id: 'faq',
         labelKey: 'profile.menu.faq',

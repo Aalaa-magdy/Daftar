@@ -6,12 +6,19 @@
     "orientation": "portrait",
     "scheme": "daftr",
     "userInterfaceStyle": "light",
+    "icon": "./assets/images/splash.png",
+    "splash": {
+      "image": "./assets/images/Logo.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#FFFFFF"
+    },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.daftr"
     },
     "android": {
       "adaptiveIcon": {
+        "foregroundImage": "./assets/images/splash.png",
         "backgroundColor": "#FFFFFF"
       },
       "predictiveBackGestureEnabled": false,
@@ -33,7 +40,15 @@
       "@react-native-community/datetimepicker",
       "expo-web-browser",
       "expo-secure-store",
-      "expo-localization"
+      "expo-localization",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/images/splash.png",
+          "resizeMode": "contain",
+          "backgroundColor": "#ffffff"
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,

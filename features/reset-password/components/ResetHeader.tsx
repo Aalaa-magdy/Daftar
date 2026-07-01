@@ -1,11 +1,12 @@
-import { colors } from '@/theme/colors';
 import { useDirectionalIcons } from '@/hooks/useDirectionalIcons';
-import { HugeiconsIcon, type IconSvgElement } from '@hugeicons/react-native';
+import { colors } from '@/theme/colors';
 import {
   Changa_400Regular,
   Changa_500Medium,
   useFonts,
 } from '@expo-google-fonts/changa';
+import { HugeiconsIcon, type IconSvgElement } from '@hugeicons/react-native';
+import { useTranslation } from 'react-i18next';
 import {
   ImageBackground,
   StyleSheet,
@@ -14,7 +15,6 @@ import {
   View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useTranslation } from 'react-i18next';
 
 const patternSource = require('@/assets/images/background-pattern-decorative.png');
 
@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
     marginBottom:16
   },
   rootWhite: {
-    backgroundColor: colors.backgroundColor,
+    backgroundColor: colors.white,
   },
   backgroundImage: {
     position: 'absolute',

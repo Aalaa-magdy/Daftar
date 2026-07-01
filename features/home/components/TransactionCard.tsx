@@ -1,24 +1,24 @@
 import { editTransactionHref } from '@/features/transaction/lib/transaction-links';
 import type { TransactionKind } from '@/features/transaction/types';
 import { colors } from '@/theme/colors';
+import {
+    Changa_400Regular,
+    Changa_500Medium,
+    useFonts,
+} from '@expo-google-fonts/changa';
 import Calendar03Icon from '@hugeicons/core-free-icons/Calendar03Icon';
 import RepeatIcon from '@hugeicons/core-free-icons/RepeatIcon';
 import Time04Icon from '@hugeicons/core-free-icons/Time04Icon';
 import { HugeiconsIcon, type IconSvgElement } from '@hugeicons/react-native';
-import {
-  Changa_400Regular,
-  Changa_500Medium,
-  useFonts,
-} from '@expo-google-fonts/changa';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import {
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-  type StyleProp,
-  type ViewStyle,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
+    type StyleProp,
+    type ViewStyle,
 } from 'react-native';
 
 interface Props {

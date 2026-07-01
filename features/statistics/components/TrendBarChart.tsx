@@ -1,6 +1,6 @@
 import { colors } from '@/theme/colors';
 import { useAppDirection } from '@/hooks/useAppDirection';
-import { useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import type { TrendPoint } from '../types/statistics.types';
@@ -18,6 +18,12 @@ interface Props {
 
 const CHART_HEIGHT = 200;
 const X_LABEL_HEIGHT = 32;
+
+type ColumnLayout = {
+  x: number;
+  topY: number;
+  width: number;
+};
 
 function buildTicks(maxValue: number): number[] {
   const step =
@@ -67,7 +73,34 @@ const TrendBarChart = ({
   const [activeTooltipIndex, setActiveTooltipIndex] = useState<number | null>(
     null,
   );
+  const [columnLayouts, setColumnLayouts] = useState<
+    Record<number, ColumnLayout>
+  >({});
+  const chartLayerRef = useRef<View>(null);
+  const barAnchorRefs = useRef<Record<number, View | null>>({});
   const ticks = buildTicks(maxValue);
+
+  const measureColumn = useCallback((index: number) => {
+    const anchor = barAnchorRefs.current[index];
+    const layer = chartLayerRef.current;
+    if (!anchor || !layer) return;
+
+    anchor.measureLayout(
+      layer,
+      (x, y, width) => {
+        setColumnLayouts((current) => ({
+          ...current,
+          [index]: { x, topY: y, width },
+        }));
+      },
+      () => {},
+    );
+  }, []);
+
+  const showTooltip = (index: number) => {
+    measureColumn(index);
+    setActiveTooltipIndex((current) => (current === index ? null : index));
+  };
 
   const getBarHeight = (value: number) =>
     Math.min(
@@ -81,28 +114,23 @@ const TrendBarChart = ({
   const columnInteractionProps = (index: number) =>
     Platform.OS === 'web'
       ? {
-          onHoverIn: () => setActiveTooltipIndex(index),
+          onHoverIn: () => {
+            measureColumn(index);
+            setActiveTooltipIndex(index);
+          },
           onHoverOut: () => setActiveTooltipIndex(null),
         }
       : {
-          onPress: () =>
-            setActiveTooltipIndex((current) =>
-              current === index ? null : index,
-            ),
+          onPress: () => showTooltip(index),
         };
 
-  const renderTooltip = (point: TrendPoint, index: number) => {
-    if (activeTooltipIndex !== index) {
-      return null;
-    }
-
+  const renderTooltipContent = (point: TrendPoint) => {
     const titleText = point.tooltipTitle ?? point.label ?? '';
-
     const spentAmount = point.spent ?? point.value;
     const formattedSpent = spentAmount.toLocaleString('en-US');
 
     return (
-      <View style={styles.tooltip}>
+      <>
         <Text style={styles.tooltipTitle} numberOfLines={2}>
           {titleText}
         </Text>
@@ -117,6 +145,34 @@ const TrendBarChart = ({
             {t('home.income')}: {point.income.toLocaleString('en-US')} {currency}
           </Text>
         ) : null}
+      </>
+    );
+  };
+
+  const renderTooltipOverlay = () => {
+    if (activeTooltipIndex == null) {
+      return null;
+    }
+
+    const point = data[activeTooltipIndex];
+    const layout = columnLayouts[activeTooltipIndex];
+    if (!point || !layout) {
+      return null;
+    }
+
+    return (
+      <View
+        pointerEvents="none"
+        style={[
+          styles.tooltipOverlay,
+          {
+            left: layout.x,
+            width: layout.width,
+            bottom: CHART_HEIGHT - layout.topY + 6,
+          },
+        ]}
+      >
+        <View style={styles.tooltip}>{renderTooltipContent(point)}</View>
       </View>
     );
   };
@@ -167,8 +223,13 @@ const TrendBarChart = ({
           accessibilityRole="button"
           accessibilityLabel={point.label}
         >
-          <View style={styles.markerWrap}>
-            {renderTooltip(point, index)}
+          <View
+            ref={(ref) => {
+              barAnchorRefs.current[index] = ref;
+            }}
+            onLayout={() => measureColumn(index)}
+            style={styles.markerWrap}
+          >
             <View style={styles.placeholderDot} />
           </View>
         </Pressable>
@@ -182,17 +243,17 @@ const TrendBarChart = ({
     return (
       <Pressable
         key={columnKey}
-        style={[
-          columnStyle,
-          activeTooltipIndex === index && styles.barColumnActive,
-        ]}
+        style={columnStyle}
         {...columnInteractionProps(index)}
         accessibilityRole="button"
         accessibilityLabel={point.label}
       >
         <View style={[styles.barWrap, { height: barHeight }]}>
-          {renderTooltip(point, index)}
           <View
+            ref={(ref) => {
+              barAnchorRefs.current[index] = ref;
+            }}
+            onLayout={() => measureColumn(index)}
             style={[
               styles.bar,
               isWeeklyChart && styles.barWeekly,
@@ -227,7 +288,7 @@ const TrendBarChart = ({
 
   const plotContent = (
     <View style={styles.plotArea}>
-      <View style={styles.chartLayer}>
+      <View style={styles.chartLayer} ref={chartLayerRef}>
         {ticks.map((tick) => (
           <View
             key={`grid-${tick}`}
@@ -235,6 +296,7 @@ const TrendBarChart = ({
           />
         ))}
         <View style={barsRowStyle}>{data.map(renderBar)}</View>
+        {renderTooltipOverlay()}
       </View>
       <View style={xLabelsRowStyle}>{data.map(renderXLabel)}</View>
     </View>
@@ -319,6 +381,7 @@ const styles = StyleSheet.create({
     height: CHART_HEIGHT,
     position: 'relative',
     overflow: 'visible',
+    zIndex: 1,
   },
   gridLine: {
     position: 'absolute',
@@ -360,7 +423,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'flex-end',
     minWidth: 0,
-    position: 'relative',
   },
   xLabelColumn: {
     flex: 1,
@@ -379,25 +441,22 @@ const styles = StyleSheet.create({
     flex: 1,
     minWidth: 0,
   },
-  barColumnActive: {
-    zIndex: 20,
-  },
   markerWrap: {
-    position: 'relative',
     alignItems: 'center',
     justifyContent: 'center',
   },
   barWrap: {
-    position: 'relative',
     width: '100%',
     alignItems: 'center',
     justifyContent: 'flex-end',
   },
-  tooltip: {
+  tooltipOverlay: {
     position: 'absolute',
-    bottom: '100%',
-    marginBottom: 6,
-    alignSelf: 'center',
+    alignItems: 'center',
+    zIndex: 1000,
+    elevation: 1000,
+  },
+  tooltip: {
     minWidth: 150,
     maxWidth: 220,
     backgroundColor: colors.white,
@@ -408,10 +467,9 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 12,
-    elevation: 8,
+    elevation: 1000,
     alignItems: 'flex-start',
     gap: 4,
-    zIndex: 100,
   },
   tooltipTitle: {
     fontFamily: 'Changa_500Medium',

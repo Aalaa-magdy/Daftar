@@ -2,10 +2,12 @@ import { colors } from '@/theme/colors';
 import { useDirectionalIcons } from '@/hooks/useDirectionalIcons';
 import ArrowDown01Icon from '@hugeicons/core-free-icons/ArrowDown01Icon';
 import { HugeiconsIcon } from '@hugeicons/react-native';
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  ScrollView,
+  FlatList,
+  Modal,
+  Pressable,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -39,6 +41,13 @@ const MONTH_KEYS = [
 
 const DAY_CELL = 32;
 const DAY_INNER = 28;
+const MONTH_OPTION_HEIGHT = 40;
+const MONTH_MENU_HEIGHT = 320;
+
+type MonthOption = {
+  key: (typeof MONTH_KEYS)[number];
+  index: number;
+};
 
 interface Props {
   value: Date | null;
@@ -81,6 +90,12 @@ const DatePicker = ({ value, onChange }: Props) => {
   const [viewYear, setViewYear] = useState(initial.getFullYear());
   const [viewMonth, setViewMonth] = useState(initial.getMonth());
   const [showMonthMenu, setShowMonthMenu] = useState(false);
+  const monthListRef = useRef<FlatList<MonthOption>>(null);
+
+  const monthOptions = useMemo<MonthOption[]>(
+    () => MONTH_KEYS.map((key, index) => ({ key, index })),
+    [],
+  );
 
   const calendarDays = useMemo(
     () => buildCalendarDays(viewYear, viewMonth),
@@ -123,7 +138,7 @@ const DatePicker = ({ value, onChange }: Props) => {
           <TouchableOpacity
             style={styles.monthYearButton}
             activeOpacity={0.7}
-            onPress={() => setShowMonthMenu((open) => !open)}
+            onPress={() => setShowMonthMenu(true)}
             accessibilityRole="button"
             accessibilityLabel={t('datePicker.chooseMonth')}
           >
@@ -136,37 +151,6 @@ const DatePicker = ({ value, onChange }: Props) => {
               color={colors.black}
             />
           </TouchableOpacity>
-
-          {showMonthMenu ? (
-            <View style={styles.monthMenu}>
-              <ScrollView
-                style={styles.monthMenuScroll}
-                nestedScrollEnabled
-                keyboardShouldPersistTaps="handled"
-              >
-                {MONTH_KEYS.map((key, index) => (
-                  <TouchableOpacity
-                    key={key}
-                    style={[
-                      styles.monthOption,
-                      index === viewMonth && styles.monthOptionActive,
-                    ]}
-                    onPress={() => handleSelectMonth(index)}
-                    activeOpacity={0.7}
-                  >
-                    <Text
-                      style={[
-                        styles.monthOptionText,
-                        index === viewMonth && styles.monthOptionTextActive,
-                      ]}
-                    >
-                      {t(key)}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              </ScrollView>
-            </View>
-          ) : null}
         </View>
 
         <View style={styles.navRow}>
@@ -243,6 +227,63 @@ const DatePicker = ({ value, onChange }: Props) => {
           );
         })}
       </View>
+
+      <Modal
+        visible={showMonthMenu}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowMonthMenu(false)}
+      >
+        <View style={styles.monthModalRoot}>
+          <Pressable
+            style={styles.monthModalBackdrop}
+            onPress={() => setShowMonthMenu(false)}
+          />
+          <View style={styles.monthModalCard}>
+            <FlatList
+              ref={monthListRef}
+              data={monthOptions}
+              keyExtractor={(item) => item.key}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  style={[
+                    styles.monthOption,
+                    item.index === viewMonth && styles.monthOptionActive,
+                  ]}
+                  onPress={() => handleSelectMonth(item.index)}
+                  activeOpacity={0.7}
+                >
+                  <Text
+                    style={[
+                      styles.monthOptionText,
+                      item.index === viewMonth && styles.monthOptionTextActive,
+                    ]}
+                  >
+                    {t(item.key)}
+                  </Text>
+                </TouchableOpacity>
+              )}
+              getItemLayout={(_, index) => ({
+                length: MONTH_OPTION_HEIGHT,
+                offset: MONTH_OPTION_HEIGHT * index,
+                index,
+              })}
+              initialScrollIndex={Math.min(viewMonth, MONTH_KEYS.length - 1)}
+              showsVerticalScrollIndicator
+              bounces={false}
+              onScrollToIndexFailed={({ index, averageItemLength }) => {
+                // Fallback when initialScrollIndex cannot be applied immediately.
+                requestAnimationFrame(() => {
+                  monthListRef.current?.scrollToOffset({
+                    offset: averageItemLength * index,
+                    animated: false,
+                  });
+                });
+              }}
+            />
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -259,12 +300,15 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.12,
     shadowRadius: 12,
     elevation: 6,
+    overflow: 'visible',
   },
   header: {
     flexDirection: 'row',
     alignItems: 'flex-start',
     justifyContent: 'space-between',
     marginBottom: 10,
+    overflow: 'visible',
+    zIndex: 2,
   },
   monthYearWrap: {
     position: 'relative',
@@ -281,28 +325,31 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     color: colors.black,
   },
-  monthMenu: {
-    position: 'absolute',
-    top: 28,
-    left: 0,
-    minWidth: 140,
-    maxHeight: 200,
+  monthModalRoot: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 40,
+  },
+  monthModalBackdrop: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(8, 27, 10, 0.15)',
+  },
+  monthModalCard: {
+    width: '100%',
+    maxWidth: 220,
+    height: MONTH_MENU_HEIGHT,
     backgroundColor: colors.white,
     borderRadius: 8,
     borderWidth: 1,
     borderColor: colors.border,
-    shadowColor: colors.black,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 4,
     overflow: 'hidden',
-  },
-  monthMenuScroll: {
-    maxHeight: 200,
+    zIndex: 2,
+    elevation: 12,
   },
   monthOption: {
-    paddingVertical: 10,
+    height: MONTH_OPTION_HEIGHT,
+    justifyContent: 'center',
     paddingHorizontal: 14,
   },
   monthOptionActive: {

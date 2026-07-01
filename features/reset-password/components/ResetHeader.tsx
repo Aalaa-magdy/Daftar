@@ -96,11 +96,11 @@ const ResetHeader = ({
 const styles = StyleSheet.create({
   root: {
     width: '100%',
-    backgroundColor: colors.background,
+    backgroundColor: colors.backgroundColor,
     marginBottom:16
   },
   rootWhite: {
-    backgroundColor: colors.white,
+    backgroundColor: colors.backgroundColor,
   },
   backgroundImage: {
     position: 'absolute',

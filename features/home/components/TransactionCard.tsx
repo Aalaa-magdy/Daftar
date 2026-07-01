@@ -42,6 +42,14 @@ function formatAmount(value: number, type: TransactionKind, currency: string) {
   return `${type === 'income' ? '+' : '-'}${formatted} ${currency}`;
 }
 
+function formatExpenseNote(note: string) {
+  const trimmed = note.trim();
+  if (trimmed.length <= 25) {
+    return trimmed;
+  }
+  return `${trimmed.slice(0, 25)}...`;
+}
+
 export const TransactionDateHeader = ({
   dateLabel,
   style,
@@ -137,7 +145,15 @@ const TransactionCard = ({
                 <Text style={styles.metaText}>{time}</Text>
               </View>
               {!isIncome && expenseNote ? (
-                <Text style={styles.expenseCategory}>{expenseNote}</Text>
+                <View style={styles.noteWrap}>
+                  <Text
+                    style={styles.expenseCategory}
+                    numberOfLines={1}
+                    ellipsizeMode="tail"
+                  >
+                    {formatExpenseNote(expenseNote)}
+                  </Text>
+                </View>
               ) : null}
               {isIncome && repeat ? (
                 <View style={[styles.metaRow, styles.metaRowSpaced]}>
@@ -185,6 +201,7 @@ const styles = StyleSheet.create({
     borderColor: colors.white,
     borderRadius: 6,
     alignItems: 'center',
+    overflow: 'hidden',
   },
   iconWrapper: {
     padding: 8,
@@ -206,6 +223,7 @@ const styles = StyleSheet.create({
   },
   info: {
     flex: 1,
+    minWidth: 0,
   },
   firstRow: {
     flexDirection: 'row',
@@ -225,19 +243,26 @@ const styles = StyleSheet.create({
   },
   section: {
     flexDirection: 'row',
+    alignItems: 'center',
     padding: 2,
+    gap: 8,
+    minWidth: 0,
+  },
+  noteWrap: {
+    flex: 1,
+    minWidth: 0,
   },
   expenseCategory: {
     fontFamily: 'Changa_400Regular',
     color: colors.textSecondary,
     fontSize: 14,
     lineHeight: 20,
-    marginRight: 20,
   },
   metaRow: {
     flexDirection: 'row',
     gap: 5,
     alignItems: 'center',
+    flexShrink: 0,
   },
   metaRowSpaced: {
     marginTop: 3,

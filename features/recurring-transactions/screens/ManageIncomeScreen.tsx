@@ -18,7 +18,10 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from 'react-native-safe-area-context';
 import RecurringIncomeCard from '../components/RecurringIncomeCard';
 import { editRecurringIncomeHref } from '../lib/recurring-links';
 import { useRequireAuth } from '@/features/auth/hooks';
@@ -26,6 +29,7 @@ import { useRecurringIncomeList } from '../hooks';
 
 const ManageIncomeScreen = () => {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const { t } = useTranslation();
   const { isAuthenticated, isAuthChecking } = useRequireAuth();
   const { items, isLoading, isEmpty, isError, refetch } =
@@ -86,7 +90,7 @@ const ManageIncomeScreen = () => {
         )}
       </ScrollView>
 
-      <View style={styles.footer}>
+      <View style={[styles.footer, { paddingBottom: insets.bottom + 36 }]}>
         <Button
           title={t('home.addIncome')}
           onPress={() => router.push(addTransactionHref('income'))}
@@ -116,7 +120,6 @@ const styles = StyleSheet.create({
   footer: {
     paddingHorizontal: 10,
     paddingTop: 8,
-    paddingBottom: 16,
     backgroundColor: colors.backgroundColor,
   },
   stateWrap: {

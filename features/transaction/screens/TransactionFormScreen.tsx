@@ -39,7 +39,10 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from 'react-native-safe-area-context';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import CategoryGrid from '@/features/categories/components/CategoryGrid';
 import DeleteDialogue from '../components/DeleteDialogue';
@@ -60,6 +63,7 @@ const fieldIcon = (icon: IconSvgElement) => (
 
 const TransactionFormScreen = () => {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const { t } = useTranslation();
   const { isAuthenticated, isAuthChecking } = useRequireAuth();
   const { id, kind: initialKind, isEdit } = useTransactionFormMode();
@@ -266,7 +270,10 @@ const TransactionFormScreen = () => {
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <KeyboardAwareScrollView
           style={styles.scroll}
-          contentContainerStyle={styles.content}
+          contentContainerStyle={[
+            styles.content,
+            { paddingBottom: insets.bottom + 56 },
+          ]}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
           enableOnAndroid
@@ -454,8 +461,7 @@ const styles = StyleSheet.create({
   },
   content: {
     paddingHorizontal: 20,
-    paddingBottom: 32,
-    gap:12,
+    gap: 12,
   },
   fieldInput: {
     marginBottom: 4,

@@ -15,6 +15,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface Props {
   visible: boolean;
@@ -30,6 +31,7 @@ const CategoryDeleteDialogue = ({
   onConfirm,
 }: Props) => {
   const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
   const [fontsLoaded] = useFonts({
     Changa_400Regular,
     Changa_500Medium,
@@ -48,7 +50,7 @@ const CategoryDeleteDialogue = ({
     >
       <View style={styles.root}>
         <Pressable style={styles.backdrop} onPress={onClose} />
-        <View style={styles.sheet}>
+        <View style={[styles.sheet, { paddingBottom: insets.bottom + 44 }]}>
           <View style={styles.handle} />
 
           <View style={styles.iconWrap}>
@@ -96,7 +98,6 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     paddingHorizontal: 20,
-    paddingBottom: 28,
     paddingTop: 12,
     alignItems: 'center',
     gap: 16,

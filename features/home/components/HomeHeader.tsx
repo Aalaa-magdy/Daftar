@@ -61,7 +61,7 @@ const HomeHeader = () => {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 15,
+  
     paddingVertical: 16,
     flexDirection: 'row',
     alignItems: 'center',

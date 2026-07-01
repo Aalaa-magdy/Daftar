@@ -22,6 +22,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const LIST_MAX_HEIGHT = Dimensions.get('window').height * 0.52;
 
@@ -45,6 +46,7 @@ const EditCategoriesDialogue = ({
   onDeleteCategory,
 }: Props) => {
   const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
   const [fontsLoaded] = useFonts({
     Changa_400Regular,
     Changa_500Medium,
@@ -64,7 +66,7 @@ const EditCategoriesDialogue = ({
       <View style={styles.root}>
         <Pressable style={styles.backdrop} onPress={onClose} />
 
-        <View style={styles.sheet}>
+        <View style={[styles.sheet, { paddingBottom: insets.bottom + 44 }]}>
           <View style={styles.handle} />
           <Text style={styles.title}>{t('transaction.editCategories')}</Text>
 
@@ -165,7 +167,6 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 20,
     paddingHorizontal: 20,
     paddingTop: 12,
-    paddingBottom: 24,
   },
   handle: {
     alignSelf: 'center',

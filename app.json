@@ -6,6 +6,12 @@
     "orientation": "portrait",
     "scheme": "daftr",
     "userInterfaceStyle": "light",
+    "androidStatusBar": {
+      "barStyle": "dark-content",
+      "backgroundColor": "#FFFFFF",
+      "translucent": false,
+      "hidden": false
+    },
     "icon": "./assets/images/adaptive-icon.png",
     "splash": {
       "image": "./assets/images/Logo.png",

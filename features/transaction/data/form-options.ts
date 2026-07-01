@@ -1,14 +1,6 @@
-import Car03Icon from '@hugeicons/core-free-icons/Car03Icon';
-import HairDryerIcon from '@hugeicons/core-free-icons/HairDryerIcon';
-import Hamburger02Icon from '@hugeicons/core-free-icons/Hamburger02Icon';
-import HealthIcon from '@hugeicons/core-free-icons/HealthIcon';
-import House03Icon from '@hugeicons/core-free-icons/House03Icon';
-import InvoiceIcon from '@hugeicons/core-free-icons/InvoiceIcon';
-import OnlineLearning01Icon from '@hugeicons/core-free-icons/OnlineLearning01Icon';
-import ShoppingBag01Icon from '@hugeicons/core-free-icons/ShoppingBag01Icon';
-import UserGroupIcon from '@hugeicons/core-free-icons/UserGroupIcon';
-import Wallet03Icon from '@hugeicons/core-free-icons/Wallet03Icon';
 import type { IconSvgElement } from '@hugeicons/react-native';
+import { DEFAULT_CATEGORY_DEFINITIONS } from '@/features/categories/lib/default-categories';
+import { resolveCategoryIcon } from '@/features/categories/lib/category-icons';
 
 export type ExpenseCategory = {
   id: string;
@@ -20,18 +12,15 @@ export function getCategoryLabelKey(id: string): string {
   return id === 'self-care' ? 'selfCare' : id;
 }
 
-export const EXPENSE_CATEGORIES: ExpenseCategory[] = [
-  { id: 'food', icon: Hamburger02Icon, color: '#F04438' },
-  { id: 'bills', icon: InvoiceIcon, color: '#17B26A' },
-  { id: 'family', icon: UserGroupIcon, color: '#7A5AF8' },
-  { id: 'health', icon: HealthIcon, color: '#2E90FA' },
-  { id: 'work', icon: Wallet03Icon, color: '#0E9384' },
-  { id: 'shopping', icon: ShoppingBag01Icon, color: '#EE46BC' },
-  { id: 'transportation', icon: Car03Icon, color: '#F79009' },
-  { id: 'self-care', icon: HairDryerIcon, color: '#F670C7' },
-  { id: 'housing', icon: House03Icon, color: '#6172F3' },
-  { id: 'education', icon: OnlineLearning01Icon, color: '#444CE7' },
-];
+/** Static preview list — live categories come from the API after seeding. */
+export const EXPENSE_CATEGORIES: ExpenseCategory[] =
+  DEFAULT_CATEGORY_DEFINITIONS.map((definition) => ({
+    id: definition.nameKey === 'selfCare' ? 'self-care' : definition.nameKey,
+    icon: resolveCategoryIcon(definition.faIcon),
+    color: definition.color,
+  }));
+
+export { DEFAULT_CATEGORY_DEFINITIONS };
 
 export const INCOME_TYPES = [
   'salary',

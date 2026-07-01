@@ -69,8 +69,6 @@ export default function DatePickerDialogue({
       visible
       transparent
       animationType="fade"
-      statusBarTranslucent
-      presentationStyle="overFullScreen"
       onRequestClose={onClose}
     >
       {content}

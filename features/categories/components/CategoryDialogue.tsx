@@ -36,6 +36,7 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import FormField from '@/features/transaction/components/FormField';
 import { getApiErrorMessage } from '@/lib/api-error';
@@ -62,6 +63,7 @@ const CategoryDialogue = ({
   onSaved,
 }: Props) => {
   const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
   const [name, setName] = useState('');
   const [selectedColor, setSelectedColor] = useState<string>(
     CATEGORY_COLOR_OPTIONS[0],
@@ -185,7 +187,7 @@ const CategoryDialogue = ({
           bounces={false}
         >
           <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-            <View style={styles.sheet}>
+            <View style={[styles.sheet, { paddingBottom: insets.bottom + 44 }]}>
               <View style={styles.handle} />
 
               <Text style={styles.title}>{title}</Text>
@@ -346,7 +348,6 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     paddingHorizontal: 20,
-    paddingBottom: Platform.OS === 'ios' ? 28 : 36,
     paddingTop: 12,
     gap: 12,
   },

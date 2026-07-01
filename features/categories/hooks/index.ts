@@ -1,3 +1,4 @@
+export { useSeedDefaultCategories } from './useSeedDefaultCategories';
 export { useCategories } from './useCategories';
 export { useCategory } from './useCategory';
 export { useCreateCategory } from './useCreateCategory';

@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { categoriesApi } from '@/features/categories/api/categories.api';
 import { Category } from '@/features/categories/types/categories.types';
+import { useSeedDefaultCategories } from './useSeedDefaultCategories';
 import { categoryKeys } from './query-keys';
 
 export const useCategories = () => {
@@ -17,11 +18,20 @@ export const useCategories = () => {
       error.response?.status !== 401 && failureCount < 1,
   });
 
+  const { isSeeding } = useSeedDefaultCategories({
+    categories: query.data,
+    isSuccess: query.isSuccess,
+    isAuthenticated,
+  });
+
   return {
     ...query,
     isAuthChecking,
     isAuthRequired: !isAuthChecking && !isAuthenticated,
-    isLoading: isAuthChecking || (isAuthenticated && query.isLoading),
+    isLoading:
+      isAuthChecking ||
+      (isAuthenticated && (query.isLoading || isSeeding)),
+    isSeeding,
     isError: query.isError,
   };
 };

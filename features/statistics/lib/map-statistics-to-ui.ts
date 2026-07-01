@@ -164,6 +164,7 @@ function mapTrendPoints(
       label: point.label,
       tooltipTitle: isSelectedWeek ? data.periodLabel : point.label,
       value,
+      spent: point.spent,
       income: point.income,
       variant: resolveTrendVariant(
         index,

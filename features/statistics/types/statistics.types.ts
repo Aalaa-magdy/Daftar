@@ -11,6 +11,7 @@ export type TrendPoint = {
   labelKey?: string;
   labelParams?: Record<string, string | number>;
   value: number;
+  spent?: number;
   income?: number;
   variant: TrendVariant;
 };

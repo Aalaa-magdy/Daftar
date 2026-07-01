@@ -98,17 +98,25 @@ const TrendBarChart = ({
 
     const titleText = point.tooltipTitle ?? point.label ?? '';
 
+    const spentAmount = point.spent ?? point.value;
+    const formattedSpent = spentAmount.toLocaleString('en-US');
+
     return (
       <View style={styles.tooltip}>
         <Text style={styles.tooltipTitle} numberOfLines={2}>
           {titleText}
         </Text>
-        <Text style={styles.tooltipAmount} numberOfLines={1}>
+        <Text style={styles.tooltipSpent}>
           {t('statistics.chartAmount', {
-            amount: point.value.toLocaleString('en-US'),
+            amount: formattedSpent,
             currency,
           })}
         </Text>
+        {point.income != null && point.income > 0 ? (
+          <Text style={styles.tooltipIncome}>
+            {t('home.income')}: {point.income.toLocaleString('en-US')} {currency}
+          </Text>
+        ) : null}
       </View>
     );
   };
@@ -390,8 +398,8 @@ const styles = StyleSheet.create({
     bottom: '100%',
     marginBottom: 6,
     alignSelf: 'center',
-    minWidth: 130,
-    maxWidth: 180,
+    minWidth: 150,
+    maxWidth: 220,
     backgroundColor: colors.white,
     borderRadius: 8,
     paddingHorizontal: 14,
@@ -412,11 +420,18 @@ const styles = StyleSheet.create({
     color: colors.black,
     textAlign: 'left',
   },
-  tooltipAmount: {
+  tooltipSpent: {
     fontFamily: 'Changa_400Regular',
     fontSize: 12,
     lineHeight: 16,
-    color: colors.primary,
+    color: colors.red,
+    textAlign: 'left',
+  },
+  tooltipIncome: {
+    fontFamily: 'Changa_400Regular',
+    fontSize: 12,
+    lineHeight: 16,
+    color: colors.green,
     textAlign: 'left',
   },
   bar: {

@@ -6,7 +6,7 @@
     "orientation": "portrait",
     "scheme": "daftr",
     "userInterfaceStyle": "light",
-    "icon": "./assets/images/splash.png",
+    "icon": "./assets/images/adaptive-icon.png",
     "splash": {
       "image": "./assets/images/Logo.png",
       "resizeMode": "contain",
@@ -18,7 +18,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/splash.png",
+        "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
       "predictiveBackGestureEnabled": false,
@@ -44,7 +44,7 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash.png",
+          "image": "./assets/images/Logo.png",
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         }

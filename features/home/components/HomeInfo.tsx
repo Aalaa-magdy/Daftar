@@ -83,10 +83,10 @@ const HomeInfo = () => {
         {isLoading ? (
           <ActivityIndicator color={colors.white} style={styles.loader} />
         ) : (
-          <>
+          <View style={styles.balanceRow}>
             <Text style={styles.balance}>{balanceDisplay}</Text>
             <Text style={styles.currency}>{egp}</Text>
-          </>
+          </View>
         )}
       </View>
       <View style={styles.thirdRow}>
@@ -153,10 +153,14 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   secondRow: {
-    flexDirection: 'row',
     marginBottom: 20,
     minHeight: 52,
+  },
+  balanceRow: {
+    flexDirection: 'row',
     alignItems: 'flex-end',
+    gap: 6,
+    marginTop: 8,
   },
   loader: {
     marginTop: 8,
@@ -167,18 +171,13 @@ const styles = StyleSheet.create({
     fontFamily: 'Changa_500Medium',
     lineHeight: 52,
     color: colors.white,
-    marginTop: 8,
-    position: 'relative',
   },
   currency: {
     fontFamily: 'Changa_400Regular',
     fontSize: 16,
     lineHeight: 24,
     color: colors.white,
-    marginTop: 4,
-    position: 'absolute',
-    bottom: 0,
-    left: 115,
+    marginBottom: 8,
   },
   icon: {
     backgroundColor: '#ECFDF3',

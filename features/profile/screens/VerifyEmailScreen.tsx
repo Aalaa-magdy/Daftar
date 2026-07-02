@@ -12,7 +12,7 @@ import {
 import NewReleasesIcon from '@hugeicons/core-free-icons/NewReleasesIcon';
 import { AxiosError } from 'axios';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -23,7 +23,19 @@ const CODE_PATTERN = /^\d{4}$/;
 const VerifyEmailScreen = () => {
   const router = useRouter();
   const { t } = useTranslation();
-  const { email: emailParam } = useLocalSearchParams<{ email?: string }>();
+  const { email: emailParam, from } = useLocalSearchParams<{
+    email?: string;
+    from?: string;
+  }>();
+  const isSignupFlow = from === 'signup';
+
+  const navigateAfterVerification = useCallback(() => {
+    if (isSignupFlow) {
+      router.replace('/home');
+      return;
+    }
+    router.back();
+  }, [isSignupFlow, router]);
   const { data: profile } = useProfile();
 
   const displayEmail = (emailParam ?? profile?.email ?? '').trim();
@@ -56,7 +68,7 @@ const VerifyEmailScreen = () => {
 
           if (message.toLowerCase().includes('already verified')) {
             Alert.alert(t('common.success'), t('profile.emailVerifiedSuccess'), [
-              { text: 'OK', onPress: () => router.back() },
+              { text: 'OK', onPress: navigateAfterVerification },
             ]);
             return;
           }
@@ -68,7 +80,7 @@ const VerifyEmailScreen = () => {
         },
       },
     );
-  }, [displayEmail, isAlreadyVerified, requestVerification, router, t]);
+  }, [displayEmail, isAlreadyVerified, requestVerification, navigateAfterVerification, t]);
 
   if (!fontsLoaded) {
     return null;
@@ -92,7 +104,7 @@ const VerifyEmailScreen = () => {
       {
         onSuccess: () => {
           Alert.alert(t('common.success'), t('profile.emailVerifiedSuccess'), [
-            { text: 'OK', onPress: () => router.back() },
+            { text: 'OK', onPress: navigateAfterVerification },
           ]);
         },
         onError: (error: AxiosError) => {
@@ -116,7 +128,7 @@ const VerifyEmailScreen = () => {
 
           if (message.toLowerCase().includes('already verified')) {
             Alert.alert(t('common.success'), t('profile.emailVerifiedSuccess'), [
-              { text: 'OK', onPress: () => router.back() },
+              { text: 'OK', onPress: navigateAfterVerification },
             ]);
             return;
           }

@@ -114,7 +114,11 @@ const Signup = () => {
     signup(
       { name: name.trim(), email: email.trim(), password },
       {
-        onSuccess: () => router.replace("/home" as Href),
+        onSuccess: () =>
+          router.replace({
+            pathname: '/verify-email',
+            params: { email: email.trim(), from: 'signup' },
+          } as Href),
         onError: (error: AxiosError) => {
           const message = getApiErrorMessage(error);
           setErrors(mapSignupFieldErrors(message));

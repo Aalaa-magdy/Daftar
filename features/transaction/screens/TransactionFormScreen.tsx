@@ -31,12 +31,10 @@ import { useTranslation } from 'react-i18next';
 import {
   Alert,
   ActivityIndicator,
-  Keyboard,
   Modal,
   Pressable,
   StyleSheet,
   TouchableOpacity,
-  TouchableWithoutFeedback,
   View,
 } from 'react-native';
 import {
@@ -267,19 +265,21 @@ const TransactionFormScreen = () => {
 
   return (
     <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View style={styles.scrollHost}>
         <KeyboardAwareScrollView
           style={styles.scroll}
           contentContainerStyle={[
             styles.content,
-            { paddingBottom: insets.bottom + 56 },
+            { paddingBottom: insets.bottom + 96 },
           ]}
           keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator={false}
+          showsVerticalScrollIndicator
           enableOnAndroid
           enableAutomaticScroll
+          nestedScrollEnabled
           extraHeight={120}
           extraScrollHeight={120}
+          bounces
         >
         <TransactionHeader
           title={headerTitle}
@@ -416,7 +416,7 @@ const TransactionFormScreen = () => {
           />
         </View>
         </KeyboardAwareScrollView>
-      </TouchableWithoutFeedback>
+      </View>
 
       <Modal
         visible={showDatePicker}
@@ -456,10 +456,14 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
 
   },
+  scrollHost: {
+    flex: 1,
+  },
   scroll: {
     flex: 1,
   },
   content: {
+    flexGrow: 1,
     paddingHorizontal: 20,
     gap: 12,
   },

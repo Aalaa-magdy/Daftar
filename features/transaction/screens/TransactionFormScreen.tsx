@@ -31,7 +31,9 @@ import { useTranslation } from 'react-i18next';
 import {
   Alert,
   ActivityIndicator,
+  KeyboardAvoidingView,
   Modal,
+  Platform,
   Pressable,
   StyleSheet,
   TouchableOpacity,
@@ -265,158 +267,157 @@ const TransactionFormScreen = () => {
 
   return (
     <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
-      <View style={styles.scrollHost}>
-        <KeyboardAwareScrollView
-          style={styles.scroll}
-          contentContainerStyle={[
-            styles.content,
-            { paddingBottom: insets.bottom + 96 },
-          ]}
-          keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator
-          enableOnAndroid
-          enableAutomaticScroll
-          nestedScrollEnabled
-          extraHeight={120}
-          extraScrollHeight={120}
-          bounces
-        >
-        <TransactionHeader
-          title={headerTitle}
-          onBack={() => router.back()}
-          onDelete={isEdit ? () => setShowDeleteDialogue(true) : undefined}
-        />
+      <KeyboardAvoidingView
+        style={styles.keyboardAvoid}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      >
+        <View style={styles.scrollHost}>
+          <KeyboardAwareScrollView
+            style={styles.scroll}
+            contentContainerStyle={styles.content}
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator
+            enableOnAndroid
+            enableAutomaticScroll
+            nestedScrollEnabled
+            extraHeight={120}
+            extraScrollHeight={120}
+            bounces
+          >
+            <TransactionHeader
+              title={headerTitle}
+              onBack={() => router.back()}
+              onDelete={isEdit ? () => setShowDeleteDialogue(true) : undefined}
+            />
 
-        {!isEdit ? (
-          <TransactionTypeToggle value={kind} onChange={setKind} />
-        ) : null}
+            {!isEdit ? (
+              <TransactionTypeToggle value={kind} onChange={setKind} />
+            ) : null}
 
-        {kind === 'income' ? (
-          <>
-            <FormField label={t('transaction.incomeType')} required>
-              <SelectField
-                value={incomeTypeDisplay}
-                placeholder={t('transaction.chooseIncomeType')}
-                options={incomeTypeLabels}
-                onSelect={(label) => {
-                  const index = incomeTypeLabels.indexOf(label);
-                  if (index >= 0) setIncomeType(INCOME_TYPES[index]);
-                }}
-                icon={fieldIcon(ArrowUpLeft01Icon)}
-                open={activePicker === 'incomeType'}
-                onToggle={() => togglePicker('incomeType')}
-              />
-            </FormField>
+            {kind === 'income' ? (
+              <>
+                <FormField label={t('transaction.incomeType')} required>
+                  <SelectField
+                    value={incomeTypeDisplay}
+                    placeholder={t('transaction.chooseIncomeType')}
+                    options={incomeTypeLabels}
+                    onSelect={(label) => {
+                      const index = incomeTypeLabels.indexOf(label);
+                      if (index >= 0) setIncomeType(INCOME_TYPES[index]);
+                    }}
+                    icon={fieldIcon(ArrowUpLeft01Icon)}
+                    open={activePicker === 'incomeType'}
+                    onToggle={() => togglePicker('incomeType')}
+                  />
+                </FormField>
 
-            <FormField label={t('transaction.amount')} required>
-              <Input
-                placeholder={t('common.amountPlaceholder')}
-                value={amount}
-                onChangeText={setAmount}
-                keyboardType="numeric"
-                icon={fieldIcon(MoneyBag01Icon)}
-                containerStyle={styles.fieldInput}
-              />
-            </FormField>
-
-            <FormField
-              label={t('transaction.payday')}
-              required
-              helper={t('transaction.paydayHelper')}
-            >
-              <TouchableOpacity
-                activeOpacity={0.85}
-                onPress={() => {
-                  setActivePicker(null);
-                  setShowDatePicker(true);
-                }}
-              >
-                <View pointerEvents="none">
+                <FormField label={t('transaction.amount')} required>
                   <Input
-                    placeholder={t('common.datePlaceholder')}
-                    value={dateDisplay}
-                    editable={false}
-                    icon={fieldIcon(Calendar03Icon)}
+                    placeholder={t('common.amountPlaceholder')}
+                    value={amount}
+                    onChangeText={setAmount}
+                    keyboardType="numeric"
+                    icon={fieldIcon(MoneyBag01Icon)}
                     containerStyle={styles.fieldInput}
                   />
-                </View>
-              </TouchableOpacity>
-            </FormField>
+                </FormField>
 
-            <FormField label={t('transaction.repeat')} required>
-              <SelectField
-                value={repeatDisplay}
-                placeholder={t('common.monthly')}
-                options={repeatLabels}
-                onSelect={(label) => {
-                  const index = repeatLabels.indexOf(label);
-                  if (index >= 0) setRepeat(REPEAT_OPTIONS[index]);
-                }}
-                icon={fieldIcon(RepeatIcon)}
-                open={activePicker === 'repeat'}
-                onToggle={() => togglePicker('repeat')}
-              />
-            </FormField>
-          </>
-        ) : (
-          <>
-            <FormField label={t('transaction.amount')} required>
-              <Input
-                placeholder={t('common.amountPlaceholder')}
-                value={amount}
-                onChangeText={setAmount}
-                keyboardType="numeric"
-                icon={fieldIcon(MoneyBag01Icon)}
-                containerStyle={styles.fieldInput}
-              />
-            </FormField>
+                <FormField
+                  label={t('transaction.payday')}
+                  required
+                  helper={t('transaction.paydayHelper')}
+                >
+                  <TouchableOpacity
+                    activeOpacity={0.85}
+                    onPress={() => {
+                      setActivePicker(null);
+                      setShowDatePicker(true);
+                    }}
+                  >
+                    <View pointerEvents="none">
+                      <Input
+                        placeholder={t('common.datePlaceholder')}
+                        value={dateDisplay}
+                        editable={false}
+                        icon={fieldIcon(Calendar03Icon)}
+                        containerStyle={styles.fieldInput}
+                      />
+                    </View>
+                  </TouchableOpacity>
+                </FormField>
 
-              <CategoryGrid
-                selectedId={categoryId}
-                onSelect={setCategoryId}
-              />
-
-            <FormField label={t('transaction.date')} required>
-              <TouchableOpacity
-                activeOpacity={0.85}
-                onPress={() => {
-                  setActivePicker(null);
-                  setShowDatePicker(true);
-                }}
-              >
-                <View pointerEvents="none">
+                <FormField label={t('transaction.repeat')} required>
+                  <SelectField
+                    value={repeatDisplay}
+                    placeholder={t('common.monthly')}
+                    options={repeatLabels}
+                    onSelect={(label) => {
+                      const index = repeatLabels.indexOf(label);
+                      if (index >= 0) setRepeat(REPEAT_OPTIONS[index]);
+                    }}
+                    icon={fieldIcon(RepeatIcon)}
+                    open={activePicker === 'repeat'}
+                    onToggle={() => togglePicker('repeat')}
+                  />
+                </FormField>
+              </>
+            ) : (
+              <>
+                <FormField label={t('transaction.amount')} required>
                   <Input
-                    placeholder={t('common.datePlaceholder')}
-                    value={dateDisplay}
-                    editable={false}
-                    icon={fieldIcon(Calendar03Icon)}
+                    placeholder={t('common.amountPlaceholder')}
+                    value={amount}
+                    onChangeText={setAmount}
+                    keyboardType="numeric"
+                    icon={fieldIcon(MoneyBag01Icon)}
                     containerStyle={styles.fieldInput}
                   />
-                </View>
-              </TouchableOpacity>
-            </FormField>
+                </FormField>
 
-            <FormField label={t('transaction.note')}>
-              <Input
-                placeholder={t('common.optional')}
-                value={note}
-                onChangeText={setNote}
-                multiline
-                containerStyle={styles.fieldInput}
-              />
-            </FormField>
-          </>
-        )}
+                <CategoryGrid selectedId={categoryId} onSelect={setCategoryId} />
 
-        <View style={styles.buttonWrap}>
+                <FormField label={t('transaction.date')} required>
+                  <TouchableOpacity
+                    activeOpacity={0.85}
+                    onPress={() => {
+                      setActivePicker(null);
+                      setShowDatePicker(true);
+                    }}
+                  >
+                    <View pointerEvents="none">
+                      <Input
+                        placeholder={t('common.datePlaceholder')}
+                        value={dateDisplay}
+                        editable={false}
+                        icon={fieldIcon(Calendar03Icon)}
+                        containerStyle={styles.fieldInput}
+                      />
+                    </View>
+                  </TouchableOpacity>
+                </FormField>
+
+                <FormField label={t('transaction.note')}>
+                  <Input
+                    placeholder={t('common.optional')}
+                    value={note}
+                    onChangeText={setNote}
+                    multiline
+                    containerStyle={styles.fieldInput}
+                  />
+                </FormField>
+              </>
+            )}
+          </KeyboardAwareScrollView>
+        </View>
+
+        <View style={[styles.footer, { paddingBottom: insets.bottom + 36 }]}>
           <Button
             title={saveLabel}
             onPress={handleSubmit}
             disabled={!isFormComplete || isSaving}
           />
         </View>
-        </KeyboardAwareScrollView>
-      </View>
+      </KeyboardAvoidingView>
 
       <Modal
         visible={showDatePicker}
@@ -454,24 +455,29 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background,
-
+  },
+  keyboardAvoid: {
+    flex: 1,
   },
   scrollHost: {
     flex: 1,
+    minHeight: 0,
   },
   scroll: {
     flex: 1,
   },
   content: {
-    flexGrow: 1,
     paddingHorizontal: 20,
+    paddingBottom: 24,
     gap: 12,
   },
   fieldInput: {
     marginBottom: 4,
   },
-  buttonWrap: {
-    marginTop: 24,
+  footer: {
+    paddingHorizontal: 20,
+    paddingTop: 12,
+    backgroundColor: colors.background,
   },
   loadingWrap: {
     flex: 1,

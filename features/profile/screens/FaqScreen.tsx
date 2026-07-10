@@ -9,12 +9,16 @@ import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from 'react-native-safe-area-context';
 import FaqItem from '../components/FaqItem';
 import { FAQ_ITEMS } from '../data/faq-items';
 
 const FaqScreen = () => {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const { t } = useTranslation();
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
 
@@ -41,30 +45,38 @@ const FaqScreen = () => {
 
   return (
     <SafeAreaView style={styles.safe} edges={['top', 'left', 'right']}>
-      <ScrollView
-        style={styles.scroll}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-      >
-        <TransactionHeader
-          title={t('profile.faqTitle')}
-          onBack={() => router.back()}
-        />
+      <View style={styles.scrollHost}>
+        <ScrollView
+          style={styles.scroll}
+          contentContainerStyle={[
+            styles.scrollContent,
+            { paddingBottom: insets.bottom + 32 },
+          ]}
+          showsVerticalScrollIndicator
+          keyboardShouldPersistTaps="handled"
+          nestedScrollEnabled
+          bounces
+        >
+          <TransactionHeader
+            title={t('profile.faqTitle')}
+            onBack={() => router.back()}
+          />
 
-        <Text style={styles.subtitle}>{t('profile.faqSubtitle')}</Text>
+          <Text style={styles.subtitle}>{t('profile.faqSubtitle')}</Text>
 
-        <View style={styles.list}>
-          {FAQ_ITEMS.map((item, index) => (
-            <FaqItem
-              key={item.id}
-              item={item}
-              expanded={expandedIds.has(item.id)}
-              onToggle={() => toggleItem(item.id)}
-              showDivider={index < FAQ_ITEMS.length - 1}
-            />
-          ))}
-        </View>
-      </ScrollView>
+          <View style={styles.list}>
+            {FAQ_ITEMS.map((item, index) => (
+              <FaqItem
+                key={item.id}
+                item={item}
+                expanded={expandedIds.has(item.id)}
+                onToggle={() => toggleItem(item.id)}
+                showDivider={index < FAQ_ITEMS.length - 1}
+              />
+            ))}
+          </View>
+        </ScrollView>
+      </View>
     </SafeAreaView>
   );
 };
@@ -74,15 +86,17 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.white,
   },
+  scrollHost: {
+    flex: 1,
+    minHeight: 0,
+  },
   scroll: {
     flex: 1,
     backgroundColor: colors.white,
   },
   scrollContent: {
-    flexGrow: 1,
     backgroundColor: colors.white,
     paddingHorizontal: 10,
-    paddingBottom: 32,
   },
   subtitle: {
     fontFamily: 'Changa_400Regular',
@@ -95,8 +109,7 @@ const styles = StyleSheet.create({
   list: {
     backgroundColor: colors.white,
     borderRadius: 12,
-    overflow: 'hidden',
-    paddingBottom: 16,
+    paddingBottom: 8,
   },
 });
 

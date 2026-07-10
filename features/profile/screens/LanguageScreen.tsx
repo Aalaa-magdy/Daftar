@@ -11,7 +11,7 @@ import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import LanguageNoteCard from '@/features/profile/components/LanguageNoteCard';
 import LanguageOptionRow from '@/features/profile/components/LanguageOptionRow';
 import { LANGUAGE_OPTIONS, type LanguageId } from '@/features/profile/data/languages';
@@ -19,6 +19,7 @@ import i18n from '@/lib/i18n';
 
 const LanguageScreen = () => {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const { t } = useTranslation();
   const [selectedLanguage, setSelectedLanguage] = useState<LanguageId>(
     i18n.language === 'ar' ? 'ar' : 'en',
@@ -69,7 +70,7 @@ const LanguageScreen = () => {
         </View>
       </ScrollView>
 
-      <View style={styles.footer}>
+      <View style={[styles.footer, { paddingBottom: insets.bottom + 44 }]}>
         <Button title={t('common.saveChanges')} onPress={handleSave} />
       </View>
     </SafeAreaView>
@@ -101,7 +102,6 @@ const styles = StyleSheet.create({
   footer: {
     paddingHorizontal: 10,
     paddingTop: 12,
-    paddingBottom: 16,
     backgroundColor: colors.white,
   },
 });

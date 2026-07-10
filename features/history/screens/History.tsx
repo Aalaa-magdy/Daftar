@@ -169,20 +169,22 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingBottom: 96,
+    alignItems: 'center',
   },
   group: {
-    width: '100%',
-    paddingHorizontal: 10,
+    width: '94%',
+    alignSelf: 'center',
   },
   dateHeader: {
     marginTop: 6,
     marginBottom: 8,
+    alignSelf: 'flex-start',
   },
   dateHeaderSpaced: {
     marginTop: 12,
   },
   transactionCard: {
-    width: '95%',
+    width: '100%',
     paddingHorizontal: 0,
   },
   stateWrap: {

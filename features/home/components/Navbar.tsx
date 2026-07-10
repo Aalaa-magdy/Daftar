@@ -1,4 +1,5 @@
 import { useAppDirection } from '@/hooks/useAppDirection';
+import { useResponsiveLayout } from '@/hooks/useResponsiveLayout';
 import { colors } from '@/theme/colors';
 import {
   Changa_400Regular,
@@ -44,11 +45,8 @@ const TABS: TabConfig[] = [
   { id: 'profile', labelKey: 'nav.profile', icon: User03Icon },
 ];
 
-const ICON_SIZE = 24;
 const ICON_STROKE_INACTIVE = 1.5;
 const ICON_STROKE_ACTIVE = 2.5;
-const FAB_SIZE = 50;
-const CENTER_SLOT_WIDTH = 56;
 
 const Navbar = ({
   activeTab = 'history',
@@ -57,6 +55,7 @@ const Navbar = ({
 }: Props) => {
   const { t } = useTranslation();
   const { isRTL } = useAppDirection();
+  const { navbar } = useResponsiveLayout();
   const insets = useSafeAreaInsets();
   const [selectedTab, setSelectedTab] = useState<NavTab>(activeTab);
   const [fontsLoaded] = useFonts({
@@ -83,20 +82,27 @@ const Navbar = ({
     return (
       <TouchableOpacity
         key={tab.id}
-        style={styles.item}
+        style={[styles.item, { minWidth: navbar.itemMinWidth }]}
         activeOpacity={0.7}
         onPress={() => handleTabPress(tab.id)}
       >
-        <View style={styles.iconWrap}>
+        <View style={[styles.iconWrap, { width: navbar.iconSize, height: navbar.iconSize }]}>
           <HugeiconsIcon
             icon={tab.icon}
-            size={ICON_SIZE}
+            size={navbar.iconSize}
             color={isActive ? colors.primary : colors.textSecondary}
             strokeWidth={isActive ? ICON_STROKE_ACTIVE : ICON_STROKE_INACTIVE}
           />
         </View>
         <Text
-          style={[styles.label, isActive && styles.labelActive]}
+          style={[
+            styles.label,
+            {
+              fontSize: navbar.labelFontSize,
+              lineHeight: navbar.labelLineHeight,
+            },
+            isActive && styles.labelActive,
+          ]}
           numberOfLines={1}
         >
           {t(tab.labelKey)}
@@ -115,30 +121,57 @@ const Navbar = ({
         { paddingBottom: Math.max(insets.bottom, 4), direction: 'ltr' },
       ]}
     >
-      <View style={styles.fabNotch} pointerEvents="none" />
+      <View
+        style={[
+          styles.fabNotch,
+          {
+            top: navbar.fabNotchTop,
+            width: navbar.fabNotchWidth,
+            height: navbar.fabNotchHeight,
+          },
+        ]}
+        pointerEvents="none"
+      />
 
-      <View style={styles.bar}>
+      <View
+        style={[
+          styles.bar,
+          {
+            height: navbar.barHeight,
+            paddingTop: navbar.barPaddingTop,
+          },
+        ]}
+      >
         <View style={styles.sideGroup}>
           {leftTabs.map((tab) => renderTab(tab))}
         </View>
-        <View style={styles.centerSlot} />
+        <View style={[styles.centerSlot, { width: navbar.centerSlotWidth }]} />
         <View style={styles.sideGroup}>
           {rightTabs.map((tab) => renderTab(tab))}
         </View>
       </View>
 
       <Pressable
-        style={({ pressed }) => [styles.fab, pressed && styles.fabPressed]}
+        style={({ pressed }) => [
+          styles.fab,
+          {
+            top: navbar.fabTopOffset,
+            width: navbar.fabSize,
+            height: navbar.fabSize,
+            borderRadius: navbar.fabSize / 2,
+          },
+          pressed && styles.fabPressed,
+        ]}
         onPress={onAddPress}
         accessibilityRole="button"
         accessibilityLabel={t('nav.addTransaction')}
         android_ripple={{
           color: 'rgba(255,255,255,0.25)',
           borderless: true,
-          radius: 28,
+          radius: navbar.fabSize / 2,
         }}
       >
-        <HugeiconsIcon icon={Add01Icon} size={28} color={colors.white} />
+        <HugeiconsIcon icon={Add01Icon} size={navbar.fabIconSize} color={colors.white} />
       </Pressable>
     </View>
   );
@@ -166,10 +199,7 @@ const styles = StyleSheet.create({
   },
   fabNotch: {
     position: 'absolute',
-    top: -14,
     alignSelf: 'center',
-    width: FAB_SIZE,
-    height: 28,
     backgroundColor: colors.background,
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
@@ -179,9 +209,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'flex-end',
     width: '100%',
-    height: 52,
     paddingHorizontal: 10,
-    paddingTop: 4,
     zIndex: 0,
   },
   sideGroup: {
@@ -192,24 +220,18 @@ const styles = StyleSheet.create({
     paddingBottom: 2,
   },
   centerSlot: {
-    width: CENTER_SLOT_WIDTH,
     flexShrink: 0,
   },
   item: {
-    minWidth: 56,
     alignItems: 'center',
     justifyContent: 'center',
     gap: 2,
   },
   iconWrap: {
-    width: ICON_SIZE,
-    height: ICON_SIZE,
     alignItems: 'center',
     justifyContent: 'center',
   },
   label: {
-    fontSize: 14,
-    lineHeight: 16,
     fontFamily: 'Changa_400Regular',
     color: colors.textSecondary,
     textAlign: 'center',
@@ -220,11 +242,7 @@ const styles = StyleSheet.create({
   },
   fab: {
     position: 'absolute',
-    top: -22,
     alignSelf: 'center',
-    width: FAB_SIZE,
-    height: FAB_SIZE,
-    borderRadius: 28,
     backgroundColor: colors.primary,
     alignItems: 'center',
     justifyContent: 'center',

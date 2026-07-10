@@ -5,6 +5,7 @@ import {
   getExpenseProgress,
 } from '@/features/transactions/lib/format-balance-amount';
 import { useBalanceSummary } from '@/features/transactions/hooks';
+import { useResponsiveLayout } from '@/hooks/useResponsiveLayout';
 import { colors } from '@/theme/colors';
 import { StyleSheet, Text, TouchableOpacity, View, ActivityIndicator } from 'react-native';
 import ViewIcon from '@hugeicons/core-free-icons/ViewIcon';
@@ -24,6 +25,7 @@ const MASK = '******';
 
 const HomeInfo = () => {
   const { t } = useTranslation();
+  const { homeInfo } = useResponsiveLayout();
   const [amountsVisible, setAmountsVisible] = useState(true);
   const { data, isLoading } = useBalanceSummary();
   const [fontsLoaded] = useFonts({
@@ -61,7 +63,15 @@ const HomeInfo = () => {
   const progress = getExpenseProgress(summary.totalExpense, summary.totalIncome);
 
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        {
+          height: homeInfo.height,
+          padding: homeInfo.padding,
+        },
+      ]}
+    >
       <View style={styles.firstRow}>
         <Text style={styles.currentBalance}>{t('home.totalBalance')}</Text>
         <TouchableOpacity
@@ -79,17 +89,35 @@ const HomeInfo = () => {
           />
         </TouchableOpacity>
       </View>
-      <View style={styles.secondRow}>
+      <View style={[styles.secondRow, { minHeight: homeInfo.secondRowMinHeight }]}>
         {isLoading ? (
           <ActivityIndicator color={colors.white} style={styles.loader} />
         ) : (
           <View style={styles.balanceRow}>
-            <Text style={styles.balance}>{balanceDisplay}</Text>
+            <Text
+              style={[
+                styles.balance,
+                {
+                  fontSize: homeInfo.balanceFontSize,
+                  lineHeight: homeInfo.balanceLineHeight,
+                },
+              ]}
+            >
+              {balanceDisplay}
+            </Text>
             <Text style={styles.currency}>{egp}</Text>
           </View>
         )}
       </View>
-      <View style={styles.thirdRow}>
+      <View
+        style={[
+          styles.thirdRow,
+          {
+            gap: homeInfo.thirdRowGap,
+            marginBottom: homeInfo.thirdRowMarginBottom,
+          },
+        ]}
+      >
         <View style={styles.item}>
           <View style={styles.icon}>
             <HugeiconsIcon
@@ -137,10 +165,9 @@ const HomeInfo = () => {
 const styles = StyleSheet.create({
   container: {
     width: '93%',
-    height: 230,
-    padding: 20,
     borderRadius: 12,
     backgroundColor: colors.primary,
+    justifyContent: 'space-between',
   },
   currentBalance: {
     color: colors.white,
@@ -154,7 +181,6 @@ const styles = StyleSheet.create({
   },
   secondRow: {
     marginBottom: 20,
-    minHeight: 52,
   },
   balanceRow: {
     flexDirection: 'row',
@@ -167,9 +193,7 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
   },
   balance: {
-    fontSize: 36,
     fontFamily: 'Changa_500Medium',
-    lineHeight: 52,
     color: colors.white,
   },
   currency: {
@@ -192,8 +216,6 @@ const styles = StyleSheet.create({
   },
   thirdRow: {
     flexDirection: 'row',
-    gap: 20,
-    marginBottom: 22,
   },
   item: {
     flexDirection: 'row',

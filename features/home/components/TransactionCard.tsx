@@ -175,8 +175,7 @@ const TransactionCard = ({
 
 const styles = StyleSheet.create({
   container: {
-    width: '94%',
-    paddingHorizontal: 10,
+    width: '100%',
     paddingVertical: 5,
     gap: 12,
   },

@@ -185,7 +185,7 @@ const styles = StyleSheet.create({
   },
   transactionCard: {
     width: '100%',
-    paddingHorizontal: 0,
+    alignSelf: 'center',
   },
   stateWrap: {
     paddingVertical: 32,

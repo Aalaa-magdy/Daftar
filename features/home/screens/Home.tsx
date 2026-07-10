@@ -215,7 +215,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginTop: 10,
-    paddingHorizontal: 12,
   },
   introText: {
     fontFamily: 'Changa_500Medium',
@@ -228,11 +227,10 @@ const styles = StyleSheet.create({
   group: {
     width: '94%',
     alignSelf: 'center',
-    paddingHorizontal: 10,
   },
   transactionCard: {
     width: '100%',
-    paddingHorizontal: 0,
+    alignSelf: 'center',
   },
   dateHeaderSpaced: {
     marginTop: 8,

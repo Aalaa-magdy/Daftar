@@ -177,6 +177,15 @@
     "yearlyTrend": "Yearly Trend",
     "chartAmount": "Spent: {{amount}} {{currency}}",
     "weekLabel": "Week #{{number}}",
+    "weekdays": {
+      "sat": "Sat",
+      "sun": "Sun",
+      "mon": "Mon",
+      "tue": "Tue",
+      "wed": "Wed",
+      "thu": "Thu",
+      "fri": "Fri"
+    },
     "gaming": "Gaming",
     "noCategoryData": "No spending by category for this period.",
     "months": {

@@ -5,31 +5,20 @@ function getLocale(language: string) {
   return language === 'ar' ? 'ar-EG' : 'en-US';
 }
 
+export function formatWeekDayLabel(date: Date, language: string): string {
+  const locale = language === 'ar' ? 'ar-EG' : 'en-US';
+  return date.toLocaleDateString(locale, {
+    month: 'long',
+    day: 'numeric',
+  });
+}
+
 export function formatWeekLabel(
   anchor: Date,
   language: string,
 ): string {
-  const locale = getLocale(language);
   const { from, to } = getWeekRange(anchor);
-
-  if (
-    from.getMonth() === to.getMonth() &&
-    from.getFullYear() === to.getFullYear()
-  ) {
-    const month = from.toLocaleDateString(locale, { month: 'long' });
-    return `${month} ${from.getDate()} – ${to.getDate()}`;
-  }
-
-  const start = from.toLocaleDateString(locale, {
-    month: 'long',
-    day: 'numeric',
-  });
-  const end = to.toLocaleDateString(locale, {
-    month: 'long',
-    day: 'numeric',
-  });
-
-  return `${start} – ${end}`;
+  return `${formatWeekDayLabel(from, language)} – ${formatWeekDayLabel(to, language)}`;
 }
 
 export function formatMonthLabel(anchor: Date, language: string): string {

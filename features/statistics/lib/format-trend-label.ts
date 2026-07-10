@@ -1,6 +1,16 @@
 import type { TFunction } from 'i18next';
 import type { TrendPoint } from '../types/statistics.types';
 
+const WEEKDAY_LABEL_KEYS = new Set([
+  'statistics.weekdays.sat',
+  'statistics.weekdays.sun',
+  'statistics.weekdays.mon',
+  'statistics.weekdays.tue',
+  'statistics.weekdays.wed',
+  'statistics.weekdays.thu',
+  'statistics.weekdays.fri',
+]);
+
 const MONTH_LABEL_KEYS = new Set([
   'statistics.months.jan',
   'statistics.months.feb',
@@ -19,6 +29,10 @@ const MONTH_LABEL_KEYS = new Set([
 export function formatTrendLabel(point: TrendPoint, t: TFunction): string {
   if (point.label) {
     return point.label;
+  }
+
+  if (point.labelKey && WEEKDAY_LABEL_KEYS.has(point.labelKey)) {
+    return t(point.labelKey);
   }
 
   if (point.labelKey && MONTH_LABEL_KEYS.has(point.labelKey)) {

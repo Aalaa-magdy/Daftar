@@ -18,6 +18,10 @@ interface Props {
 
 const CHART_HEIGHT = 200;
 const X_LABEL_HEIGHT = 32;
+const WEEKLY_BAR_WIDTH = 30;
+const WEEKLY_COLUMN_GAP = 14;
+const WEEKLY_PAST_BAR_HEIGHT = 58;
+const WEEKLY_ACTIVE_MIN_BAR_HEIGHT = 72;
 
 type ColumnLayout = {
   x: number;
@@ -102,11 +106,30 @@ const TrendBarChart = ({
     setActiveTooltipIndex((current) => (current === index ? null : index));
   };
 
-  const getBarHeight = (value: number) =>
-    Math.min(
+  const getBarHeight = (value: number, variant?: TrendPoint['variant']) => {
+    if (isWeeklyChart) {
+      if (value > 0) {
+        return Math.min(
+          CHART_HEIGHT,
+          Math.max(
+            variant === 'active'
+              ? WEEKLY_ACTIVE_MIN_BAR_HEIGHT
+              : WEEKLY_PAST_BAR_HEIGHT,
+            (value / maxValue) * CHART_HEIGHT,
+          ),
+        );
+      }
+
+      return variant === 'active'
+        ? WEEKLY_ACTIVE_MIN_BAR_HEIGHT
+        : WEEKLY_PAST_BAR_HEIGHT;
+    }
+
+    return Math.min(
       CHART_HEIGHT,
       Math.max(6, (value / maxValue) * CHART_HEIGHT),
     );
+  };
 
   const getScaleBottom = (value: number) =>
     (value / maxValue) * CHART_HEIGHT;
@@ -186,13 +209,14 @@ const TrendBarChart = ({
 
   const xLabelColumnStyle = [
     styles.xLabelColumn,
-    isWeeklyChart && styles.barColumnWeekly,
+    isWeeklyChart && styles.xLabelColumnWeekly,
     isYearlyChart && styles.barColumnYearly,
     isMonthlyChart && styles.barColumnMonthly,
   ];
 
   const labelStyle = [
     styles.xLabel,
+    isWeeklyChart && styles.xLabelWeekly,
     isMonthlyChart && styles.xLabelMonthly,
     isRTL && styles.xLabelRtl,
   ];
@@ -212,9 +236,9 @@ const TrendBarChart = ({
   ];
 
   const renderBar = (point: TrendPoint, index: number) => {
-    const columnKey = `${point.label ?? 'point'}-${index}`;
+    const columnKey = `${point.label ?? point.labelKey ?? 'point'}-${index}`;
 
-    if (point.variant === 'placeholder') {
+    if (point.variant === 'placeholder' && !isWeeklyChart) {
       return (
         <Pressable
           key={columnKey}
@@ -236,7 +260,7 @@ const TrendBarChart = ({
       );
     }
 
-    const barHeight = getBarHeight(point.value);
+    const barHeight = getBarHeight(point.value, point.variant);
     const barColor =
       point.variant === 'active' ? colors.primary : colors.light;
 
@@ -272,13 +296,13 @@ const TrendBarChart = ({
 
   const renderXLabel = (point: TrendPoint, index: number) => (
     <View
-      key={`label-${point.label ?? 'point'}-${index}`}
+      key={`label-${point.label ?? point.labelKey ?? 'point'}-${index}`}
       style={xLabelColumnStyle}
     >
       <Text
         style={labelStyle}
         numberOfLines={1}
-        adjustsFontSizeToFit
+        adjustsFontSizeToFit={!isWeeklyChart}
         minimumFontScale={0.75}
       >
         {point.label}
@@ -407,8 +431,8 @@ const styles = StyleSheet.create({
     paddingTop: 8,
   },
   barsRowWeekly: {
-    justifyContent: 'flex-start',
-    gap: 18,
+    justifyContent: 'center',
+    gap: WEEKLY_COLUMN_GAP,
   },
   barsRowYearly: {
     justifyContent: 'flex-start',
@@ -431,7 +455,13 @@ const styles = StyleSheet.create({
   },
   barColumnWeekly: {
     flex: 0,
-    width: 36,
+    width: WEEKLY_BAR_WIDTH,
+    alignItems: 'center',
+  },
+  xLabelColumnWeekly: {
+    flex: 0,
+    width: WEEKLY_BAR_WIDTH,
+    alignItems: 'center',
   },
   barColumnYearly: {
     flex: 0,
@@ -499,8 +529,12 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 10,
   },
   barWeekly: {
-    width: 28,
-    minWidth: 28,
+    width: WEEKLY_BAR_WIDTH,
+    minWidth: WEEKLY_BAR_WIDTH,
+    borderTopLeftRadius: 8,
+    borderTopRightRadius: 8,
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0,
   },
   barYearly: {
     width: 36,
@@ -527,6 +561,13 @@ const styles = StyleSheet.create({
     lineHeight: 16,
     color: colors.textSecondary,
     textAlign: 'center',
+  },
+  xLabelWeekly: {
+    width: WEEKLY_BAR_WIDTH,
+    fontSize: 12,
+    lineHeight: 16,
+    minHeight: 16,
+    color: colors.textSecondary,
   },
   xLabelMonthly: {
     fontSize: 10,

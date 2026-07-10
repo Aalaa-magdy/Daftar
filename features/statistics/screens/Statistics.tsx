@@ -64,13 +64,16 @@ const Statistics = () => {
       <View style={screenLayout.header}>
         <Text style={screenLayout.title}>{t('statistics.title')}</Text>
       </View>
+
+      <View style={styles.toggleWrap}>
+        <PeriodToggle value={period} onChange={handlePeriodChange} />
+      </View>
+
       <ScrollView
         style={styles.scroll}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        <PeriodToggle value={period} onChange={handlePeriodChange} />
-
         <DateNavigator
           label={stats.dateLabel}
           onPrevious={() =>
@@ -118,6 +121,12 @@ const styles = StyleSheet.create({
   safe: {
     flex: 1,
     backgroundColor: colors.backgroundColor,
+  },
+  toggleWrap: {
+    width: '100%',
+    paddingHorizontal: 20,
+    marginTop: 12,
+    marginBottom: 8,
   },
   scroll: {
     flex: 1,

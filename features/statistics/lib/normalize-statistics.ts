@@ -124,7 +124,7 @@ function normalizeTrendPoint(value: unknown): ApiStatisticsTrendPoint | null {
   const record = value as Record<string, unknown>;
 
   return {
-    label: readOptionalString(record, ['label']),
+    label: readOptionalString(record, ['label', 'date']),
     spent: Number(record.spent ?? record.value ?? record.amount ?? 0),
     income:
       record.income != null ? Number(record.income) : undefined,

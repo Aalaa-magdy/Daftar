@@ -177,6 +177,15 @@
     "yearlyTrend": "الاتجاه السنوي",
     "chartAmount": "المصروف: {{amount}} {{currency}}",
     "weekLabel": "الأسبوع {{number}}",
+    "weekdays": {
+      "sat": "سبت",
+      "sun": "أحد",
+      "mon": "إثن",
+      "tue": "ثلث",
+      "wed": "أرب",
+      "thu": "خمي",
+      "fri": "جمعة"
+    },
     "gaming": "ألعاب",
     "noCategoryData": "لا توجد مصروفات حسب الفئة لهذه الفترة.",
     "months": {

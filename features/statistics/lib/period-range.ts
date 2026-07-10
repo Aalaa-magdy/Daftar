@@ -18,8 +18,9 @@ function endOfDay(date: Date) {
 
 export function getWeekRange(anchor: Date): { from: Date; to: Date } {
   const day = startOfDay(anchor);
+  const daysSinceSaturday = (day.getDay() + 1) % 7;
   const from = new Date(day);
-  from.setDate(day.getDate() - day.getDay());
+  from.setDate(day.getDate() - daysSinceSaturday);
   const to = new Date(from);
   to.setDate(from.getDate() + 6);
   return { from: startOfDay(from), to: endOfDay(to) };

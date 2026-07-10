@@ -12,7 +12,6 @@ export function buildStatisticsQueryParams(
 
     return {
       timeFrame: 'week',
-      month: anchor.getMonth() + 1,
       startDate: formatApiDate(from),
       endDate: formatApiDate(to),
     };

@@ -9,12 +9,11 @@ import type {
   TrendVariant,
 } from '../types/statistics.types';
 import { formatPeriodLabel } from './format-period-label';
-import { getPeriodRange } from './period-range';
 import {
   getTrendPoints,
   getTrendSelectedIndex,
 } from './trend-utils';
-import type { ApiStatisticsTrendPoint } from '../types/statistics-response.types';
+import { mapWeeklyDailyTrendPoints } from './weekly-trend';
 
 function computeTrendMax(values: number[]) {
   const max = Math.max(...values, 0);
@@ -34,67 +33,12 @@ function computeTrendMax(values: number[]) {
   return Math.max(rounded, max);
 }
 
-function resolveWeeklySelectedIndex(
-  data: StatisticsData,
-  anchorDate: Date,
-  trendPoints: ApiStatisticsTrendPoint[],
-): number {
-  const apiIndex = getTrendSelectedIndex(data.trend);
-  const maxIndex = Math.max(trendPoints.length - 1, 0);
-  const clamp = (index: number) =>
-    Math.min(Math.max(index, 0), maxIndex);
-
-  if (apiIndex != null) {
-    const apiSpent = trendPoints[apiIndex]?.spent ?? 0;
-    if (apiSpent === data.totalSpent || data.totalSpent === 0) {
-      return clamp(apiIndex);
-    }
-  }
-
-  if (data.totalSpent > 0) {
-    const matchIndex = trendPoints.findIndex(
-      (point) => point.spent === data.totalSpent,
-    );
-    if (matchIndex >= 0) {
-      return clamp(matchIndex);
-    }
-  }
-
-  if (apiIndex != null) {
-    return clamp(apiIndex);
-  }
-
-  const { to } = getPeriodRange(anchorDate, 'week');
-  return clamp(Math.floor((to.getDate() - 1) / 7));
-}
-
-function resolveWeeklyTrendValue(
-  index: number,
-  selectedIndex: number,
-  point: ApiStatisticsTrendPoint,
-  totalSpent: number,
-): number {
-  if (index === selectedIndex) {
-    return totalSpent > 0 ? totalSpent : point.spent;
-  }
-
-  if (totalSpent > 0 && point.spent === totalSpent) {
-    return 0;
-  }
-
-  return point.spent;
-}
-
 function resolveSelectedIndex(
   data: StatisticsData,
   period: StatisticsPeriod,
   anchorDate: Date,
   trendPoints: ReturnType<typeof getTrendPoints>,
 ): number {
-  if (period === 'week') {
-    return resolveWeeklySelectedIndex(data, anchorDate, trendPoints);
-  }
-
   const selectedIndex = getTrendSelectedIndex(data.trend);
   if (selectedIndex != null) {
     return selectedIndex;
@@ -122,11 +66,6 @@ function resolveTrendVariant(
 ): TrendVariant {
   if (index === selectedIndex) return 'active';
 
-  // Weekly trend compares all weeks in the month; show bars whenever data exists.
-  if (period === 'week') {
-    return spent > 0 ? 'past' : 'placeholder';
-  }
-
   if (index > selectedIndex) return 'placeholder';
   return spent > 0 ? 'past' : 'placeholder';
 }
@@ -135,8 +74,14 @@ function mapTrendPoints(
   data: StatisticsData,
   period: StatisticsPeriod,
   anchorDate: Date,
+  language: string,
 ): TrendPoint[] {
   const trendPoints = getTrendPoints(data.trend);
+
+  if (period === 'week') {
+    return mapWeeklyDailyTrendPoints(trendPoints, anchorDate, language);
+  }
+
   const selectedIndex = resolveSelectedIndex(
     data,
     period,
@@ -144,36 +89,19 @@ function mapTrendPoints(
     trendPoints,
   );
 
-  return trendPoints.map((point, index) => {
-    const isSelectedWeek =
-      period === 'week' &&
-      index === selectedIndex &&
-      Boolean(data.periodLabel);
-
-    const value =
-      period === 'week'
-        ? resolveWeeklyTrendValue(
-            index,
-            selectedIndex,
-            point,
-            data.totalSpent,
-          )
-        : point.spent;
-
-    return {
-      label: point.label,
-      tooltipTitle: isSelectedWeek ? data.periodLabel : point.label,
-      value,
-      spent: point.spent,
-      income: point.income,
-      variant: resolveTrendVariant(
-        index,
-        selectedIndex,
-        value,
-        period,
-      ),
-    };
-  });
+  return trendPoints.map((point, index) => ({
+    label: point.label,
+    tooltipTitle: point.label,
+    value: point.spent,
+    spent: point.spent,
+    income: point.income,
+    variant: resolveTrendVariant(
+      index,
+      selectedIndex,
+      point.spent,
+      period,
+    ),
+  }));
 }
 
 function resolveCategoryMeta(
@@ -235,8 +163,10 @@ export function mapStatisticsToPeriodStatistics({
   language: string;
 }): PeriodStatistics {
   const dateLabel =
-    data.periodLabel ?? formatPeriodLabel(anchorDate, period, language);
-  const trend = mapTrendPoints(data, period, anchorDate);
+    period === 'week'
+      ? formatPeriodLabel(anchorDate, period, language)
+      : data.periodLabel ?? formatPeriodLabel(anchorDate, period, language);
+  const trend = mapTrendPoints(data, period, anchorDate, language);
   const trendValues = trend.map((point) => point.value);
 
   return {

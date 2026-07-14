@@ -122,12 +122,14 @@ function normalizeTrendPoint(value: unknown): ApiStatisticsTrendPoint | null {
   if (!value || typeof value !== 'object') return null;
 
   const record = value as Record<string, unknown>;
+  const date = readOptionalString(record, ['date']);
+  const label = readOptionalString(record, ['label']);
 
   return {
-    label: readOptionalString(record, ['label', 'date']),
+    label,
+    date,
     spent: Number(record.spent ?? record.value ?? record.amount ?? 0),
-    income:
-      record.income != null ? Number(record.income) : undefined,
+    income: record.income != null ? Number(record.income) : 0,
   };
 }
 

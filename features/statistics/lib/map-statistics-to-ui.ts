@@ -79,7 +79,12 @@ function mapTrendPoints(
   const trendPoints = getTrendPoints(data.trend);
 
   if (period === 'week') {
-    return mapWeeklyDailyTrendPoints(trendPoints, anchorDate, language);
+    return mapWeeklyDailyTrendPoints(
+      trendPoints,
+      anchorDate,
+      language,
+      getTrendSelectedIndex(data.trend),
+    );
   }
 
   const selectedIndex = resolveSelectedIndex(

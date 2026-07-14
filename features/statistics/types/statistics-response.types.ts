@@ -11,7 +11,10 @@ export type ApiStatisticsCategory = {
 };
 
 export type ApiStatisticsTrendPoint = {
+  /** Day name from API (e.g. "Tue") — display is handled client-side. */
   label?: string;
+  /** ISO date for weekly columns (e.g. "2026-06-02"). */
+  date?: string;
   spent: number;
   income?: number;
 };

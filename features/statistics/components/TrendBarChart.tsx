@@ -18,8 +18,8 @@ interface Props {
 
 const CHART_HEIGHT = 200;
 const X_LABEL_HEIGHT = 32;
-const WEEKLY_BAR_WIDTH = 30;
-const WEEKLY_COLUMN_GAP = 14;
+const WEEKLY_COLUMN_GAP = 4;
+const WEEKLY_BAR_MAX_WIDTH = 22;
 const WEEKLY_PAST_BAR_HEIGHT = 58;
 const WEEKLY_ACTIVE_MIN_BAR_HEIGHT = 72;
 
@@ -395,11 +395,12 @@ const styles = StyleSheet.create({
   },
   plotAreaFlex: {
     flex: 1,
-    overflow: 'visible',
+    minWidth: 0,
+    overflow: 'hidden',
   },
   plotArea: {
     height: CHART_HEIGHT + X_LABEL_HEIGHT,
-    overflow: 'visible',
+    overflow: 'hidden',
   },
   chartLayer: {
     height: CHART_HEIGHT,
@@ -431,8 +432,9 @@ const styles = StyleSheet.create({
     paddingTop: 8,
   },
   barsRowWeekly: {
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     gap: WEEKLY_COLUMN_GAP,
+    overflow: 'hidden',
   },
   barsRowYearly: {
     justifyContent: 'flex-start',
@@ -454,13 +456,15 @@ const styles = StyleSheet.create({
     minWidth: 0,
   },
   barColumnWeekly: {
-    flex: 0,
-    width: WEEKLY_BAR_WIDTH,
+    flex: 1,
+    minWidth: 0,
+    maxWidth: 36,
     alignItems: 'center',
   },
   xLabelColumnWeekly: {
-    flex: 0,
-    width: WEEKLY_BAR_WIDTH,
+    flex: 1,
+    minWidth: 0,
+    maxWidth: 36,
     alignItems: 'center',
   },
   barColumnYearly: {
@@ -529,8 +533,9 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 10,
   },
   barWeekly: {
-    width: WEEKLY_BAR_WIDTH,
-    minWidth: WEEKLY_BAR_WIDTH,
+    width: '78%',
+    maxWidth: WEEKLY_BAR_MAX_WIDTH,
+    minWidth: 10,
     borderTopLeftRadius: 8,
     borderTopRightRadius: 8,
     borderBottomLeftRadius: 0,
@@ -563,10 +568,10 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   xLabelWeekly: {
-    width: WEEKLY_BAR_WIDTH,
-    fontSize: 12,
-    lineHeight: 16,
-    minHeight: 16,
+    width: '100%',
+    fontSize: 10,
+    lineHeight: 14,
+    minHeight: 14,
     color: colors.textSecondary,
   },
   xLabelMonthly: {

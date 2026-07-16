@@ -23,12 +23,6 @@ const WEEKLY_BAR_MAX_WIDTH = 22;
 const WEEKLY_PAST_BAR_HEIGHT = 58;
 const WEEKLY_ACTIVE_MIN_BAR_HEIGHT = 72;
 
-type ColumnLayout = {
-  x: number;
-  topY: number;
-  width: number;
-};
-
 function buildTicks(maxValue: number): number[] {
   const step =
     maxValue <= 8000
@@ -60,6 +54,33 @@ function getYAxisLabelBottom(value: number, maxValue: number): number {
   const chartOffset = X_LABEL_HEIGHT;
   const scaled = (value / maxValue) * CHART_HEIGHT;
   return chartOffset + scaled - 7;
+}
+
+type ColumnLayout = {
+  x: number;
+  topY: number;
+  width: number;
+};
+
+/** Near the left edge the tooltip must grow rightward; near the right edge, leftward. */
+const EDGE_COLUMN_COUNT = 3;
+const TOOLTIP_VERTICAL_GAP = 6;
+/** Rough max height of the tooltip card (title + spent + income lines + padding). */
+const TOOLTIP_HEIGHT_ESTIMATE = 74;
+
+function getTooltipAnchor(
+  index: number,
+  columnCount: number,
+): 'start' | 'center' | 'end' {
+  if (index < EDGE_COLUMN_COUNT) {
+    return 'start';
+  }
+
+  if (index >= columnCount - EDGE_COLUMN_COUNT) {
+    return 'end';
+  }
+
+  return 'center';
 }
 
 const TrendBarChart = ({
@@ -183,16 +204,31 @@ const TrendBarChart = ({
       return null;
     }
 
+    const anchor = getTooltipAnchor(activeTooltipIndex, data.length);
+    const anchorStyle =
+      anchor === 'start'
+        ? styles.tooltipAnchorStart
+        : anchor === 'end'
+          ? styles.tooltipAnchorEnd
+          : styles.tooltipAnchorCenter;
+
+    const hasRoomAbove =
+      layout.topY >= TOOLTIP_HEIGHT_ESTIMATE + TOOLTIP_VERTICAL_GAP;
+    const verticalStyle = hasRoomAbove
+      ? { bottom: CHART_HEIGHT - layout.topY + TOOLTIP_VERTICAL_GAP }
+      : { top: layout.topY + TOOLTIP_VERTICAL_GAP };
+
     return (
       <View
         pointerEvents="none"
         style={[
           styles.tooltipOverlay,
+          anchorStyle,
           {
             left: layout.x,
             width: layout.width,
-            bottom: CHART_HEIGHT - layout.topY + 6,
           },
+          verticalStyle,
         ]}
       >
         <View style={styles.tooltip}>{renderTooltipContent(point)}</View>
@@ -486,43 +522,51 @@ const styles = StyleSheet.create({
   },
   tooltipOverlay: {
     position: 'absolute',
-    alignItems: 'center',
     zIndex: 1000,
     elevation: 1000,
   },
+  tooltipAnchorStart: {
+    alignItems: 'flex-start',
+  },
+  tooltipAnchorCenter: {
+    alignItems: 'center',
+  },
+  tooltipAnchorEnd: {
+    alignItems: 'flex-end',
+  },
   tooltip: {
-    minWidth: 150,
-    maxWidth: 220,
+    minWidth: 130,
+    maxWidth: 190,
     backgroundColor: colors.white,
     borderRadius: 8,
-    paddingHorizontal: 14,
-    paddingVertical: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 12,
     elevation: 1000,
     alignItems: 'flex-start',
-    gap: 4,
+    gap: 3,
   },
   tooltipTitle: {
     fontFamily: 'Changa_500Medium',
-    fontSize: 14,
-    lineHeight: 18,
+    fontSize: 12,
+    lineHeight: 16,
     color: colors.black,
     textAlign: 'left',
   },
   tooltipSpent: {
     fontFamily: 'Changa_400Regular',
-    fontSize: 12,
-    lineHeight: 16,
+    fontSize: 11,
+    lineHeight: 14,
     color: colors.red,
     textAlign: 'left',
   },
   tooltipIncome: {
     fontFamily: 'Changa_400Regular',
-    fontSize: 12,
-    lineHeight: 16,
+    fontSize: 11,
+    lineHeight: 14,
     color: colors.green,
     textAlign: 'left',
   },

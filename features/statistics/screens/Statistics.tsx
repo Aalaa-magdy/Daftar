@@ -1,18 +1,19 @@
+import { useRequireAuth } from '@/features/auth/hooks';
 import { colors } from '@/theme/colors';
+import { screenLayout } from '@/theme/screen-layout';
 import {
-  Changa_400Regular,
-  Changa_500Medium,
-  useFonts,
+    Changa_400Regular,
+    Changa_500Medium,
+    useFonts,
 } from '@expo-google-fonts/changa';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { screenLayout } from '@/theme/screen-layout';
 import {
-  ActivityIndicator,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
+    ActivityIndicator,
+    ScrollView,
+    StyleSheet,
+    Text,
+    View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import CategoryBreakdown from '../components/CategoryBreakdown';
@@ -20,10 +21,9 @@ import DateNavigator from '../components/DateNavigator';
 import PeriodToggle from '../components/PeriodToggle';
 import SummaryCards from '../components/SummaryCards';
 import TrendBarChart from '../components/TrendBarChart';
-import { shiftPeriodAnchor } from '../lib/period-range';
-import { formatTrendLabel } from '../lib/format-trend-label';
-import { useRequireAuth } from '@/features/auth/hooks';
 import { useStatistics } from '../hooks/useStatistics';
+import { formatTrendLabel } from '../lib/format-trend-label';
+import { shiftPeriodAnchor } from '../lib/period-range';
 import type { StatisticsPeriod } from '../types/statistics.types';
 
 const Statistics = () => {

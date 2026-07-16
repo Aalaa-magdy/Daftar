@@ -1,6 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Localization from 'expo-localization';
-import { I18nManager } from 'react-native';
 
 export const LANGUAGE_STORAGE_KEY = '@daftr/language';
 
@@ -30,20 +29,6 @@ export async function resolveInitialLanguage(): Promise<AppLanguage> {
   return getDeviceLanguage();
 }
 
-/** Applied once on cold start. Runtime switches use root `direction` + i18n remount. */
-export function applyLayoutDirection(language: AppLanguage) {
-  const shouldUseRTL = language === 'ar';
-
-  I18nManager.allowRTL(true);
-  I18nManager.swapLeftAndRightInRTL(true);
-
-  if (I18nManager.isRTL !== shouldUseRTL) {
-    I18nManager.forceRTL(shouldUseRTL);
-    return true;
-  }
-
-  return false;
-}
 
 export async function persistLanguage(language: AppLanguage) {
   await AsyncStorage.setItem(LANGUAGE_STORAGE_KEY, language);

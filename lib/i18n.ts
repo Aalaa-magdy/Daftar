@@ -1,11 +1,6 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
-import {
-  applyLayoutDirection,
-  persistLanguage,
-  resolveInitialLanguage,
-  type AppLanguage,
-} from '@/lib/language';
+import { persistLanguage, resolveInitialLanguage, type AppLanguage } from '@/lib/language';
 
 const resources = {
   en: {
@@ -25,7 +20,6 @@ export async function initI18n() {
 
   initPromise = (async () => {
     const language = await resolveInitialLanguage();
-    applyLayoutDirection(language);
 
     if (!i18n.isInitialized) {
       await i18n.use(initReactI18next).init({
@@ -43,7 +37,6 @@ export async function initI18n() {
     } else {
       await i18n.changeLanguage(language);
     }
-
     return i18n;
   })();
 
@@ -51,7 +44,6 @@ export async function initI18n() {
 }
 
 export async function changeAppLanguage(language: AppLanguage) {
-  applyLayoutDirection(language);
   await i18n.changeLanguage(language);
   await persistLanguage(language);
 }

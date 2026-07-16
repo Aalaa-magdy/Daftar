@@ -37,7 +37,7 @@ const ResetHeader = ({
   whiteBackground = false,
 }: Props) => {
   const { t } = useTranslation();
-  const { isRTL, backIcon } = useDirectionalIcons();
+  const { backIcon } = useDirectionalIcons();
   const insets = useSafeAreaInsets();
   const [fontsLoaded] = useFonts({
     Changa_400Regular,
@@ -56,26 +56,23 @@ const ResetHeader = ({
         resizeMode="cover"
       />
 
-      {onBackPress ? (
-        <TouchableOpacity
-          accessibilityRole="button"
-          accessibilityLabel={t('common.goBack')}
-          style={[
-            styles.backButton,
-            { top: Math.max(insets.top, 8) },
-            isRTL ? styles.backButtonRtl : styles.backButtonLtr,
-          ]}
-          onPress={onBackPress}
-          activeOpacity={0.7}
-          hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
-        >
-          <HugeiconsIcon
-            icon={backIcon}
-            size={28}
-            color={colors.textGray}
-          />
-        </TouchableOpacity>
-      ) : null}
+      {/* Flex row: first child lands on the right in RTL (no absolute left/right). */}
+      <View style={[styles.topBar, { paddingTop: Math.max(insets.top, 8) }]}>
+        {onBackPress ? (
+          <TouchableOpacity
+            accessibilityRole="button"
+            accessibilityLabel={t('common.goBack')}
+            style={styles.backButton}
+            onPress={onBackPress}
+            activeOpacity={0.7}
+            hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+          >
+            <HugeiconsIcon icon={backIcon} size={28} color={colors.textGray} />
+          </TouchableOpacity>
+        ) : (
+          <View style={styles.backButtonPlaceholder} />
+        )}
+      </View>
 
       <View style={styles.centerContent}>
         <View style={styles.iconContainer}>
@@ -97,7 +94,7 @@ const styles = StyleSheet.create({
   root: {
     width: '100%',
     backgroundColor: colors.backgroundColor,
-    marginBottom:16
+    marginBottom: 16,
   },
   rootWhite: {
     backgroundColor: colors.backgroundColor,
@@ -110,22 +107,24 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '90%',
   },
+  topBar: {
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    minHeight: 44,
+  },
   backButton: {
-    position: 'absolute',
-    zIndex: 10,
     paddingVertical: 8,
   },
-  backButtonLtr: {
-    left: 16,
-  },
-  backButtonRtl: {
-    right: 16,
+  backButtonPlaceholder: {
+    width: 28,
+    height: 28,
   },
   centerContent: {
     width: '100%',
     alignItems: 'center',
-    paddingTop: 40,
-    marginTop: 60,
+    paddingTop: 8,
     paddingBottom: 16,
     gap: 12,
   },

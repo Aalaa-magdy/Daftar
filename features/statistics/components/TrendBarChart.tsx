@@ -1,5 +1,5 @@
-import { colors } from '@/theme/colors';
 import { useAppDirection } from '@/hooks/useAppDirection';
+import { colors } from '@/theme/colors';
 import { useCallback, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';

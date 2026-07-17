@@ -136,9 +136,10 @@ function resolveActiveIndex(
 function resolveWeeklyVariant(
   index: number,
   activeIndex: number,
+  spent: number,
 ): TrendVariant {
   if (activeIndex >= 0 && index === activeIndex) return 'active';
-  return 'past';
+  return spent > 0 ? 'past' : 'placeholder';
 }
 
 /**
@@ -169,7 +170,7 @@ export function mapWeeklyDailyTrendPoints(
       value: spent,
       spent,
       income,
-      variant: resolveWeeklyVariant(index, activeIndex),
+      variant: resolveWeeklyVariant(index, activeIndex, spent),
     };
   });
 }

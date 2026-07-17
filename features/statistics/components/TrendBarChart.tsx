@@ -128,22 +128,20 @@ const TrendBarChart = ({
   };
 
   const getBarHeight = (value: number, variant?: TrendPoint['variant']) => {
-    if (isWeeklyChart) {
-      if (value > 0) {
-        return Math.min(
-          CHART_HEIGHT,
-          Math.max(
-            variant === 'active'
-              ? WEEKLY_ACTIVE_MIN_BAR_HEIGHT
-              : WEEKLY_PAST_BAR_HEIGHT,
-            (value / maxValue) * CHART_HEIGHT,
-          ),
-        );
-      }
+    if (value <= 0) {
+      return 0;
+    }
 
-      return variant === 'active'
-        ? WEEKLY_ACTIVE_MIN_BAR_HEIGHT
-        : WEEKLY_PAST_BAR_HEIGHT;
+    if (isWeeklyChart) {
+      return Math.min(
+        CHART_HEIGHT,
+        Math.max(
+          variant === 'active'
+            ? WEEKLY_ACTIVE_MIN_BAR_HEIGHT
+            : WEEKLY_PAST_BAR_HEIGHT,
+          (value / maxValue) * CHART_HEIGHT,
+        ),
+      );
     }
 
     return Math.min(
@@ -274,7 +272,7 @@ const TrendBarChart = ({
   const renderBar = (point: TrendPoint, index: number) => {
     const columnKey = `${point.label ?? point.labelKey ?? 'point'}-${index}`;
 
-    if (point.variant === 'placeholder' && !isWeeklyChart) {
+    if (point.variant === 'placeholder' || (isWeeklyChart && point.value <= 0)) {
       return (
         <Pressable
           key={columnKey}

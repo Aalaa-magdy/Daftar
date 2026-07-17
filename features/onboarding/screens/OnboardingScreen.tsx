@@ -25,9 +25,11 @@ import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useAppDirection } from '@/hooks/useAppDirection';
 
+const LAST_INDEX = onboardingData.length - 1;
+
 const OnboardingScreen = () => {
   const { t } = useTranslation();
-  const { directionStyle, isRTL } = useAppDirection();
+  const { isRTL } = useAppDirection();
   const router = useRouter();
   const [fontsLoaded] = useFonts({
     Tektur_400Regular,
@@ -36,17 +38,48 @@ const OnboardingScreen = () => {
 
   const [currentStep, setCurrentStep] = React.useState(0);
   const flatListRef = React.useRef<FlatList<OnboardingItemType>>(null);
+  const isProgrammaticScroll = React.useRef(false);
   const { width } = useWindowDimensions();
   const contentWidth = Math.max(width - 40, 0);
 
+  const scrollToStep = React.useCallback(
+    (index: number, animated = true) => {
+      const clamped = Math.min(Math.max(index, 0), LAST_INDEX);
+      isProgrammaticScroll.current = true;
+      flatListRef.current?.scrollToOffset({
+        offset: clamped * contentWidth,
+        animated,
+      });
+      setCurrentStep(clamped);
+
+      // Allow momentum handler again after the animated scroll settles.
+      if (animated) {
+        setTimeout(() => {
+          isProgrammaticScroll.current = false;
+        }, 350);
+      } else {
+        isProgrammaticScroll.current = false;
+      }
+    },
+    [contentWidth],
+  );
+
   React.useEffect(() => {
-    flatListRef.current?.scrollToOffset({ offset: 0, animated: false });
-  }, [contentWidth]);
+    scrollToStep(0, false);
+  }, [contentWidth, scrollToStep]);
 
   const handleScrollEnd = React.useCallback(
     (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+      if (isProgrammaticScroll.current || contentWidth <= 0) {
+        return;
+      }
+
       const offsetX = event.nativeEvent.contentOffset.x;
-      setCurrentStep(Math.round(offsetX / contentWidth));
+      const nextStep = Math.min(
+        Math.max(Math.round(offsetX / contentWidth), 0),
+        LAST_INDEX,
+      );
+      setCurrentStep(nextStep);
     },
     [contentWidth],
   );
@@ -57,18 +90,13 @@ const OnboardingScreen = () => {
   }, [router]);
 
   const handleNext = React.useCallback(() => {
-    if (currentStep >= onboardingData.length - 1) {
+    if (currentStep >= LAST_INDEX) {
       goToLastOnboarding();
       return;
     }
 
-    const nextStep = currentStep + 1;
-    flatListRef.current?.scrollToIndex({
-      index: nextStep,
-      animated: true,
-    });
-    setCurrentStep(nextStep);
-  }, [currentStep, goToLastOnboarding]);
+    scrollToStep(currentStep + 1);
+  }, [currentStep, goToLastOnboarding, scrollToStep]);
 
   const renderItem = React.useCallback(
     ({ item }: { item: OnboardingItemType }) => (
@@ -84,7 +112,8 @@ const OnboardingScreen = () => {
   }
 
   return (
-    <SafeAreaView style={[styles.container, directionStyle]}>
+    // Keep the screen LTR so the carousel never reverses under Arabic `direction: rtl`.
+    <SafeAreaView style={styles.container}>
       <ImageBackground
         source={patternSource}
         resizeMode="cover"
@@ -96,7 +125,12 @@ const OnboardingScreen = () => {
         </TouchableOpacity>
       </View>
       <View style={styles.content}>
-        <View style={styles.logoSection}>
+        <View
+          style={[
+            styles.logoSection,
+            isRTL ? styles.logoSectionRtl : styles.logoSectionLtr,
+          ]}
+        >
           <SoloLogo />
           <Text style={styles.logoText}>{t('onboarding.brand')}</Text>
         </View>
@@ -116,6 +150,7 @@ const OnboardingScreen = () => {
             pagingEnabled
             bounces={false}
             showsHorizontalScrollIndicator={false}
+            inverted={false}
             initialScrollIndex={0}
             onMomentumScrollEnd={handleScrollEnd}
             getItemLayout={(_, index) => ({
@@ -124,10 +159,7 @@ const OnboardingScreen = () => {
               index,
             })}
             onScrollToIndexFailed={(info) => {
-              flatListRef.current?.scrollToOffset({
-                offset: info.index * contentWidth,
-                animated: true,
-              });
+              scrollToStep(info.index, true);
             }}
             style={styles.list}
           />
@@ -136,7 +168,7 @@ const OnboardingScreen = () => {
           <OnboardingButton
             currentStep={currentStep}
             onPress={handleNext}
-            isLastStep={currentStep === onboardingData.length - 1}
+            isLastStep={currentStep === LAST_INDEX}
           />
         </View>
       </View>
@@ -148,6 +180,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background,
+    direction: 'ltr',
   },
   backgroundImage: {
     position: 'absolute',
@@ -172,6 +205,7 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     paddingHorizontal: 20,
+    direction: 'ltr',
   },
   headerButton: {
     fontFamily: 'Changa_500Medium',
@@ -184,10 +218,15 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 50,
     flexDirection: 'row',
-    justifyContent: 'flex-start',
     alignItems: 'center',
     paddingHorizontal: 2,
     gap: 4,
+  },
+  logoSectionLtr: {
+    justifyContent: 'flex-start',
+  },
+  logoSectionRtl: {
+    justifyContent: 'flex-end',
   },
   logoText: {
     color: colors.primary,
@@ -200,6 +239,7 @@ const styles = StyleSheet.create({
   pagination: {
     width: '100%',
     height: 40,
+    direction: 'ltr',
   },
   listContainer: {
     flex: 1,
@@ -207,6 +247,7 @@ const styles = StyleSheet.create({
   },
   list: {
     flex: 1,
+    direction: 'ltr',
   },
   slide: {
     flex: 1,

@@ -1,6 +1,7 @@
 import { StyleSheet, View } from 'react-native';
 import React from 'react';
 import { colors } from '@/theme/colors';
+import { useAppDirection } from '@/hooks/useAppDirection';
 
 interface Props {
   currentStep: number;
@@ -10,10 +11,16 @@ interface Props {
 const TRACK_W = 44;
 
 const Pagination: React.FC<Props> = ({ currentStep, totalSteps }) => {
+  const { isRTL } = useAppDirection();
   const steps = Array.from({ length: totalSteps }, (_, index) => index);
 
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        isRTL ? styles.containerRtl : styles.containerLtr,
+      ]}
+    >
       {steps.map((step) => (
         <View
           key={step}
@@ -35,8 +42,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     height: 16,
     alignItems: 'center',
-    justifyContent: 'flex-start',
     gap: 8,
+  },
+  containerLtr: {
+    justifyContent: 'flex-start',
+  },
+  containerRtl: {
+    justifyContent: 'flex-end',
   },
   step: {
     width: TRACK_W,

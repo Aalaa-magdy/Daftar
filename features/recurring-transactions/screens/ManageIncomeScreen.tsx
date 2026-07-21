@@ -90,7 +90,7 @@ const ManageIncomeScreen = () => {
         )}
       </ScrollView>
 
-      <View style={[styles.footer, { paddingBottom: insets.bottom + 36 }]}>
+      <View style={[styles.footer, { paddingBottom: insets.bottom + 56 }]}>
         <Button
           title={t('home.addIncome')}
           onPress={() => router.push(addTransactionHref('income'))}

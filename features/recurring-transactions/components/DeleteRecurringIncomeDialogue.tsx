@@ -44,7 +44,7 @@ const DeleteRecurringIncomeDialogue = ({ visible, onClose, onConfirm }: Props) =
     >
       <View style={styles.root}>
         <Pressable style={styles.backdrop} onPress={onClose} />
-        <View style={[styles.sheet, { paddingBottom: insets.bottom + 44 }]}>
+        <View style={[styles.sheet, { paddingBottom: insets.bottom + 56 }]}>
           <View style={styles.handle} />
 
           <View style={styles.iconWrap}>

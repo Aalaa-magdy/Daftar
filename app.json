@@ -12,9 +12,9 @@
       "translucent": false,
       "hidden": false
     },
-    "icon": "./assets/images/adaptive-icon.png",
+    "icon": "./assets/images/New_logo.png",
     "splash": {
-      "image": "./assets/images/Logo.png",
+      "image": "./assets/images/New_logo.png",
       "resizeMode": "contain",
       "backgroundColor": "#FFFFFF"
     },
@@ -24,7 +24,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "./assets/images/New_logo.png",
         "backgroundColor": "#FFFFFF"
       },
       "predictiveBackGestureEnabled": false,
@@ -50,7 +50,7 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash.png",
+          "image": "./assets/images/New_logo.png",
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         }

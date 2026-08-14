@@ -106,7 +106,7 @@
     "totalBalance": "TOTAL BALANCE",
     "income": "Income",
     "expense": "Expense",
-    "spent": "spent {{amount}} EGP",
+    "spentLabel": "spent",
     "daysRemaining": "{{count}} days remaining",
     "hideAmounts": "Hide amounts",
     "showAmounts": "Show amounts",

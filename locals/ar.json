@@ -106,7 +106,7 @@
     "totalBalance": "إجمالي الرصيد",
     "income": "الدخل",
     "expense": "المصروف",
-    "spent": "تم إنفاق {{amount}} ج.م",
+    "spentLabel": "تم إنفاق",
     "daysRemaining": "متبقٍ {{count}} يوم",
     "hideAmounts": "إخفاء المبالغ",
     "showAmounts": "إظهار المبالغ",

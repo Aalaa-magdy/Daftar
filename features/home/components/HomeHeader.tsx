@@ -1,4 +1,3 @@
-import SoloLogo from '@/assets/images/SoloLogo.svg';
 import { useProfile } from '@/features/profile/hooks';
 import { resolveProfileAvatarSource } from '@/features/profile/lib/profile-avatar';
 import { colors } from '@/theme/colors';
@@ -14,6 +13,8 @@ import { ActivityIndicator, Image, StyleSheet, Text, View } from 'react-native';
 const HORIZONTAL_PADDING = 20;
 /** Cancel header padding so the logo aligns with the content edge. */
 const LOGO_OUTER_NUDGE = 20;
+
+const logoSource = require('@/assets/images/New_logo.png');
 
 const HomeHeader = () => {
   const { t } = useTranslation();
@@ -61,7 +62,7 @@ const HomeHeader = () => {
       </View>
 
       <View style={styles.logoWrap}>
-        <SoloLogo width={80} height={40} />
+        <Image source={logoSource} style={styles.logoImage} resizeMode="contain" />
       </View>
     </View>
   );
@@ -120,8 +121,11 @@ const styles = StyleSheet.create({
     flexShrink: 0,
     alignItems: 'center',
     justifyContent: 'center',
-    // Logical end = right in LTR, left in RTL (avoids mirrored left/right margins).
     marginEnd: -LOGO_OUTER_NUDGE,
+  },
+  logoImage: {
+    width: 84,
+    height: 84,
   },
 });
 

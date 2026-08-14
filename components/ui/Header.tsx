@@ -1,6 +1,6 @@
 import { colors } from "@/theme/colors"
-import { StyleSheet, Text, View } from "react-native"
-import SoloLogo from "@/assets/images/SoloLogo.svg";
+import { Image, StyleSheet, Text, View } from "react-native"
+const logoSource = require("@/assets/images/New_logo.png");
 interface Props {
   title: string,
   subtitle: string,
@@ -22,7 +22,7 @@ const Header = ({ title, subtitle }: Props) => {
   return (
     <View style={styles.content}> 
       <View style={styles.logo}>
-        <SoloLogo width={68} height={68} />
+        <Image source={logoSource} style={styles.logoImage} resizeMode="contain" />
       </View>
       <View style={styles.description}>
         <Text style={styles.title}>
@@ -45,6 +45,10 @@ const styles = StyleSheet.create({
   logo: {
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  logoImage: {
+    width: 68,
+    height: 68,
   },
   description: {
     gap: 12,

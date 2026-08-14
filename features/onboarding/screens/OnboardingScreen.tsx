@@ -1,6 +1,7 @@
 import {
   StyleSheet,
   View,
+  Image,
   ImageBackground,
   TouchableOpacity,
   Text,
@@ -11,8 +12,8 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors } from '@/theme/colors';
-import SoloLogo from '@/assets/images/SoloLogo.svg';
 const patternSource = require('@/assets/images/background-pattern-decorative.png');
+const logoSource = require('@/assets/images/New_logo.png');
 import { Tektur_400Regular, useFonts } from '@expo-google-fonts/tektur';
 import { Changa_500Medium } from '@expo-google-fonts/changa';
 import Pagination from '../components/Pagination';
@@ -131,7 +132,7 @@ const OnboardingScreen = () => {
             isRTL ? styles.logoSectionRtl : styles.logoSectionLtr,
           ]}
         >
-          <SoloLogo />
+          <Image source={logoSource} style={styles.logoImage} resizeMode="contain" />
           <Text style={styles.logoText}>{t('onboarding.brand')}</Text>
         </View>
         <View style={styles.pagination}>
@@ -227,6 +228,10 @@ const styles = StyleSheet.create({
   },
   logoSectionRtl: {
     justifyContent: 'flex-end',
+  },
+  logoImage: {
+    width: 24,
+    height: 24,
   },
   logoText: {
     color: colors.primary,

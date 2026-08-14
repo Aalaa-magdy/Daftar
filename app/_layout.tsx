@@ -27,10 +27,9 @@ function AppShell() {
   const isRTL = i18nInstance.language === 'ar';
 
   return (
-    <View
-      key={i18nInstance.language}
-      style={{ flex: 1, direction: isRTL ? 'rtl' : 'ltr' }}
-    >
+    // Do NOT key by language — remounting Stack resets navigation to /index
+    // and can briefly look like a logout (especially on first language change).
+    <View style={{ flex: 1, direction: isRTL ? 'rtl' : 'ltr' }}>
       <Stack screenOptions={seamlessScreenOptions}>
         <Stack.Screen name="index" options={{ animation: 'none' }} />
         <Stack.Screen name="(auth)" options={seamlessScreenOptions} />

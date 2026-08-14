@@ -7,7 +7,15 @@ import {
 import { useBalanceSummary } from '@/features/transactions/hooks';
 import { useResponsiveLayout } from '@/hooks/useResponsiveLayout';
 import { colors } from '@/theme/colors';
-import { StyleSheet, Text, TouchableOpacity, View, ActivityIndicator } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  ActivityIndicator,
+  Image,
+  type LayoutChangeEvent,
+} from 'react-native';
 import ViewIcon from '@hugeicons/core-free-icons/ViewIcon';
 import ViewOffIcon from '@hugeicons/core-free-icons/ViewOffIcon';
 import ArrowUpLeft01Icon from '@hugeicons/core-free-icons/ArrowUpLeft01Icon';
@@ -22,12 +30,26 @@ import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 const MASK = '******';
+const CARD_RADIUS = 12;
+const CARD_PADDING = 16;
+
+const homeCardBackground = require('@/assets/images/home.png');
 
 const HomeInfo = () => {
   const { t } = useTranslation();
   const { homeInfo } = useResponsiveLayout();
   const [amountsVisible, setAmountsVisible] = useState(true);
   const { data, isLoading } = useBalanceSummary();
+  const [cardSize, setCardSize] = useState({ width: 0, height: 0 });
+
+  const onCardLayout = (event: LayoutChangeEvent) => {
+    const { width, height } = event.nativeEvent.layout;
+    setCardSize((prev) =>
+      prev.width === width && prev.height === height
+        ? prev
+        : { width, height },
+    );
+  };
   const [fontsLoaded] = useFonts({
     Changa_400Regular,
     Changa_500Medium,
@@ -63,100 +85,109 @@ const HomeInfo = () => {
   const progress = getExpenseProgress(summary.totalExpense, summary.totalIncome);
 
   return (
-    <View
-      style={[
-        styles.container,
-        {
-          height: homeInfo.height,
-          padding: homeInfo.padding,
-        },
-      ]}
-    >
-      <View style={styles.firstRow}>
-        <Text style={styles.currentBalance}>{t('home.totalBalance')}</Text>
-        <TouchableOpacity
-          onPress={() => setAmountsVisible((visible) => !visible)}
-          hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
-          accessibilityRole="button"
-          accessibilityLabel={
-            amountsVisible ? t('home.hideAmounts') : t('home.showAmounts')
-          }
-        >
-          <HugeiconsIcon
-            icon={amountsVisible ? ViewIcon : ViewOffIcon}
-            size={24}
-            color={colors.white}
-          />
-        </TouchableOpacity>
-      </View>
-      <View style={[styles.secondRow, { minHeight: homeInfo.secondRowMinHeight }]}>
-        {isLoading ? (
-          <ActivityIndicator color={colors.white} style={styles.loader} />
-        ) : (
-          <View style={styles.balanceRow}>
-            <Text
-              style={[
-                styles.balance,
-                {
-                  fontSize: homeInfo.balanceFontSize,
-                  lineHeight: homeInfo.balanceLineHeight,
-                },
-              ]}
-            >
-              {balanceDisplay}
-            </Text>
-            <Text style={styles.currency}>{egp}</Text>
-          </View>
-        )}
-      </View>
-      <View
-        style={[
-          styles.thirdRow,
-          {
-            gap: homeInfo.thirdRowGap,
-            marginBottom: homeInfo.thirdRowMarginBottom,
-          },
-        ]}
-      >
-        <View style={styles.item}>
-          <View style={styles.icon}>
-            <HugeiconsIcon
-              icon={ArrowDownRight01Icon}
-              size={20}
-              color="#17B26A"
-            />
-          </View>
-          <View>
-            <Text style={styles.type}>{t('home.income')}</Text>
-            <Text style={styles.amount}>{incomeDisplay}</Text>
-          </View>
-        </View>
-        <View style={styles.item}>
-          <View style={[styles.icon, styles.expenseIcon]}>
-            <HugeiconsIcon
-              icon={ArrowUpLeft01Icon}
-              size={20}
-              color="#F04438"
-            />
-          </View>
-          <View>
-            <Text style={styles.type}>{t('home.expense')}</Text>
-            <Text style={styles.amount}>{expenseDisplay}</Text>
-          </View>
-        </View>
-      </View>
-      <View>
-        <View style={styles.lastRow}>
-          <Text style={styles.spans}>{spentDisplay}</Text>
-          <Text style={styles.spans}>
-            {t('home.daysRemaining', { count: daysRemaining })}
-          </Text>
-        </View>
-        <ProgressBar
-          progress={progress}
-          color={colors.secondary}
-          trackColor="#144718"
+
+    <View style={styles.container} onLayout={onCardLayout}>
+      {cardSize.width > 0 && cardSize.height > 0 && (
+        <Image
+          source={homeCardBackground}
+          resizeMode="cover"
+          style={[
+            styles.backgroundImage,
+            { width: cardSize.width, height: cardSize.height },
+          ]}
         />
+      )}
+      <View style={styles.content}>
+        <View style={styles.firstRow}>
+          <Text style={styles.currentBalance}>{t('home.totalBalance')}</Text>
+          <TouchableOpacity
+            onPress={() => setAmountsVisible((visible) => !visible)}
+            hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+            accessibilityRole="button"
+            accessibilityLabel={
+              amountsVisible ? t('home.hideAmounts') : t('home.showAmounts')
+            }
+          >
+            <HugeiconsIcon
+              icon={amountsVisible ? ViewIcon : ViewOffIcon}
+              size={24}
+              color={colors.white}
+            />
+          </TouchableOpacity>
+        </View>
+
+        <View
+          style={[
+            styles.secondRow,
+            { minHeight: homeInfo.secondRowMinHeight },
+          ]}
+        >
+          {isLoading ? (
+            <ActivityIndicator color={colors.white} style={styles.loader} />
+          ) : (
+            <View style={styles.balanceRow}>
+              <Text
+                style={[
+                  styles.balance,
+                  {
+                    fontSize: homeInfo.balanceFontSize,
+                    lineHeight: homeInfo.balanceLineHeight,
+                  },
+                ]}
+              >
+                {balanceDisplay}
+              </Text>
+              <Text style={styles.currency}>{egp}</Text>
+            </View>
+          )}
+        </View>
+
+        <View
+          style={[
+            styles.thirdRow,
+            {
+              gap: homeInfo.thirdRowGap,
+              marginBottom: homeInfo.thirdRowMarginBottom,
+            },
+          ]}
+        >
+          <View style={styles.item}>
+            <View style={styles.icon}>
+              <HugeiconsIcon
+                icon={ArrowDownRight01Icon}
+                size={20}
+                color="#17B26A"
+              />
+            </View>
+            <View>
+              <Text style={styles.type}>{t('home.income')}</Text>
+              <Text style={styles.amount}>{incomeDisplay}</Text>
+            </View>
+          </View>
+          <View style={styles.item}>
+            <View style={[styles.icon, styles.expenseIcon]}>
+              <HugeiconsIcon icon={ArrowUpLeft01Icon} size={20} color="#F04438" />
+            </View>
+            <View>
+              <Text style={styles.type}>{t('home.expense')}</Text>
+              <Text style={styles.amount}>{expenseDisplay}</Text>
+            </View>
+          </View>
+        </View>
+
+        <View>
+          <View style={styles.lastRow}>
+            <Text style={styles.spans}>{spentDisplay}</Text>
+            <Text style={styles.spans}>
+              {t('home.daysRemaining', { count: daysRemaining })}
+            </Text>
+          </View>
+          <ProgressBar
+            progress={progress}
+            color={colors.secondary}
+            trackColor="#144718"
+          />
+        </View>
       </View>
     </View>
   );
@@ -165,9 +196,22 @@ const HomeInfo = () => {
 const styles = StyleSheet.create({
   container: {
     width: '93%',
-    borderRadius: 12,
+    borderRadius: CARD_RADIUS,
     backgroundColor: colors.primary,
-    justifyContent: 'space-between',
+    // Clips the image to the rounded corners. Required on Android.
+    overflow: 'hidden',
+  },
+  // top/left only — width & height come from the onLayout measurement above,
+  // as real numbers, so there's no percentage anywhere left to misresolve.
+  backgroundImage: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    borderRadius: CARD_RADIUS,
+  },
+  // All spacing lives here, on a normal flow child that sits above the image.
+  content: {
+    padding: CARD_PADDING,
   },
   currentBalance: {
     color: colors.white,
@@ -178,6 +222,7 @@ const styles = StyleSheet.create({
   firstRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
   },
   secondRow: {
     marginBottom: 20,

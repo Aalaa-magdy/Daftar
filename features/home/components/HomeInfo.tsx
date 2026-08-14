@@ -22,6 +22,7 @@ import ViewOffIcon from '@hugeicons/core-free-icons/ViewOffIcon';
 import ArrowUpLeft01Icon from '@hugeicons/core-free-icons/ArrowUpLeft01Icon';
 import ArrowDownRight01Icon from '@hugeicons/core-free-icons/ArrowDownRight01Icon';
 import Note05Icon from '@hugeicons/core-free-icons/Note05Icon';
+import Calendar03Icon from '@hugeicons/core-free-icons/Calendar03Icon';
 import { HugeiconsIcon } from '@hugeicons/react-native';
 import {
   Changa_400Regular,
@@ -84,6 +85,9 @@ const HomeInfo = () => {
     : `${MASK} ${egp}`;
   const spentAmountDisplay = amountsVisible
     ? formatBalanceAmount(summary.totalExpense)
+    : MASK;
+  const budgetDisplay = amountsVisible
+    ? formatBalanceAmount(summary.totalIncome)
     : MASK;
   const daysRemaining = getDaysRemainingInMonth();
   const progress = getExpenseProgress(summary.totalExpense, summary.totalIncome);
@@ -181,20 +185,33 @@ const HomeInfo = () => {
 
         <View>
           <View style={styles.lastRow}>
-            <View style={styles.spentRow}>
+            <View style={styles.lastRowItem}>
               <View style={styles.spentIcon}>
-                <HugeiconsIcon icon={Note05Icon} size={14} color={colors.gold} />
+                <HugeiconsIcon icon={Note05Icon} size={18} color={colors.gold} />
               </View>
-              <Text style={styles.spans}>
-                {t('home.spentLabel')}{' '}
-                <Text style={styles.goldText}>{spentAmountDisplay}</Text>
-                {' '}
-                <Text style={styles.goldText}>{egp}</Text>
-              </Text>
+              <View>
+                <Text style={styles.spansBold}>
+                  {t('home.spentLabel')}{' '}
+                  <Text style={styles.goldText}>{spentAmountDisplay}</Text>
+                  {' '}
+                  <Text style={styles.goldText}>{egp}</Text>
+                </Text>
+                <Text style={styles.subSpan}>
+                  {t('home.ofBudget', { amount: budgetDisplay })}
+                </Text>
+              </View>
             </View>
-            <Text style={styles.spans}>
-              {t('home.daysRemaining', { count: daysRemaining })}
-            </Text>
+            <View style={styles.lastRowItem}>
+              <View style={styles.spentIcon}>
+                <HugeiconsIcon icon={Calendar03Icon} size={18} color={colors.gold} />
+              </View>
+              <View>
+                <Text style={styles.spansBold}>
+                  {t('home.daysRemaining', { count: daysRemaining })}
+                </Text>
+                <Text style={styles.subSpan}>{t('home.untilNextSalary')}</Text>
+              </View>
+            </View>
           </View>
           <ProgressBar
             progress={progress}
@@ -297,26 +314,34 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 2,
+    marginBottom: 12,
   },
-  spentRow: {
+  lastRowItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
+    gap: 8,
+    flexShrink: 1,
   },
   spentIcon: {
-    width: 20,
-    height: 20,
-    borderRadius: 6,
+    width: 32,
+    height: 32,
+    borderRadius: 8,
     backgroundColor: 'rgba(201, 162, 39, 0.16)',
     alignItems: 'center',
     justifyContent: 'center',
+    flexShrink: 0,
   },
-  spans: {
+  spansBold: {
     color: colors.white,
     fontSize: 14,
-    fontFamily: 'Changa_400Regular',
+    fontFamily: 'Changa_500Medium',
     lineHeight: 20,
+  },
+  subSpan: {
+    color: 'rgba(255, 255, 255, 0.65)',
+    fontSize: 12,
+    fontFamily: 'Changa_400Regular',
+    lineHeight: 16,
   },
   goldText: {
     color: colors.gold,

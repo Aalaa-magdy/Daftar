@@ -12,19 +12,14 @@
       "translucent": false,
       "hidden": false
     },
-    "icon": "./assets/images/New_logo.png",
-    "splash": {
-      "image": "./assets/images/New_logo.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#FFFFFF"
-    },
+    "icon": "./assets/images/icon.png",
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.daftr"
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/New_logo.png",
+        "foregroundImage": "./assets/images/adaptive-icon-foreground.png",
         "backgroundColor": "#FFFFFF"
       },
       "predictiveBackGestureEnabled": false,
@@ -50,9 +45,10 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/New_logo.png",
+          "image": "./assets/images/splash-icon.png",
+          "imageWidth": 120,
           "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
+          "backgroundColor": "#FFFFFF"
         }
       ]
     ],

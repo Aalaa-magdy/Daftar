@@ -13,7 +13,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors } from '@/theme/colors';
 const patternSource = require('@/assets/images/background-pattern-decorative.png');
-const logoSource = require('@/assets/images/New_logo.png');
+const logoSource = require('@/assets/images/logo-mark.png');
 import { Tektur_400Regular, useFonts } from '@expo-google-fonts/tektur';
 import { Changa_500Medium } from '@expo-google-fonts/changa';
 import Pagination from '../components/Pagination';
@@ -220,8 +220,9 @@ const styles = StyleSheet.create({
     height: 50,
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 2,
-    gap: 4,
+    // No padding of its own, so the mark lines up with the pagination track
+    // and the slides on `content`'s 20px inset.
+    gap: 8,
   },
   logoSectionLtr: {
     justifyContent: 'flex-start',
@@ -230,15 +231,16 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   logoImage: {
-    width: 24,
-    height: 24,
+    // logo-mark.png is cropped flush, so this is the mark's true rendered size.
+    // The old 60 box drew a ~29px mark inside 15.5px of baked-in padding.
+    width: 30,
+    height: 30,
   },
   logoText: {
     color: colors.primary,
     fontFamily: 'Tektur_400Regular',
     fontSize: 25,
     fontWeight: '400',
-    paddingHorizontal: 2,
     lineHeight: 40,
   },
   pagination: {

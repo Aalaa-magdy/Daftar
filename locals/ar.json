@@ -221,6 +221,8 @@
     "addTitle": "إضافة معاملات",
     "incomeType": "نوع الدخل",
     "chooseIncomeType": "اختر نوع الدخل",
+    "customIncomeType": "اسم نوع الدخل",
+    "customIncomeTypePlaceholder": "أدخل نوع الدخل",
     "amount": "المبلغ",
     "payday": "يوم الراتب",
     "paydayHelper": "يتم إعادة ضبط رصيدك في هذا اليوم من كل شهر.",

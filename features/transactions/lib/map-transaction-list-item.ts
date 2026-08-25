@@ -14,6 +14,7 @@ import { sortTransactionsByRecent } from './sort-transactions-by-recent';
 
 function incomeTypeLabel(
   incomeType: Transaction['incomeType'],
+  customIncomeType: string | undefined,
   t: TFunction,
 ): string {
   switch (incomeType) {
@@ -27,7 +28,7 @@ function incomeTypeLabel(
       return t('transaction.incomeTypes.bonus');
     case 'other':
     default:
-      return t('transaction.incomeTypes.other');
+      return customIncomeType?.trim() || t('transaction.incomeTypes.other');
   }
 }
 
@@ -61,7 +62,7 @@ export function mapTransactionToListItem(
     type: transaction.transactionType,
     title: isExpense
       ? category?.name ?? transaction.notes?.trim() ?? t('common.expense')
-      : incomeTypeLabel(transaction.incomeType, t),
+      : incomeTypeLabel(transaction.incomeType, transaction.customIncomeType, t),
     amount: transaction.amount,
     time: formatTransactionTime(resolveTransactionTimeSource(transaction), language),
     date,

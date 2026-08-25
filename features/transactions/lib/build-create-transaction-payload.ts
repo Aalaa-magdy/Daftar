@@ -34,10 +34,18 @@ export function buildCreateTransactionPayload(
     throw new Error('Income type is required for income transactions');
   }
 
+  const incomeType = mapFormIncomeType(form.incomeType);
+  const customIncomeType = form.customIncomeType?.trim() || undefined;
+
+  if (incomeType === 'other' && !customIncomeType) {
+    throw new Error('Please enter the income type');
+  }
+
   return {
     amount,
     transactionType: 'income',
-    incomeType: mapFormIncomeType(form.incomeType),
+    incomeType,
+    customIncomeType: incomeType === 'other' ? customIncomeType : undefined,
     date,
     payDate: date,
     repeat: mapFormRepeat(form.repeat),

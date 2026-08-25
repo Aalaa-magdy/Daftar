@@ -15,6 +15,8 @@ export interface Transaction {
   notes?: string;
   categoryId?: string;
   incomeType?: ApiIncomeType;
+  /** User-entered label when incomeType is 'other'. */
+  customIncomeType?: string;
   repeat?: ApiRepeatType;
   createdAt?: string;
   updatedAt?: string;

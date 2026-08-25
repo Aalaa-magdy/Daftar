@@ -221,6 +221,8 @@
     "addTitle": "Add Transactions",
     "incomeType": "Income Type",
     "chooseIncomeType": "Choose income type",
+    "customIncomeType": "Income Type Name",
+    "customIncomeTypePlaceholder": "Enter income type",
     "amount": "Amount",
     "payday": "Payday",
     "paydayHelper": "Your balance resets on this day each month.",

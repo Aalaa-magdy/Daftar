@@ -84,6 +84,7 @@ const TransactionFormScreen = () => {
   const [amount, setAmount] = useState('');
   const [categoryId, setCategoryId] = useState<string | null>(null);
   const [incomeType, setIncomeType] = useState('');
+  const [customIncomeType, setCustomIncomeType] = useState('');
   const [date, setDate] = useState<Date | null>(() =>
     isEdit ? null : new Date(),
   );
@@ -137,6 +138,7 @@ const TransactionFormScreen = () => {
     setAmount(formValues.amount);
     setCategoryId(formValues.categoryId ?? null);
     setIncomeType(formValues.incomeType ?? '');
+    setCustomIncomeType(formValues.customIncomeType ?? '');
     setDate(formValues.date);
     setRepeat(formValues.repeat ?? 'monthly');
     setNote(formValues.note ?? '');
@@ -151,8 +153,11 @@ const TransactionFormScreen = () => {
       return Boolean(categoryId);
     }
 
-    return Boolean(incomeType);
-  }, [amount, date, kind, categoryId, incomeType]);
+    if (!incomeType) return false;
+    if (incomeType === 'other') return Boolean(customIncomeType.trim());
+
+    return true;
+  }, [amount, date, kind, categoryId, incomeType, customIncomeType]);
 
   const headerTitle = isEdit
     ? kind === 'income'
@@ -206,6 +211,7 @@ const TransactionFormScreen = () => {
           amount,
           categoryId,
           incomeType,
+          customIncomeType,
           date,
           repeat,
           note,
@@ -235,6 +241,7 @@ const TransactionFormScreen = () => {
         amount,
         categoryId,
         incomeType,
+        customIncomeType,
         date,
         repeat,
         note,
@@ -312,6 +319,18 @@ const TransactionFormScreen = () => {
                     onToggle={() => togglePicker('incomeType')}
                   />
                 </FormField>
+
+                {incomeType === 'other' ? (
+                  <FormField label={t('transaction.customIncomeType')} required>
+                    <Input
+                      placeholder={t('transaction.customIncomeTypePlaceholder')}
+                      value={customIncomeType}
+                      onChangeText={setCustomIncomeType}
+                      icon={fieldIcon(ArrowUpLeft01Icon)}
+                      containerStyle={styles.fieldInput}
+                    />
+                  </FormField>
+                ) : null}
 
                 <FormField label={t('transaction.amount')} required>
                   <Input

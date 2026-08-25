@@ -8,6 +8,8 @@ export type UpdateTransactionRequest = {
   notes?: string;
   categoryId?: string;
   incomeType?: ApiIncomeType;
+  /** Required when incomeType is 'other' — the user-entered label. */
+  customIncomeType?: string;
   repeat?: ApiRepeatType;
 };
 

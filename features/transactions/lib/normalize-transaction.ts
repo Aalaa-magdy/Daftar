@@ -66,6 +66,10 @@ export function normalizeTransaction(raw: unknown): Transaction | null {
     categoryId:
       record.categoryId != null ? String(record.categoryId) : undefined,
     incomeType: normalizeIncomeType(record.incomeType),
+    customIncomeType:
+      record.customIncomeType != null
+        ? String(record.customIncomeType)
+        : undefined,
     repeat: normalizeRepeat(record.repeat),
     createdAt:
       record.createdAt != null ? String(record.createdAt) : undefined,

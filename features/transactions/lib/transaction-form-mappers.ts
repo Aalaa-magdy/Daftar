@@ -46,6 +46,7 @@ export function mapTransactionToForm(
     amount: String(transaction.amount),
     categoryId: transaction.categoryId ?? null,
     incomeType: mapApiIncomeTypeToForm(transaction.incomeType),
+    customIncomeType: transaction.customIncomeType ?? '',
     date: new Date(transaction.date),
     repeat: mapApiRepeatToForm(transaction.repeat),
     note: transaction.notes ?? '',
@@ -81,10 +82,18 @@ export function buildUpdateTransactionPayload(
     throw new Error('Income type is required for income transactions');
   }
 
+  const incomeType = mapFormIncomeType(form.incomeType);
+  const customIncomeType = form.customIncomeType?.trim() || undefined;
+
+  if (incomeType === 'other' && !customIncomeType) {
+    throw new Error('Please enter the income type');
+  }
+
   return {
     amount,
     transactionType: 'income',
-    incomeType: mapFormIncomeType(form.incomeType),
+    incomeType,
+    customIncomeType: incomeType === 'other' ? customIncomeType : undefined,
     date,
     payDate: date,
     repeat: mapFormRepeat(form.repeat),

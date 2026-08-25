@@ -1,6 +1,6 @@
 import { colors } from "@/theme/colors"
 import { Image, StyleSheet, Text, View } from "react-native"
-const logoSource = require("@/assets/images/New_logo.png");
+const logoSource = require("@/assets/images/logo-mark.png");
 interface Props {
   title: string,
   subtitle: string,
@@ -47,8 +47,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   logoImage: {
-    width: 68,
-    height: 68,
+    // logo-mark.png is cropped flush, so this is the mark's true rendered size.
+    // The old 68 box on New_logo.png drew a ~33pt mark inside baked-in padding.
+    width: 60,
+    height: 60,
   },
   description: {
     gap: 12,

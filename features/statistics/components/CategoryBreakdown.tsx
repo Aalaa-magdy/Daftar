@@ -48,7 +48,9 @@ const CategoryBreakdown = ({ categories, totalSpent }: Props) => {
                   <View style={styles.topLine}>
                     <Text style={styles.name}>{item.name}</Text>
                     <Text style={styles.meta}>
-                      {formatCompactAmount(item.amount, t('common.egp'))}{' '}
+                      <Text style={styles.amount}>
+                        {formatCompactAmount(item.amount, t('common.egp'))}
+                      </Text>{' '}
                       {formatPercentage(item.percentage)}
                     </Text>
                   </View>
@@ -133,6 +135,9 @@ const styles = StyleSheet.create({
     fontSize: 13,
     lineHeight: 18,
     color: colors.textSecondary,
+  },
+  amount: {
+    color: colors.red,
   },
 });
 

@@ -5,13 +5,14 @@ import type { BalanceSummary } from '../types/balance-summary.types';
 import { transactionKeys } from './query-keys';
 import { useTransactionAuth } from './useTransactionAuth';
 
-export const useBalanceSummary = () => {
+export const useBalanceSummary = (options: { enabled?: boolean } = {}) => {
+  const { enabled = true } = options;
   const { isAuthenticated, isAuthChecking } = useTransactionAuth();
 
   const query = useQuery<BalanceSummary, AxiosError>({
     queryKey: transactionKeys.balanceSummary,
     queryFn: () => transactionsApi.balanceSummary(),
-    enabled: isAuthenticated,
+    enabled: isAuthenticated && enabled,
     refetchOnMount: 'always',
     retry: (failureCount, error) =>
       error.response?.status !== 401 && failureCount < 1,

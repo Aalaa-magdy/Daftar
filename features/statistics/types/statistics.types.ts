@@ -1,6 +1,6 @@
 import type { IconSvgElement } from '@hugeicons/react-native';
 
-export type StatisticsPeriod = 'week' | 'month' | 'year';
+export type StatisticsPeriod = 'day' | 'week' | 'month' | 'year';
 
 export type TrendVariant = 'past' | 'active' | 'placeholder';
 

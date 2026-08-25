@@ -16,6 +16,10 @@ function endOfDay(date: Date) {
   );
 }
 
+export function getDayRange(anchor: Date): { from: Date; to: Date } {
+  return { from: startOfDay(anchor), to: endOfDay(anchor) };
+}
+
 export function getWeekRange(anchor: Date): { from: Date; to: Date } {
   const day = startOfDay(anchor);
   const daysSinceSaturday = (day.getDay() + 1) % 7;
@@ -42,6 +46,7 @@ export function getPeriodRange(
   anchor: Date,
   period: StatisticsPeriod,
 ): { from: Date; to: Date } {
+  if (period === 'day') return getDayRange(anchor);
   if (period === 'week') return getWeekRange(anchor);
   if (period === 'month') return getMonthRange(anchor);
   return getYearRange(anchor);
@@ -53,6 +58,11 @@ export function shiftPeriodAnchor(
   delta: -1 | 1,
 ): Date {
   const next = new Date(anchor);
+
+  if (period === 'day') {
+    next.setDate(next.getDate() + delta);
+    return next;
+  }
 
   if (period === 'week') {
     next.setDate(next.getDate() + 7 * delta);

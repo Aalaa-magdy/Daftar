@@ -7,6 +7,18 @@ export function buildStatisticsQueryParams(
   period: StatisticsPeriod,
   anchor: Date,
 ): StatisticsQueryParams {
+  // 'day' never actually reaches this endpoint — see useStatistics — but
+  // branch explicitly so it doesn't silently fall through to 'year' below.
+  if (period === 'day') {
+    const { from, to } = getPeriodRange(anchor, 'day');
+
+    return {
+      timeFrame: 'day',
+      startDate: formatApiDate(from),
+      endDate: formatApiDate(to),
+    };
+  }
+
   if (period === 'week') {
     const { from, to } = getPeriodRange(anchor, 'week');
 

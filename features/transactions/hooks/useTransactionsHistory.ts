@@ -6,13 +6,17 @@ import type { Transaction } from '../types/transactions.types';
 import { transactionKeys } from './query-keys';
 import { useTransactionAuth } from './useTransactionAuth';
 
-export const useTransactionsHistory = (params: HistoryQueryParams) => {
+export const useTransactionsHistory = (
+  params: HistoryQueryParams,
+  options: { enabled?: boolean } = {},
+) => {
+  const { enabled = true } = options;
   const { isAuthenticated, isAuthChecking } = useTransactionAuth();
 
   const query = useQuery<Transaction[], AxiosError>({
     queryKey: transactionKeys.history(params),
     queryFn: () => transactionsApi.history(params),
-    enabled: isAuthenticated,
+    enabled: isAuthenticated && enabled,
     refetchOnMount: 'always',
     retry: (failureCount, error) =>
       error.response?.status !== 401 && failureCount < 1,

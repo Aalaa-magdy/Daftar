@@ -40,7 +40,9 @@ export const useStatistics = (
   const statisticsQuery = useQuery({
     queryKey: statisticsKeys.aggregated(queryParams, 'period'),
     queryFn: () => statisticsApi.get(queryParams),
-    enabled: isAuthenticated,
+    // The 'day' period is powered by useDailyReport (transaction history +
+    // balance summary) instead — this aggregated endpoint doesn't cover it.
+    enabled: isAuthenticated && period !== 'day',
     refetchOnMount: 'always',
     retry: (failureCount, error: AxiosError) =>
       error.response?.status !== 401 && failureCount < 1,

@@ -5,6 +5,14 @@ function getLocale(language: string) {
   return language === 'ar' ? 'ar-EG' : 'en-US';
 }
 
+/** e.g. "Friday, 10 June" — matches the app's day-before-month convention. */
+export function formatDayLabel(anchor: Date, language: string): string {
+  const locale = getLocale(language);
+  const weekday = anchor.toLocaleDateString(locale, { weekday: 'long' });
+  const month = anchor.toLocaleDateString(locale, { month: 'long' });
+  return `${weekday}, ${anchor.getDate()} ${month}`;
+}
+
 export function formatWeekDayLabel(date: Date, language: string): string {
   const locale = language === 'ar' ? 'ar-EG' : 'en-US';
   return date.toLocaleDateString(locale, {
@@ -37,6 +45,7 @@ export function formatPeriodLabel(
   period: StatisticsPeriod,
   language: string,
 ): string {
+  if (period === 'day') return formatDayLabel(anchor, language);
   if (period === 'week') return formatWeekLabel(anchor, language);
   if (period === 'month') return formatMonthLabel(anchor, language);
   return formatYearLabel(anchor);

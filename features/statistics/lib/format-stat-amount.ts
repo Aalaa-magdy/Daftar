@@ -8,19 +8,21 @@ export function formatSummaryAmount(
   return `${sign}${formatted} ${currency}`;
 }
 
-export function formatCompactAmount(amount: number, currency: string): string {
+export function formatCompactNumber(amount: number): string {
   const abs = Math.abs(amount);
 
   if (abs >= 1000) {
     const thousands = abs / 1000;
-    const compact =
-      thousands % 1 === 0
-        ? `${thousands}k`
-        : `${thousands.toFixed(1).replace(/\.0$/, '')}K`;
-    return `${compact} ${currency}`;
+    return thousands % 1 === 0
+      ? `${thousands}k`
+      : `${thousands.toFixed(1).replace(/\.0$/, '')}K`;
   }
 
-  return `${abs.toLocaleString('en-US')} ${currency}`;
+  return abs.toLocaleString('en-US');
+}
+
+export function formatCompactAmount(amount: number, currency: string): string {
+  return `${formatCompactNumber(amount)} ${currency}`;
 }
 
 export function formatPercentage(value: number): string {

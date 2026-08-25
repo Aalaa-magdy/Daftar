@@ -139,6 +139,31 @@ function cutOutBackground(png, bg) {
   return out;
 }
 
+/**
+ * Distance from the content's centre to its furthest opaque pixel.
+ *
+ * This is what decides whether an adaptive icon survives masking: Android
+ * clips to a circle, so what matters is the artwork's RADIUS, not the width
+ * of its bounding box. A square whose side is 66% of the canvas has corners
+ * reaching 66%*sqrt(2) = 93% — far outside the guaranteed-visible circle.
+ */
+function contentRadius(rgba, srcW, box) {
+  const cx = box.minX + box.w / 2;
+  const cy = box.minY + box.h / 2;
+  let far = 0;
+
+  for (let y = box.minY; y <= box.maxY; y++) {
+    for (let x = box.minX; x <= box.maxX; x++) {
+      if (rgba[(y * srcW + x) * 4 + 3] > 8) {
+        const d = Math.hypot(x + 0.5 - cx, y + 0.5 - cy);
+        if (d > far) far = d;
+      }
+    }
+  }
+
+  return far;
+}
+
 function contentBounds(rgba, w, h) {
   let minX = w;
   let minY = h;
@@ -236,14 +261,50 @@ console.log(
     ((100 * box.w) / src.width).toFixed(1) + '% of the master'
 );
 
+/**
+ * Android adaptive icons are a 108dp canvas of which only a CENTRED CIRCLE of
+ * 66dp is guaranteed to survive the launcher's mask (circle, squircle, rounded
+ * square — the OEM picks). Everything outside that circle is at the launcher's
+ * mercy, which is why the logo's corners were being shaved off.
+ *
+ * So the adaptive fill is not a fixed guess: scale the artwork until its
+ * furthest pixel from centre lands on that circle, then convert back into the
+ * bounding-box fraction `render()` expects. `SAFE_MARGIN` keeps a sliver of
+ * clearance so resampling can't nudge a pixel back over the line.
+ */
+const SAFE_MARGIN = 0.97;
+
+const radius = contentRadius(cut, src.width, box);
+
+/**
+ * Largest bounding-box fill whose artwork still fits inside a centred circle
+ * of `diameter` (as a fraction of the canvas). Works off the measured radius,
+ * so it stays correct if the logo art is ever replaced.
+ */
+const fillForCircle = (diameter) =>
+  (diameter / 2) * (Math.max(box.w, box.h) / radius) * SAFE_MARGIN;
+
+// Adaptive icon: only the centred 66dp circle of the 108dp canvas is safe.
+const adaptiveFill = fillForCircle(66 / 108);
+// Legacy launcher icon: full-bleed square, so the worst case is a launcher
+// masking it to the inscribed circle — diameter == the canvas width.
+const legacyFill = fillForCircle(1);
+
+console.log(
+  'content radius ' + radius.toFixed(0) + 'px  ->  adaptive fill ' +
+    (adaptiveFill * 100).toFixed(1) + '% (was 66.0%), legacy fill ' +
+    (legacyFill * 100).toFixed(1) + '% (was 80.0%)'
+);
+
 const targets = [
   // Tight crop, so `imageWidth` in app.json maps 1:1 to the visible logo.
   { file: 'splash-icon.png', canvas: 1024, fill: 0.96, background: null },
-  // Adaptive icon foreground: Android masks to a circle and only the inner
-  // ~66% is guaranteed visible, so the logo is inset to that safe zone.
-  { file: 'adaptive-icon-foreground.png', canvas: 1024, fill: 0.66, background: null },
+  // Inset to Android's guaranteed-visible circle — see SAFE_CIRCLE above.
+  { file: 'adaptive-icon-foreground.png', canvas: 1024, fill: adaptiveFill, background: null },
   // iOS / legacy launcher icon must be opaque — alpha renders as black there.
-  { file: 'icon.png', canvas: 1024, fill: 0.8, background: bg },
+  // Inset to survive a launcher circle-mask; still comfortably within the
+  // normal range for iOS, whose rounded-rect mask is far more forgiving.
+  { file: 'icon.png', canvas: 1024, fill: legacyFill, background: bg },
   // In-app mark. Zero padding, so a style's width/height is the mark's real
   // size and it aligns flush with whatever container edge it sits against.
   { file: 'logo-mark.png', canvas: 512, fill: 1, background: null },

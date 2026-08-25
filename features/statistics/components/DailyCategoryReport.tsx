@@ -55,30 +55,36 @@ const DailyCategoryReport = ({ title, expenseCount, categories }: Props) => {
                 <View style={styles.content}>
                   <View style={styles.topLine}>
                     <Text style={styles.name}>{item.name}</Text>
-                    <Text style={styles.meta}>
-                      <Text style={styles.amount}>
+                    <View style={styles.metaRow}>
+                      <Text style={[styles.meta, styles.amount]}>
                         {formatCompactAmount(item.amount, t('common.egp'))}
-                      </Text>{' '}
-                      {formatPercentage(item.percentage)}
-                    </Text>
+                      </Text>
+                      <Text style={styles.meta}>
+                        {formatPercentage(item.percentage)}
+                      </Text>
+                    </View>
                   </View>
 
                   <ProgressBar progress={item.percentage / 100} color={color} />
 
                   {showBalance ? (
                     <View style={styles.balanceLine}>
-                      <Text style={styles.balanceText}>
-                        {t('statistics.balanceBefore')}:{' '}
-                        <Text style={styles.balanceValue}>
+                      <View style={styles.balanceItem}>
+                        <Text style={styles.balanceText}>
+                          {t('statistics.balanceBefore')}:
+                        </Text>
+                        <Text style={[styles.balanceText, styles.balanceValue]}>
                           {formatCompactNumber(item.balanceBefore as number)}
                         </Text>
-                      </Text>
-                      <Text style={styles.balanceText}>
-                        {t('statistics.balanceAfter')}:{' '}
-                        <Text style={styles.balanceValue}>
+                      </View>
+                      <View style={styles.balanceItem}>
+                        <Text style={styles.balanceText}>
+                          {t('statistics.balanceAfter')}:
+                        </Text>
+                        <Text style={[styles.balanceText, styles.balanceValue]}>
                           {formatCompactNumber(item.balanceAfter as number)}
                         </Text>
-                      </Text>
+                      </View>
                     </View>
                   ) : null}
                 </View>
@@ -156,6 +162,11 @@ const styles = StyleSheet.create({
     color: colors.black,
     flex: 1,
   },
+  metaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
   meta: {
     fontFamily: 'Changa_400Regular',
     fontSize: 13,
@@ -164,11 +175,19 @@ const styles = StyleSheet.create({
   },
   amount: {
     color: colors.red,
+    // Keep "1k EGP"/"1k ج.م" reading in that fixed internal order —
+    // isolates it from the surrounding RTL paragraph's bidi reordering.
+    writingDirection: 'ltr',
   },
   balanceLine: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     gap: 8,
+  },
+  balanceItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
   },
   balanceText: {
     fontFamily: 'Changa_400Regular',

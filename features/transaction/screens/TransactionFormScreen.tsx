@@ -84,7 +84,9 @@ const TransactionFormScreen = () => {
   const [amount, setAmount] = useState('');
   const [categoryId, setCategoryId] = useState<string | null>(null);
   const [incomeType, setIncomeType] = useState('');
-  const [date, setDate] = useState<Date | null>(null);
+  const [date, setDate] = useState<Date | null>(() =>
+    isEdit ? null : new Date(),
+  );
   const [repeat, setRepeat] = useState('monthly');
   const [note, setNote] = useState('');
   const [showDatePicker, setShowDatePicker] = useState(false);

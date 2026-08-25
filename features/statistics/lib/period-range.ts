@@ -67,3 +67,12 @@ export function shiftPeriodAnchor(
   next.setFullYear(next.getFullYear() + delta);
   return next;
 }
+
+/** True once the displayed period reaches today — there's nothing further to show. */
+export function isCurrentOrFuturePeriod(
+  anchor: Date,
+  period: StatisticsPeriod,
+): boolean {
+  const { to } = getPeriodRange(anchor, period);
+  return to >= startOfDay(new Date());
+}

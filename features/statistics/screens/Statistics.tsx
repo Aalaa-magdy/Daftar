@@ -23,7 +23,7 @@ import SummaryCards from '../components/SummaryCards';
 import TrendBarChart from '../components/TrendBarChart';
 import { useStatistics } from '../hooks/useStatistics';
 import { formatTrendLabel } from '../lib/format-trend-label';
-import { shiftPeriodAnchor } from '../lib/period-range';
+import { isCurrentOrFuturePeriod, shiftPeriodAnchor } from '../lib/period-range';
 import type { StatisticsPeriod } from '../types/statistics.types';
 
 const Statistics = () => {
@@ -55,6 +55,13 @@ const Statistics = () => {
     setAnchorDate(new Date());
   };
 
+  const isNextDisabled = isCurrentOrFuturePeriod(anchorDate, period);
+
+  const handleNext = () => {
+    if (isNextDisabled) return;
+    setAnchorDate((current) => shiftPeriodAnchor(current, period, 1));
+  };
+
   if (!fontsLoaded || isAuthChecking || !isAuthenticated) {
     return null;
   }
@@ -79,9 +86,8 @@ const Statistics = () => {
           onPrevious={() =>
             setAnchorDate((current) => shiftPeriodAnchor(current, period, -1))
           }
-          onNext={() =>
-            setAnchorDate((current) => shiftPeriodAnchor(current, period, 1))
-          }
+          onNext={handleNext}
+          isNextDisabled={isNextDisabled}
         />
 
         {isLoading ? (

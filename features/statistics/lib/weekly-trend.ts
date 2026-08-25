@@ -139,6 +139,9 @@ function resolveWeeklyVariant(
   spent: number,
 ): TrendVariant {
   if (activeIndex >= 0 && index === activeIndex) return 'active';
+  // Days after today haven't happened yet — always render as placeholder,
+  // even if the API ever returns a stray non-zero value for one.
+  if (activeIndex >= 0 && index > activeIndex) return 'placeholder';
   return spent > 0 ? 'past' : 'placeholder';
 }
 

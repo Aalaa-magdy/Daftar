@@ -10,9 +10,15 @@ interface Props {
   label: string;
   onPrevious: () => void;
   onNext: () => void;
+  isNextDisabled?: boolean;
 }
 
-const DateNavigator = ({ label, onPrevious, onNext }: Props) => {
+const DateNavigator = ({
+  label,
+  onPrevious,
+  onNext,
+  isNextDisabled = false,
+}: Props) => {
   const { t } = useTranslation();
   const { isRTL } = useAppDirection();
 
@@ -39,9 +45,15 @@ const DateNavigator = ({ label, onPrevious, onNext }: Props) => {
           activeOpacity={0.7}
           accessibilityRole="button"
           accessibilityLabel={t('statistics.nextPeriod')}
+          accessibilityState={{ disabled: isNextDisabled }}
+          disabled={isNextDisabled}
           onPress={onNext}
         >
-          <HugeiconsIcon icon={NextIcon} size={24} color={colors.black} />
+          <HugeiconsIcon
+            icon={NextIcon}
+            size={24}
+            color={isNextDisabled ? colors.progressInactive : colors.black}
+          />
         </TouchableOpacity>
       </View>
     </View>

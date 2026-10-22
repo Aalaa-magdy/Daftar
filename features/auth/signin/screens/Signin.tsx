@@ -19,10 +19,10 @@ import {
   ImageBackground,
   Keyboard,
   StyleSheet,
-  Text,
   TouchableWithoutFeedback,
   View,
 } from "react-native";
+import { Text } from "@/components/ui/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { useTranslation } from "react-i18next";
@@ -264,7 +264,7 @@ const styles = StyleSheet.create({
 
   label: {
     width: "100%",
-    fontFamily: "Changa_400Regular",
+
     color: colors.black,
     fontSize: 16,
     lineHeight: 24,
@@ -283,7 +283,7 @@ const styles = StyleSheet.create({
   },
 
   footerAuthMuted: {
-    fontFamily: "Changa_400Regular",
+  
     fontSize: 16,
     lineHeight: 24,
     color: colors.captionMuted,

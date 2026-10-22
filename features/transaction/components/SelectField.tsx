@@ -2,7 +2,12 @@ import { colors } from '@/theme/colors';
 import ArrowDown01Icon from '@hugeicons/core-free-icons/ArrowDown01Icon';
 import { HugeiconsIcon } from '@hugeicons/react-native';
 import type { ReactNode } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { Text } from "@/components/ui/AppText";
 
 interface Props {
   value: string;

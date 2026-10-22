@@ -15,7 +15,13 @@ import { AxiosError } from 'axios';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
+import {
+  Alert,
+  ScrollView,
+  StyleSheet,
+  View,
+} from "react-native";
+import { Text } from "@/components/ui/AppText";
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const MIN_PASSWORD_LENGTH = 6;

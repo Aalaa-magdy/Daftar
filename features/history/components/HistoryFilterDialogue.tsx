@@ -19,10 +19,10 @@ import {
   Pressable,
   ScrollView,
   StyleSheet,
-  Text,
   TouchableOpacity,
   View,
-} from 'react-native';
+} from "react-native";
+import { Text } from "@/components/ui/AppText";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { TIME_RANGE_PRESETS } from '../lib/date-ranges';
 import {

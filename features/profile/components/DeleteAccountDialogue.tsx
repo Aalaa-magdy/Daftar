@@ -11,11 +11,11 @@ import {
   Modal,
   Pressable,
   StyleSheet,
-  Text,
   TouchableOpacity,
   View,
   ActivityIndicator,
-} from 'react-native';
+} from "react-native";
+import { Text } from "@/components/ui/AppText";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface Props {

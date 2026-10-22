@@ -14,7 +14,13 @@ import { AxiosError } from 'axios';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
+import {
+  Alert,
+  ScrollView,
+  StyleSheet,
+  View,
+} from "react-native";
+import { Text } from "@/components/ui/AppText";
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useProfile, useRequestEmailVerification, useVerifyEmail } from '../hooks';
 

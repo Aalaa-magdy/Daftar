@@ -3,11 +3,10 @@ import React, { useEffect, useRef, useState } from 'react';
 import {
   NativeSyntheticEvent,
   StyleSheet,
-  Text,
-  TextInput,
   TextInputKeyPressEventData,
   View,
-} from 'react-native';
+} from "react-native";
+import { Text, TextInput } from "@/components/ui/AppText";
 
 const CODE_LENGTH = 4;
 

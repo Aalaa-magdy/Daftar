@@ -10,13 +10,13 @@ import { useResponsiveLayout } from '@/hooks/useResponsiveLayout';
 import { colors } from '@/theme/colors';
 import {
   StyleSheet,
-  Text,
   TouchableOpacity,
   View,
   ActivityIndicator,
   Image,
   type LayoutChangeEvent,
-} from 'react-native';
+} from "react-native";
+import { Text } from "@/components/ui/AppText";
 import ViewIcon from '@hugeicons/core-free-icons/ViewIcon';
 import ViewOffIcon from '@hugeicons/core-free-icons/ViewOffIcon';
 import ArrowUpLeft01Icon from '@hugeicons/core-free-icons/ArrowUpLeft01Icon';

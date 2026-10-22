@@ -9,10 +9,10 @@ import {
   Modal,
   Pressable,
   StyleSheet,
-  Text,
   TouchableOpacity,
   View,
-} from 'react-native';
+} from "react-native";
+import { Text } from "@/components/ui/AppText";
 
 const WEEKDAY_KEYS = [
   'datePicker.weekdays.sun',

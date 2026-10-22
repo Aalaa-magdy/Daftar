@@ -13,13 +13,13 @@ import { HugeiconsIcon, type IconSvgElement } from '@hugeicons/react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import {
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
-    type StyleProp,
-    type ViewStyle,
-} from 'react-native';
+  StyleSheet,
+  TouchableOpacity,
+  View,
+  type StyleProp,
+  type ViewStyle,
+} from "react-native";
+import { Text } from "@/components/ui/AppText";
 
 interface Props {
   id: string;

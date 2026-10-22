@@ -3,7 +3,12 @@ import Cancel01Icon from '@hugeicons/core-free-icons/Cancel01Icon';
 import Tick01Icon from '@hugeicons/core-free-icons/Tick01Icon';
 import { HugeiconsIcon } from '@hugeicons/react-native';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { Text } from "@/components/ui/AppText";
 
 interface Props {
   visible: boolean;

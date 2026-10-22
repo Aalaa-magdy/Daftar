@@ -1,6 +1,11 @@
 import { colors } from '@/theme/colors'
 import React from 'react'
-import { Text, TouchableOpacity, StyleSheet, View } from 'react-native'
+import {
+  TouchableOpacity,
+  StyleSheet,
+  View,
+} from "react-native";
+import { Text } from "@/components/ui/AppText";
 import { onboardingData } from '../data/onboardingData'
 import Button from '@/components/ui/Button';
 import { useTranslation } from 'react-i18next';

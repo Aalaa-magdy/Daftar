@@ -9,12 +9,12 @@ import {
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-    ActivityIndicator,
-    ScrollView,
-    StyleSheet,
-    Text,
-    View,
-} from 'react-native';
+  ActivityIndicator,
+  ScrollView,
+  StyleSheet,
+  View,
+} from "react-native";
+import { Text } from "@/components/ui/AppText";
 import { SafeAreaView } from 'react-native-safe-area-context';
 import CategoryBreakdown from '../components/CategoryBreakdown';
 import DailyCategoryReport from '../components/DailyCategoryReport';

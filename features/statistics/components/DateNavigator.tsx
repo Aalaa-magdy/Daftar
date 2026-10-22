@@ -4,7 +4,12 @@ import ArrowLeft01Icon from '@hugeicons/core-free-icons/ArrowLeft01Icon';
 import ArrowRight01Icon from '@hugeicons/core-free-icons/ArrowRight01Icon';
 import { HugeiconsIcon } from '@hugeicons/react-native';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { Text } from "@/components/ui/AppText";
 
 interface Props {
   label: string;

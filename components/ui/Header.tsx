@@ -1,5 +1,10 @@
 import { colors } from "@/theme/colors"
-import { Image, StyleSheet, Text, View } from "react-native"
+import {
+  Image,
+  StyleSheet,
+  View,
+} from "react-native";
+import { Text } from "@/components/ui/AppText";
 const logoSource = require("@/assets/images/logo-mark.png");
 interface Props {
   title: string,

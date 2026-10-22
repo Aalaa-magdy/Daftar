@@ -14,10 +14,10 @@ import { screenLayout } from '@/theme/screen-layout';
 import {
   ScrollView,
   StyleSheet,
-  Text,
   TouchableOpacity,
   View,
-} from 'react-native';
+} from "react-native";
+import { Text } from "@/components/ui/AppText";
 import { SafeAreaView } from 'react-native-safe-area-context';
 import LogoutDialogue from '../components/LogoutDialogue';
 import ProfileMenuSection from '../components/ProfileMenuSection';

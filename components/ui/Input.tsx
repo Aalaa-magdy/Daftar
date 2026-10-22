@@ -6,12 +6,11 @@ import {
   Platform,
   StyleProp,
   StyleSheet,
-  Text,
-  TextInput,
   TouchableOpacity,
   View,
   ViewStyle,
-} from 'react-native';
+} from "react-native";
+import { Text, TextInput } from "@/components/ui/AppText";
 
 /** Leading/trailing icons + placeholder (unfocused) — tweak only here. */
 const INPUT_MUTED = '#A4A7AE';

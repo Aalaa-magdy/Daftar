@@ -4,12 +4,12 @@ import {
   Image,
   ImageBackground,
   TouchableOpacity,
-  Text,
   FlatList,
   useWindowDimensions,
   NativeSyntheticEvent,
   NativeScrollEvent,
-} from 'react-native';
+} from "react-native";
+import { Text } from "@/components/ui/AppText";
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors } from '@/theme/colors';
 const patternSource = require('@/assets/images/background-pattern-decorative.png');

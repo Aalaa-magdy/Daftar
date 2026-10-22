@@ -8,7 +8,13 @@ import {
 } from '@expo-google-fonts/changa';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, Image, StyleSheet, Text, View } from 'react-native';
+import {
+  ActivityIndicator,
+  Image,
+  StyleSheet,
+  View,
+} from "react-native";
+import { Text } from "@/components/ui/AppText";
 
 const HORIZONTAL_PADDING = 20;
 /** Cancel header padding so the logo aligns with the content edge. */

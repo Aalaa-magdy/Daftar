@@ -1,5 +1,11 @@
 import { colors } from "@/theme/colors";
-import { ImageBackground, StyleSheet, Text, TouchableOpacity, View } from "react-native"
+import {
+  ImageBackground,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { Text } from "@/components/ui/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
 const patternSource = require('@/assets/images/background-pattern-decorative.png');
 import {

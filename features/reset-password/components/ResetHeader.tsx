@@ -10,10 +10,10 @@ import { useTranslation } from 'react-i18next';
 import {
   ImageBackground,
   StyleSheet,
-  Text,
   TouchableOpacity,
   View,
-} from 'react-native';
+} from "react-native";
+import { Text } from "@/components/ui/AppText";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const patternSource = require('@/assets/images/background-pattern-decorative.png');

@@ -4,6 +4,20 @@ import {
   seamlessScreenOptions,
   tabsScreenOptions,
 } from '@/lib/navigation-transitions';
+import {
+  Changa_400Regular,
+  Changa_500Medium,
+  Changa_600SemiBold,
+  Changa_700Bold,
+  useFonts as useChangaFonts,
+} from '@expo-google-fonts/changa';
+import {
+  IBMPlexSansArabic_400Regular,
+  IBMPlexSansArabic_500Medium,
+  IBMPlexSansArabic_600SemiBold,
+  IBMPlexSansArabic_700Bold,
+  useFonts as usePlexFonts,
+} from '@expo-google-fonts/ibm-plex-sans-arabic';
 import { queryClient } from '@/lib/query-client';
 import { colors } from '@/theme/colors';
 import { QueryClientProvider } from '@tanstack/react-query';
@@ -23,6 +37,8 @@ export const unstable_settings = {
 };
 
 function AppShell() {
+
+
   const { i18n: i18nInstance } = useTranslation();
   const isRTL = i18nInstance.language === 'ar';
 
@@ -57,6 +73,21 @@ function AppShell() {
 
 export default function RootLayout() {
   const [i18nReady, setI18nReady] = useState(i18n.isInitialized);
+
+
+  
+
+  useEffect(() => {
+    initI18n()
+      .then(() => setI18nReady(true))
+      .catch(() => setI18nReady(true));
+  }, []);
+
+  useEffect(() => {
+    if (i18nReady ) {
+      SplashScreen.hideAsync();
+    }
+  }, [i18nReady]);
 
   useEffect(() => {
     initI18n()

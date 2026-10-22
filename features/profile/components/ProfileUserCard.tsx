@@ -1,5 +1,11 @@
 import { colors } from '@/theme/colors';
-import { ActivityIndicator, Image, StyleSheet, Text, View } from 'react-native';
+import {
+  ActivityIndicator,
+  Image,
+  StyleSheet,
+  View,
+} from "react-native";
+import { Text } from "@/components/ui/AppText";
 import { useProfile } from '../hooks';
 import { resolveProfileAvatarSource } from '../lib/profile-avatar';
 

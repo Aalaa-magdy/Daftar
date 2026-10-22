@@ -1,7 +1,11 @@
 import { colors } from '@/theme/colors';
 import NoteIcon from '@hugeicons/core-free-icons/NoteIcon';
 import { HugeiconsIcon } from '@hugeicons/react-native';
-import { StyleSheet, Text, View } from 'react-native';
+import {
+  StyleSheet,
+  View,
+} from "react-native";
+import { Text } from "@/components/ui/AppText";
 import { useTranslation } from 'react-i18next';
 
 const LanguageNoteCard = () => {

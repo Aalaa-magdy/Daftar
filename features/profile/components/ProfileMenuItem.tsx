@@ -1,7 +1,12 @@
 import { colors } from '@/theme/colors';
 import { useDirectionalIcons } from '@/hooks/useDirectionalIcons';
 import { HugeiconsIcon, type IconSvgElement } from '@hugeicons/react-native';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { Text } from "@/components/ui/AppText";
 
 interface Props {
   label: string;

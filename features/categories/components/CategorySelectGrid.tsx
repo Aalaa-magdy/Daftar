@@ -7,10 +7,10 @@ import { useTranslation } from 'react-i18next';
 import {
   ActivityIndicator,
   StyleSheet,
-  Text,
   TouchableOpacity,
   View,
-} from 'react-native';
+} from "react-native";
+import { Text } from "@/components/ui/AppText";
 
 interface Props {
   selectedIds: string[];

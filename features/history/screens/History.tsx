@@ -19,10 +19,10 @@ import {
   ActivityIndicator,
   ScrollView,
   StyleSheet,
-  Text,
   TouchableOpacity,
   View,
-} from 'react-native';
+} from "react-native";
+import { Text } from "@/components/ui/AppText";
 import { SafeAreaView } from 'react-native-safe-area-context';
 import HistoryFilterDialogue from '../components/HistoryFilterDialogue';
 import { groupTransactionsByDate } from '../lib/group-transactions';

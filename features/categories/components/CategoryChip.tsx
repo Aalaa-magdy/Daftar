@@ -5,7 +5,11 @@ import {
 import { resolveCategoryIcon } from '@/features/categories/lib/category-icons';
 import type { Category } from '@/features/categories/types/categories.types';
 import { HugeiconsIcon } from '@hugeicons/react-native';
-import { StyleSheet, Text, TouchableOpacity } from 'react-native';
+import {
+  StyleSheet,
+  TouchableOpacity,
+} from "react-native";
+import { Text } from "@/components/ui/AppText";
 
 interface Props {
   category: Category;

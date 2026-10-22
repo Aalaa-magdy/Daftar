@@ -9,7 +9,12 @@ import SquareLockPasswordIcon from '@hugeicons/core-free-icons/SquareLockPasswor
 import { HugeiconsIcon, type IconSvgElement } from '@hugeicons/react-native';
 import { AxiosError } from 'axios';
 import React, { useState } from 'react';
-import { Alert, StyleSheet, Text, View } from 'react-native';
+import {
+  Alert,
+  StyleSheet,
+  View,
+} from "react-native";
+import { Text } from "@/components/ui/AppText";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import type { PasswordDataType } from '../data/passwordData';
 import ResetHeader from './ResetHeader';

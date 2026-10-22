@@ -1,6 +1,10 @@
 import { colors } from '@/theme/colors';
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity } from 'react-native';
+import {
+  StyleSheet,
+  TouchableOpacity,
+} from "react-native";
+import { Text } from "@/components/ui/AppText";
 
 /** Full-width centered row (e.g. Continue as guest) vs inline next to caption (e.g. Sign in). */
 export type TextLinkButtonVariant = 'block' | 'inline';

@@ -2,7 +2,11 @@ import ProgressBar from '@/components/ui/ProgressBar';
 import { colors } from '@/theme/colors';
 import { HugeiconsIcon } from '@hugeicons/react-native';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, Text, View } from 'react-native';
+import {
+  StyleSheet,
+  View,
+} from "react-native";
+import { Text } from "@/components/ui/AppText";
 import type { CategoryStat } from '../types/statistics.types';
 import { formatCompactAmount, formatPercentage } from '../lib/format-stat-amount';
 

@@ -3,7 +3,12 @@ import Add01Icon from '@hugeicons/core-free-icons/Add01Icon';
 import MinusSignIcon from '@hugeicons/core-free-icons/MinusSignIcon';
 import { HugeiconsIcon } from '@hugeicons/react-native';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { Text } from "@/components/ui/AppText";
 import type { FaqItemData } from '../data/faq-items';
 
 interface Props {

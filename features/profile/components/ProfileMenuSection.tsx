@@ -1,6 +1,10 @@
 import { colors } from '@/theme/colors';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, Text, View } from 'react-native';
+import {
+  StyleSheet,
+  View,
+} from "react-native";
+import { Text } from "@/components/ui/AppText";
 import type { ProfileMenuSection as ProfileMenuSectionType } from '../data/profile-menu';
 import ProfileMenuItem from './ProfileMenuItem';
 

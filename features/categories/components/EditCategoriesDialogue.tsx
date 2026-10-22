@@ -18,10 +18,10 @@ import {
   Pressable,
   ScrollView,
   StyleSheet,
-  Text,
   TouchableOpacity,
   View,
-} from 'react-native';
+} from "react-native";
+import { Text } from "@/components/ui/AppText";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const LIST_MAX_HEIGHT = Dimensions.get('window').height * 0.52;

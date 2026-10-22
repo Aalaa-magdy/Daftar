@@ -4,7 +4,12 @@ import PencilEdit02Icon from '@hugeicons/core-free-icons/PencilEdit02Icon';
 import RepeatIcon from '@hugeicons/core-free-icons/RepeatIcon';
 import { HugeiconsIcon } from '@hugeicons/react-native';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { Text } from "@/components/ui/AppText";
 import type { RecurringIncomeListItem } from '../types/recurring-transaction.types';
 
 type Props = {

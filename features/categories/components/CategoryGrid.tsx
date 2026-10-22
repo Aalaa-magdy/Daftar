@@ -17,10 +17,10 @@ import {
   ActivityIndicator,
   Alert,
   StyleSheet,
-  Text,
   TouchableOpacity,
   View,
-} from 'react-native';
+} from "react-native";
+import { Text } from "@/components/ui/AppText";
 import { getApiErrorMessage } from '@/lib/api-error';
 import CategoryDeleteDialogue from './CategoryDeleteDialogue';
 import CategoryDialogue from './CategoryDialogue';

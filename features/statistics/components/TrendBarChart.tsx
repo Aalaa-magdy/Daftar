@@ -2,7 +2,13 @@ import { useAppDirection } from '@/hooks/useAppDirection';
 import { colors } from '@/theme/colors';
 import { useCallback, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
+import {
+  Platform,
+  Pressable,
+  StyleSheet,
+  View,
+} from "react-native";
+import { Text } from "@/components/ui/AppText";
 import type { TrendPoint } from '../types/statistics.types';
 
 interface Props {

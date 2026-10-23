@@ -106,6 +106,8 @@
     "totalBalance": "إجمالي الرصيد",
     "income": "الدخل",
     "expense": "المصروف",
+    "monthlyIncome": "الدخل الشهري",
+    "monthlyExpense": "المصروف الشهري",
     "spentLabel": "تم إنفاق",
     "ofBudget": "من {{amount}} ج.م",
     "daysRemaining": "متبقٍ {{count}} يوم",

@@ -7,6 +7,8 @@ export function normalizeBalanceSummary(data: unknown): BalanceSummary {
     totalIncome: Number(record.totalIncome ?? 0),
     totalExpense: Number(record.totalExpense ?? 0),
     totalBalance: Number(record.totalBalance ?? 0),
+    monthlyIncome: Number(record.monthlyIncome ?? 0),
+    monthlyExpense: Number(record.monthlyExpense ?? 0),
   };
 }
 

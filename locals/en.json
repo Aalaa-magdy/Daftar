@@ -106,6 +106,8 @@
     "totalBalance": "TOTAL BALANCE",
     "income": "Income",
     "expense": "Expense",
+    "monthlyIncome": "Monthly Income",
+    "monthlyExpense": "Monthly Expense",
     "spentLabel": "Spent",
     "ofBudget": "of {{amount}} EGP",
     "daysRemaining": "{{count}} days remaining",

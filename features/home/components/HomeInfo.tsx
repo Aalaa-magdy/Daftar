@@ -63,8 +63,8 @@ const HomeInfo = () => {
   const summary = useMemo(
     () => ({
       totalBalance: data?.totalBalance ?? 0,
-      totalIncome: data?.totalIncome ?? 0,
-      totalExpense: data?.totalExpense ?? 0,
+      monthlyIncome: data?.monthlyIncome ?? 0,
+      monthlyExpense: data?.monthlyExpense ?? 0,
     }),
     [data],
   );
@@ -78,19 +78,22 @@ const HomeInfo = () => {
     ? formatBalanceAmount(summary.totalBalance)
     : MASK;
   const incomeDisplay = amountsVisible
-    ? `${formatBalanceAmount(summary.totalIncome)} ${egp}`
+    ? `${formatBalanceAmount(summary.monthlyIncome)} ${egp}`
     : `${MASK} ${egp}`;
   const expenseDisplay = amountsVisible
-    ? `${formatBalanceAmount(summary.totalExpense)} ${egp}`
+    ? `${formatBalanceAmount(summary.monthlyExpense)} ${egp}`
     : `${MASK} ${egp}`;
   const spentAmountDisplay = amountsVisible
-    ? formatBalanceAmount(summary.totalExpense)
+    ? formatBalanceAmount(summary.monthlyExpense)
     : MASK;
   const budgetDisplay = amountsVisible
-    ? formatBalanceAmount(summary.totalIncome)
+    ? formatBalanceAmount(summary.monthlyIncome)
     : MASK;
   const daysRemaining = getDaysRemainingInMonth();
-  const progress = getExpenseProgress(summary.totalExpense, summary.totalIncome);
+  const progress = getExpenseProgress(
+    summary.monthlyExpense,
+    summary.monthlyIncome,
+  );
 
   return (
 
@@ -168,7 +171,7 @@ const HomeInfo = () => {
               />
             </View>
             <View>
-              <Text style={styles.type}>{t('home.income')}</Text>
+              <Text style={styles.type}>{t('home.monthlyIncome')}</Text>
               <Text style={styles.amount}>{incomeDisplay}</Text>
             </View>
           </View>
@@ -177,7 +180,7 @@ const HomeInfo = () => {
               <HugeiconsIcon icon={ArrowUpLeft01Icon} size={20} color="#F04438" />
             </View>
             <View>
-              <Text style={styles.type}>{t('home.expense')}</Text>
+              <Text style={styles.type}>{t('home.monthlyExpense')}</Text>
               <Text style={styles.amount}>{expenseDisplay}</Text>
             </View>
           </View>

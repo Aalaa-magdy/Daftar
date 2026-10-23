@@ -62,7 +62,6 @@ function resolveTrendVariant(
   index: number,
   selectedIndex: number,
   spent: number,
-  period: StatisticsPeriod,
 ): TrendVariant {
   if (index === selectedIndex) return 'active';
 
@@ -104,7 +103,6 @@ function mapTrendPoints(
       index,
       selectedIndex,
       point.spent,
-      period,
     ),
   }));
 }

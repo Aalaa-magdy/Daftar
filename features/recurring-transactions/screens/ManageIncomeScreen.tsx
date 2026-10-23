@@ -8,7 +8,7 @@ import {
   useFonts,
 } from '@expo-google-fonts/changa';
 import { useFocusEffect, useRouter } from 'expo-router';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   ActivityIndicator,
@@ -22,18 +22,22 @@ import {
   SafeAreaView,
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
-import RecurringIncomeCard from '../components/RecurringIncomeCard';
+import RecurringTransactionCard from '../components/RecurringTransactionCard';
 import { editRecurringIncomeHref } from '../lib/recurring-links';
 import { useRequireAuth } from '@/features/auth/hooks';
-import { useRecurringIncomeList } from '../hooks';
+import { useRecurringTransactionList } from '../hooks';
+import TransactionTypeToggle from '@/features/transaction/components/TransactionTypeToggle';
+import type { TransactionKind } from '@/features/transaction/types';
 
 const ManageIncomeScreen = () => {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { t } = useTranslation();
   const { isAuthenticated, isAuthChecking } = useRequireAuth();
-  const { items, isLoading, isEmpty, isError, refetch } =
-    useRecurringIncomeList();
+  const { items, isLoading, isError, refetch } =
+    useRecurringTransactionList();
+  const [type, setType] = useState<TransactionKind>('expense');
+  const filteredItems = items.filter((item) => item.type === type);
 
   const [fontsLoaded] = useFonts({
     Changa_400Regular,
@@ -62,6 +66,8 @@ const ManageIncomeScreen = () => {
           onBack={() => router.back()}
         />
 
+        <TransactionTypeToggle value={type} onChange={setType} />
+
         {isLoading ? (
           <View style={styles.stateWrap}>
             <ActivityIndicator color={colors.primary} />
@@ -73,17 +79,27 @@ const ManageIncomeScreen = () => {
               <Text style={styles.retryText}>{t('common.retry')}</Text>
             </TouchableOpacity>
           </View>
-        ) : isEmpty ? (
+        ) : filteredItems.length === 0 ? (
           <View style={styles.stateWrap}>
-            <Text style={styles.stateText}>{t('manageIncome.empty')}</Text>
+            <Text style={styles.stateText}>
+              {t(
+                type === 'income'
+                  ? 'manageIncome.emptyIncome'
+                  : 'manageIncome.emptyExpense',
+              )}
+            </Text>
           </View>
         ) : (
           <View style={styles.list}>
-            {items.map((item) => (
-              <RecurringIncomeCard
+            {filteredItems.map((item) => (
+              <RecurringTransactionCard
                 key={item.id}
                 item={item}
-                onEdit={() => router.push(editRecurringIncomeHref(item.id))}
+                onEdit={
+                  item.type === 'income'
+                    ? () => router.push(editRecurringIncomeHref(item.id))
+                    : undefined
+                }
               />
             ))}
           </View>
@@ -92,8 +108,8 @@ const ManageIncomeScreen = () => {
 
       <View style={[styles.footer, { paddingBottom: insets.bottom + 56 }]}>
         <Button
-          title={t('home.addIncome')}
-          onPress={() => router.push(addTransactionHref('income'))}
+          title={t(type === 'income' ? 'home.addIncome' : 'home.addExpense')}
+          onPress={() => router.push(addTransactionHref(type))}
         />
       </View>
     </SafeAreaView>

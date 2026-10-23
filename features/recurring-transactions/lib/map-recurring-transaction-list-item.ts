@@ -1,8 +1,8 @@
 import type { TFunction } from 'i18next';
 import { resolveDayOfMonth } from './recurring-form-mappers';
 import type {
-  RecurringIncomeListItem,
   RecurringIncomeType,
+  RecurringTransactionListItem,
   RecurringTransaction,
 } from '../types/recurring-transaction.types';
 
@@ -29,17 +29,23 @@ function resolveTitle(
   item: RecurringTransaction,
   t: TFunction,
 ): string {
+  if (item.type === 'expense' && item.frequency === 'monthly' && item.name) {
+    return item.name;
+  }
+
   if (item.notes) {
     return item.notes;
   }
 
-  if (item.incomeType) {
+  if (item.type === 'income' && item.incomeType) {
     return t(`transaction.incomeTypes.${incomeTypeLabelKey(item.incomeType)}`, {
       defaultValue: item.incomeType,
     });
   }
 
-  return t('transaction.incomeTypes.salary');
+  return item.type === 'income'
+    ? t('transaction.incomeTypes.salary')
+    : t('common.expense');
 }
 
 function resolveScheduleLabel(
@@ -57,13 +63,14 @@ function resolveScheduleLabel(
   return t('common.oneTime');
 }
 
-export function mapRecurringIncomeListItem(
+export function mapRecurringTransactionListItem(
   item: RecurringTransaction,
   t: TFunction,
   language: string,
-): RecurringIncomeListItem {
+): RecurringTransactionListItem {
   return {
     id: item.id,
+    type: item.type,
     title: resolveTitle(item, t),
     amount: item.amount,
     scheduleLabel: resolveScheduleLabel(item, t, language),
@@ -72,12 +79,12 @@ export function mapRecurringIncomeListItem(
   };
 }
 
-export function mapRecurringIncomeListItems(
+export function mapRecurringTransactionListItems(
   items: RecurringTransaction[],
   t: TFunction,
   language: string,
-): RecurringIncomeListItem[] {
+): RecurringTransactionListItem[] {
   return items
-    .filter((item) => item.type === 'income' && item.isActive)
-    .map((item) => mapRecurringIncomeListItem(item, t, language));
+    .filter((item) => item.isActive)
+    .map((item) => mapRecurringTransactionListItem(item, t, language));
 }

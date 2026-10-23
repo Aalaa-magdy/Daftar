@@ -1,4 +1,4 @@
-export { useRecurringIncomeList } from './useRecurringIncomeList';
+export { useRecurringTransactionList } from './useRecurringTransactionList';
 export { useRecurringTransaction } from './useRecurringTransaction';
 export { useUpdateRecurringTransaction } from './useUpdateRecurringTransaction';
 export { useDeleteRecurringTransaction } from './useDeleteRecurringTransaction';

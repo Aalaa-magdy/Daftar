@@ -40,5 +40,3 @@ export const CATEGORY_COLOR_OPTIONS = [
   '#7A5AF8',
   '#717680',
 ] as const;
-
-export type CategoryDialogueMode = 'add' | 'edit';

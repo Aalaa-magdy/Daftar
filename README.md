@@ -1,83 +1,54 @@
-## 🎯 Overview
+# Daftar
 
-MoneyTrack helps users manage their personal finances by providing an intuitive interface to record, categorize, and analyze income and expenses. The app features a clean history view with filtering capabilities, category-based organization, and visual transaction summaries.
+Daftar is a personal finance app built with Expo and React Native. It lets users
+track income and expenses, manage recurring transactions, review transaction
+history, and view statistics in English or Arabic.
 
-## ✨ Features
+## Requirements
 
-### Core Features
-- **Add Transactions** - Record income and expenses with amount, category, and date
-- **Transaction History** - View all transactions in chronological order
-- **Filtering System** - Filter by:
-  - Date ranges (This Week, This Month, Last Month, This Year, Custom Range)
-  - Transaction type (Income/Expense/All)
-  - Categories (Food, Shopping, Education, Bills, etc.)
-- **Category Management** - Predefined categories with icons for common expense types
-- **Balance Calculator** - Real-time balance calculation based on income and expenses
-- **Visual Indicators** - Color-coded entries (green for income, red for expenses)
+- Node.js and npm versions supported by Expo SDK 54
+- An API server reachable from the device or emulator
+- iOS Simulator or Android Emulator for native development (optional)
 
-### Advanced Features
-- Custom date range picker
-- Persistent storage using AsyncStorage
-- Transaction editing and deletion
-- Monthly/yearly summaries
-- Export transaction history (CSV)
-- Charts and statistics (coming soon)
+## Setup
 
-## 🛠 Tech Stack
+1. Install dependencies:
 
-| Technology | Purpose |
-|------------|---------|
-| **React Native** (0.72+) | Mobile framework |
-| **Expo** | Development platform |
-| **React Navigation** (v6) | Screen navigation |
-| **AsyncStorage** | Local data persistence |
-| **React Native Paper** | UI components |
-| **React Native Calendars** | Date picking |
-| **React Native Vector Icons** | Icons and graphics |
-| **Moment.js** | Date manipulation |
-| **React Native Chart Kit** | Data visualization (planned) |
+   ```sh
+   npm ci
+   ```
 
-## 📦 Installation
+2. Create `.env.local` in the project root and configure the API URL:
 
-### Prerequisites
-- Node.js (v16 or later)
-- npm or yarn
-- Expo CLI (`npm install -g expo-cli`)
-- iOS Simulator (Mac only) or Android Emulator
-- Expo Go app on physical device
+   ```dotenv
+   EXPO_PUBLIC_API_URL=http://localhost:3000
+   ```
 
-### Setup Instructions
+   Use an API URL reachable from your device or emulator. For Google sign-in,
+   configure `EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID` and, for Android,
+   `EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID`.
 
-```bash
-# 1. Clone the repository
-git clone https://github.com/yourusername/moneytrack.git
-cd moneytrack
+3. Start the Expo development server:
 
-# 2. Install dependencies
-npm install
-# or
-yarn install
+   ```sh
+   npm start
+   ```
 
-# 3. Install additional required packages
-npm install @react-navigation/native @react-navigation/stack
-npm install @react-navigation/bottom-tabs
-npm install react-native-screens react-native-safe-area-context
-npm install @react-native-async-storage/async-storage
-npm install react-native-paper
-npm install react-native-vector-icons
-npm install react-native-calendars
-npm install moment
-npm install react-native-gesture-handler
+## Useful commands
 
-# 4. For iOS (Mac only)
-cd ios && pod install && cd ..
+| Command | Description |
+| --- | --- |
+| `npm start` | Start the Expo development server |
+| `npm run ios` | Build and run on the iOS simulator |
+| `npm run android` | Build and run on an Android emulator |
+| `npm run web` | Run the web version |
+| `npm run lint` | Run ESLint |
+| `npm run typecheck` | Run the TypeScript type check |
 
-# 5. Start the development server
-npm start
-# or
-expo start
+## Project layout
 
-# 6. Run on device/emulator
-# Press 'i' for iOS simulator
-# Press 'a' for Android emulator
-# Scan QR code with Expo Go app for physical device
+- `app/` - Expo Router routes and navigation layouts
+- `components/` - Shared UI components
+- `features/` - Feature-specific screens, components, hooks, and data logic
+- `hooks/`, `lib/`, `theme/` - Shared hooks, utilities, and styling
+- `locals/` - English and Arabic translations

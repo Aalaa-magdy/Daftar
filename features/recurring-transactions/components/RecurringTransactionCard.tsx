@@ -10,14 +10,14 @@ import {
   View,
 } from "react-native";
 import { Text } from "@/components/ui/AppText";
-import type { RecurringIncomeListItem } from '../types/recurring-transaction.types';
+import type { RecurringTransactionListItem } from '../types/recurring-transaction.types';
 
 type Props = {
-  item: RecurringIncomeListItem;
+  item: RecurringTransactionListItem;
   onEdit?: () => void;
 };
 
-const RecurringIncomeCard = ({ item, onEdit }: Props) => {
+const RecurringTransactionCard = ({ item, onEdit }: Props) => {
   const { t } = useTranslation();
 
   return (
@@ -37,15 +37,21 @@ const RecurringIncomeCard = ({ item, onEdit }: Props) => {
           <Text style={styles.schedule}>{item.scheduleLabel}</Text>
         </View>
 
-        <TouchableOpacity
-          style={styles.editButton}
-          activeOpacity={0.7}
-          onPress={onEdit}
-          accessibilityRole="button"
-          accessibilityLabel={t('transaction.edit')}
-        >
-          <HugeiconsIcon icon={PencilEdit02Icon} size={20} color={colors.primary} />
-        </TouchableOpacity>
+        {onEdit ? (
+          <TouchableOpacity
+            style={styles.editButton}
+            activeOpacity={0.7}
+            onPress={onEdit}
+            accessibilityRole="button"
+            accessibilityLabel={t('transaction.edit')}
+          >
+            <HugeiconsIcon
+              icon={PencilEdit02Icon}
+              size={20}
+              color={colors.primary}
+            />
+          </TouchableOpacity>
+        ) : null}
       </View>
     </View>
   );
@@ -104,4 +110,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default RecurringIncomeCard;
+export default RecurringTransactionCard;

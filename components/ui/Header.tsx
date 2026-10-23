@@ -1,45 +1,48 @@
-import { colors } from "@/theme/colors"
+import { Text } from '@/components/ui/AppText';
+import { colors } from '@/theme/colors';
+import {
+  Changa_400Regular,
+  Changa_500Medium,
+  useFonts,
+} from '@expo-google-fonts/changa';
 import {
   Image,
   StyleSheet,
   View,
-} from "react-native";
-import { Text } from "@/components/ui/AppText";
-const logoSource = require("@/assets/images/logo-mark.png");
+} from 'react-native';
+
+const logoSource = require('@/assets/images/logo-mark.png');
+
 interface Props {
-  title: string,
-  subtitle: string,
+  title: string;
+  subtitle: string;
 }
-import {
-  Changa_400Regular,
-  Changa_500Medium,
-  useFonts
-} from '@expo-google-fonts/changa';
+
 const Header = ({ title, subtitle }: Props) => {
   const [fontsLoaded] = useFonts({
     Changa_400Regular,
-    Changa_500Medium
+    Changa_500Medium,
   });
 
   if (!fontsLoaded) {
     return null;
   }
   return (
-    <View style={styles.content}> 
+    <View style={styles.content}>
       <View style={styles.logo}>
-        <Image source={logoSource} style={styles.logoImage} resizeMode="contain" />
+        <Image
+          source={logoSource}
+          style={styles.logoImage}
+          resizeMode="contain"
+        />
       </View>
       <View style={styles.description}>
-        <Text style={styles.title}>
-          {title}
-        </Text>
-        <Text style={styles.subTitle}>
-          {subtitle}
-        </Text>
+        <Text style={styles.title}>{title}</Text>
+        <Text style={styles.subTitle}>{subtitle}</Text>
       </View>
     </View>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   content: {
@@ -75,7 +78,7 @@ const styles = StyleSheet.create({
     color: colors.textGray,
     fontFamily: 'Changa_400Regular',
     textAlign: 'center',
-  }
-})
+  },
+});
 
 export default Header

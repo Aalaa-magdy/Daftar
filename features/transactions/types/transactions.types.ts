@@ -4,6 +4,7 @@ import type { TransactionKind } from '@/features/transaction/types';
 export type ApiTransactionType = 'expense' | 'income';
 export type ApiIncomeType = 'salary' | 'part-time' | 'freelance' | 'bonus' | 'other';
 export type ApiRepeatType = 'monthly' | 'one-time';
+export type ApiFrequency = 'monthly';
 
 export interface Transaction {
   id: string;
@@ -18,6 +19,9 @@ export interface Transaction {
   /** User-entered label when incomeType is 'other'. */
   customIncomeType?: string;
   repeat?: ApiRepeatType;
+  frequency?: ApiFrequency;
+  repeatCount?: number;
+  name?: string;
   createdAt?: string;
   updatedAt?: string;
 }

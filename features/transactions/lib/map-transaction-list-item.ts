@@ -61,7 +61,9 @@ export function mapTransactionToListItem(
     id: transaction.id,
     type: transaction.transactionType,
     title: isExpense
-      ? category?.name ?? transaction.notes?.trim() ?? t('common.expense')
+      ? transaction.repeat === 'monthly' && transaction.name?.trim()
+        ? transaction.name.trim()
+        : category?.name ?? transaction.notes?.trim() ?? t('common.expense')
       : incomeTypeLabel(transaction.incomeType, transaction.customIncomeType, t),
     amount: transaction.amount,
     time: formatTransactionTime(resolveTransactionTimeSource(transaction), language),

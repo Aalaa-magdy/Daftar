@@ -1,4 +1,8 @@
-import type { ApiIncomeType, ApiRepeatType, ApiTransactionType } from './transactions.types';
+import type {
+  ApiIncomeType,
+  ApiRepeatType,
+  ApiTransactionType,
+} from './transactions.types';
 
 export type UpdateTransactionRequest = {
   amount?: number;

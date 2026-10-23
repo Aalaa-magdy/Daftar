@@ -82,6 +82,11 @@ export function normalizeRecurringTransaction(raw: unknown): RecurringTransactio
     lastGeneratedAt:
       record.lastGeneratedAt != null ? String(record.lastGeneratedAt) : undefined,
     isActive: record.isActive !== false,
+    repeatCount:
+      Number.isInteger(Number(record.repeatCount)) && Number(record.repeatCount) > 0
+        ? Number(record.repeatCount)
+        : undefined,
+    name: typeof record.name === 'string' ? record.name.trim() : undefined,
     notes: typeof record.notes === 'string' ? record.notes.trim() : undefined,
     incomeType: readIncomeType(record.incomeType),
     createdAt: record.createdAt != null ? String(record.createdAt) : undefined,

@@ -4,6 +4,7 @@ import {
   NativeSyntheticEvent,
   StyleSheet,
   TextInputKeyPressEventData,
+  type TextInput as NativeTextInput,
   View,
 } from "react-native";
 import { Text, TextInput } from "@/components/ui/AppText";
@@ -17,7 +18,7 @@ interface Props {
 }
 
 const VerificationCodeInput = ({ value = '', onChange, error }: Props) => {
-  const inputsRef = useRef<(TextInput | null)[]>([]);
+  const inputsRef = useRef<(NativeTextInput | null)[]>([]);
   const [digits, setDigits] = useState<string[]>(() =>
     Array.from({ length: CODE_LENGTH }, (_, i) => value[i] ?? ''),
   );

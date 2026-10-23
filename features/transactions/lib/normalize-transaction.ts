@@ -1,5 +1,6 @@
 import type {
   ApiIncomeType,
+  ApiFrequency,
   ApiRepeatType,
   Transaction,
 } from '../types/transactions.types';
@@ -27,6 +28,7 @@ const VALID_INCOME_TYPES = new Set<ApiIncomeType>([
 ]);
 
 const VALID_REPEAT_TYPES = new Set<ApiRepeatType>(['monthly', 'one-time']);
+const VALID_FREQUENCIES = new Set<ApiFrequency>(['monthly']);
 
 function normalizeIncomeType(value: unknown): ApiIncomeType | undefined {
   if (value == null) return undefined;
@@ -38,6 +40,12 @@ function normalizeRepeat(value: unknown): ApiRepeatType | undefined {
   if (value == null) return undefined;
   const normalized = String(value).trim() as ApiRepeatType;
   return VALID_REPEAT_TYPES.has(normalized) ? normalized : undefined;
+}
+
+function normalizeFrequency(value: unknown): ApiFrequency | undefined {
+  if (value == null) return undefined;
+  const normalized = String(value).trim() as ApiFrequency;
+  return VALID_FREQUENCIES.has(normalized) ? normalized : undefined;
 }
 
 export function normalizeTransaction(raw: unknown): Transaction | null {
@@ -53,6 +61,8 @@ export function normalizeTransaction(raw: unknown): Transaction | null {
 
   const dateValue =
     record.date ?? record.payDate ?? record.createdAt ?? new Date().toISOString();
+
+  const frequency = normalizeFrequency(record.frequency);
 
   return {
     id: String(id),
@@ -70,7 +80,13 @@ export function normalizeTransaction(raw: unknown): Transaction | null {
       record.customIncomeType != null
         ? String(record.customIncomeType)
         : undefined,
-    repeat: normalizeRepeat(record.repeat),
+    repeat: normalizeRepeat(record.repeat) ?? frequency,
+    frequency,
+    repeatCount:
+      Number.isInteger(Number(record.repeatCount)) && Number(record.repeatCount) > 0
+        ? Number(record.repeatCount)
+        : undefined,
+    name: record.name != null ? String(record.name).trim() : undefined,
     createdAt:
       record.createdAt != null ? String(record.createdAt) : undefined,
     updatedAt:

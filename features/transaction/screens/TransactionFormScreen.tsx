@@ -89,6 +89,8 @@ const TransactionFormScreen = () => {
     isEdit ? null : new Date(),
   );
   const [repeat, setRepeat] = useState('monthly');
+  const [repeatCount, setRepeatCount] = useState('');
+  const [expenseName, setExpenseName] = useState('');
   const [note, setNote] = useState('');
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showDeleteDialogue, setShowDeleteDialogue] = useState(false);
@@ -141,23 +143,43 @@ const TransactionFormScreen = () => {
     setCustomIncomeType(formValues.customIncomeType ?? '');
     setDate(formValues.date);
     setRepeat(formValues.repeat ?? 'monthly');
+    setRepeatCount(formValues.repeatCount ?? '');
+    setExpenseName(formValues.name ?? '');
     setNote(formValues.note ?? '');
   }, [isEdit, existingTransaction]);
 
   const dateDisplay = date ? formatDisplayDate(date) : '';
+  const hasValidRepeatCount =
+    Number.isInteger(Number(repeatCount)) && Number(repeatCount) > 0;
 
   const isFormComplete = useMemo(() => {
     if (!amount.trim() || !date) return false;
 
     if (kind === 'expense') {
-      return Boolean(categoryId);
+      if (!categoryId) return false;
+      if (!isEdit && repeat === 'monthly') {
+        return hasValidRepeatCount && Boolean(expenseName.trim());
+      }
+      return true;
     }
 
     if (!incomeType) return false;
-    if (incomeType === 'other') return Boolean(customIncomeType.trim());
+    if (incomeType === 'other' && !customIncomeType.trim()) return false;
+    if (!isEdit && repeat === 'monthly') return hasValidRepeatCount;
 
     return true;
-  }, [amount, date, kind, categoryId, incomeType, customIncomeType]);
+  }, [
+    amount,
+    date,
+    kind,
+    categoryId,
+    incomeType,
+    customIncomeType,
+    isEdit,
+    repeat,
+    hasValidRepeatCount,
+    expenseName,
+  ]);
 
   const headerTitle = isEdit
     ? kind === 'income'
@@ -214,6 +236,8 @@ const TransactionFormScreen = () => {
           customIncomeType,
           date,
           repeat,
+          repeatCount,
+          name: expenseName,
           note,
         });
 
@@ -244,6 +268,8 @@ const TransactionFormScreen = () => {
         customIncomeType,
         date,
         repeat,
+        repeatCount,
+        name: expenseName,
         note,
       });
 
@@ -381,6 +407,22 @@ const TransactionFormScreen = () => {
                     onToggle={() => togglePicker('repeat')}
                   />
                 </FormField>
+                {!isEdit && repeat === 'monthly' ? (
+                  <FormField
+                    label={t('transaction.repeatCount')}
+                    required
+                    helper={t('transaction.repeatCountHelper')}
+                  >
+                    <Input
+                      placeholder={t('transaction.repeatCountPlaceholder')}
+                      value={repeatCount}
+                      onChangeText={setRepeatCount}
+                      keyboardType="numeric"
+                      icon={fieldIcon(RepeatIcon)}
+                      containerStyle={styles.fieldInput}
+                    />
+                  </FormField>
+                ) : null}
               </>
             ) : (
               <>
@@ -417,15 +459,59 @@ const TransactionFormScreen = () => {
                   </TouchableOpacity>
                 </FormField>
 
-                <FormField label={t('transaction.note')}>
-                  <Input
-                    placeholder={t('common.optional')}
-                    value={note}
-                    onChangeText={setNote}
-                    multiline
-                    containerStyle={styles.fieldInput}
-                  />
-                </FormField>
+                {!isEdit ? (
+                  <FormField label={t('transaction.repeat')} required>
+                    <SelectField
+                      value={repeatDisplay}
+                      placeholder={t('common.oneTime')}
+                      options={repeatLabels}
+                      onSelect={(label) => {
+                        const index = repeatLabels.indexOf(label);
+                        if (index >= 0) setRepeat(REPEAT_OPTIONS[index]);
+                      }}
+                      icon={fieldIcon(RepeatIcon)}
+                      open={activePicker === 'repeat'}
+                      onToggle={() => togglePicker('repeat')}
+                    />
+                  </FormField>
+                ) : null}
+
+                {!isEdit && repeat === 'monthly' ? (
+                  <>
+                    <FormField
+                      label={t('transaction.repeatCount')}
+                      required
+                      helper={t('transaction.repeatCountHelper')}
+                    >
+                      <Input
+                        placeholder={t('transaction.repeatCountPlaceholder')}
+                        value={repeatCount}
+                        onChangeText={setRepeatCount}
+                        keyboardType="numeric"
+                        icon={fieldIcon(RepeatIcon)}
+                        containerStyle={styles.fieldInput}
+                      />
+                    </FormField>
+                    <FormField label={t('transaction.expenseName')} required>
+                      <Input
+                        placeholder={t('transaction.expenseNamePlaceholder')}
+                        value={expenseName}
+                        onChangeText={setExpenseName}
+                        containerStyle={styles.fieldInput}
+                      />
+                    </FormField>
+                  </>
+                ) : (
+                  <FormField label={t('transaction.note')}>
+                    <Input
+                      placeholder={t('common.optional')}
+                      value={note}
+                      onChangeText={setNote}
+                      multiline
+                      containerStyle={styles.fieldInput}
+                    />
+                  </FormField>
+                )}
               </>
             )}
           </KeyboardAwareScrollView>

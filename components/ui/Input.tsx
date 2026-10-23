@@ -34,12 +34,18 @@ interface InputProps {
   error?: string;
   invalid?: boolean;
   secureTextEntry?: boolean;
-  keyboardType?: 'default' | 'email-address' | 'numeric' | 'phone-pad';
+  keyboardType?:
+    | 'default'
+    | 'email-address'
+    | 'numeric'
+    | 'number-pad'
+    | 'phone-pad';
   icon?: React.ReactNode;
   rightIcon?: React.ReactNode;
   onRightIconPress?: () => void;
   containerStyle?: StyleProp<ViewStyle>;
   multiline?: boolean;
+  maxLength?: number;
   /** When false, field is display-only (e.g. opens a date picker on press). */
   editable?: boolean;
 }
@@ -58,6 +64,7 @@ const Input: React.FC<InputProps> = ({
   onRightIconPress,
   containerStyle,
   multiline = false,
+  maxLength,
   editable = true,
 }) => {
   const { t } = useTranslation();
@@ -121,6 +128,7 @@ const Input: React.FC<InputProps> = ({
           secureTextEntry={secureTextEntry}
           keyboardType={keyboardType}
           multiline={multiline}
+          maxLength={maxLength}
           editable={editable}
           focusable={editable}
           pointerEvents={editable ? 'auto' : 'none'}

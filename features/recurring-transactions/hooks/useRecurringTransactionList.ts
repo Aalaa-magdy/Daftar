@@ -4,12 +4,12 @@ import { AxiosError } from 'axios';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { recurringTransactionsApi } from '../api/recurring-transactions.api';
-import { mapRecurringIncomeListItems } from '../lib/map-recurring-income-list-item';
+import { mapRecurringTransactionListItems } from '../lib/map-recurring-transaction-list-item';
 import { mergeRecurringTransactionListWithCache } from '../lib/merge-recurring-transaction-update';
-import type { RecurringIncomeListItem } from '../types/recurring-transaction.types';
+import type { RecurringTransactionListItem } from '../types/recurring-transaction.types';
 import { recurringTransactionKeys } from './query-keys';
 
-export const useRecurringIncomeList = () => {
+export const useRecurringTransactionList = () => {
   const queryClient = useQueryClient();
   const { t, i18n } = useTranslation();
   const { isAuthenticated, isAuthChecking } = useTransactionAuth();
@@ -30,10 +30,10 @@ export const useRecurringIncomeList = () => {
       error.response?.status !== 401 && failureCount < 1,
   });
 
-  const items = useMemo<RecurringIncomeListItem[]>(() => {
+  const items = useMemo<RecurringTransactionListItem[]>(() => {
     if (!query.data) return [];
 
-    return mapRecurringIncomeListItems(query.data, t, i18n.language);
+    return mapRecurringTransactionListItems(query.data, t, i18n.language);
   }, [query.data, t, i18n.language]);
 
   const isLoading = isAuthChecking || (isAuthenticated && query.isLoading);
@@ -42,7 +42,6 @@ export const useRecurringIncomeList = () => {
     items,
     isLoading,
     isError: query.isError,
-    isEmpty: !isLoading && !query.isError && items.length === 0,
     refetch: query.refetch,
   };
 };

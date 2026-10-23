@@ -49,6 +49,11 @@ export function mapTransactionToForm(
     customIncomeType: transaction.customIncomeType ?? '',
     date: new Date(transaction.date),
     repeat: mapApiRepeatToForm(transaction.repeat),
+    repeatCount:
+      transaction.repeatCount != null
+        ? String(transaction.repeatCount)
+        : undefined,
+    name: transaction.name ?? '',
     note: transaction.notes ?? '',
   };
 }

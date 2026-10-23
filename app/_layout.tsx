@@ -26,19 +26,19 @@ import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
 import { I18nextProvider, useTranslation } from 'react-i18next';
-import { ActivityIndicator, View } from 'react-native';
+import { ActivityIndicator, Text, View } from 'react-native';
 import 'react-native-reanimated';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
-SplashScreen.preventAutoHideAsync();
+SplashScreen.preventAutoHideAsync().catch((error: unknown) => {
+  console.error('Failed to keep the splash screen visible', error);
+});
 
 export const unstable_settings = {
   initialRouteName: 'index',
 };
 
 function AppShell() {
-
-
   const { i18n: i18nInstance } = useTranslation();
   const isRTL = i18nInstance.language === 'ar';
 
@@ -73,54 +73,68 @@ function AppShell() {
 
 export default function RootLayout() {
   const [i18nReady, setI18nReady] = useState(i18n.isInitialized);
-
-
-  
+  const [initializationFailed, setInitializationFailed] = useState(false);
+  const [changaFontsLoaded] = useChangaFonts({
+    Changa_400Regular,
+    Changa_500Medium,
+    Changa_600SemiBold,
+    Changa_700Bold,
+  });
+  const [plexFontsLoaded] = usePlexFonts({
+    IBMPlexSansArabic_400Regular,
+    IBMPlexSansArabic_500Medium,
+    IBMPlexSansArabic_600SemiBold,
+    IBMPlexSansArabic_700Bold,
+  });
+  const isAppReady = i18nReady && changaFontsLoaded && plexFontsLoaded;
 
   useEffect(() => {
     initI18n()
       .then(() => setI18nReady(true))
-      .catch(() => setI18nReady(true));
-  }, []);
-
-  useEffect(() => {
-    if (i18nReady ) {
-      SplashScreen.hideAsync();
-    }
-  }, [i18nReady]);
-
-  useEffect(() => {
-    initI18n()
-      .then(() => {
-        setI18nReady(true);
-      })
-      .catch(() => {
-        setI18nReady(true);
+      .catch((error: unknown) => {
+        console.error('Failed to initialize translations', error);
+        setInitializationFailed(true);
       });
   }, []);
 
   useEffect(() => {
-    if (i18nReady) {
-      SplashScreen.hideAsync();
+    if (isAppReady || initializationFailed) {
+      SplashScreen.hideAsync().catch((error: unknown) => {
+        console.error('Failed to hide splash screen', error);
+      });
     }
-  }, [i18nReady]);
+  }, [isAppReady, initializationFailed]);
 
   return (
     <I18nextProvider i18n={i18n}>
       <QueryClientProvider client={queryClient}>
         <SafeAreaProvider>
           <StatusBar style="dark" />
-          {!i18nReady ? (
-          <View
-            style={{
-              flex: 1,
-              alignItems: 'center',
-              justifyContent: 'center',
-              backgroundColor: colors.white,
-            }}
-          >
-            <ActivityIndicator color={colors.primary} />
-          </View>
+          {!isAppReady ? (
+            initializationFailed ? (
+              <View
+                style={{
+                  flex: 1,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  padding: 24,
+                  backgroundColor: colors.white,
+                }}
+              >
+                <Text>Unable to initialize the app. Please restart it.</Text>
+              </View>
+            ) : (
+              <View
+                style={{
+                  flex: 1,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  backgroundColor: colors.white,
+                }}
+              >
+                <ActivityIndicator color={colors.primary} />
+              </View>
+            )
           ) : (
             <AppShell />
           )}

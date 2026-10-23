@@ -20,14 +20,17 @@ export type RecurringTransaction = {
   dayOfMonth?: number;
   lastGeneratedAt?: string;
   isActive: boolean;
+  repeatCount?: number;
+  name?: string;
   notes?: string;
   incomeType?: RecurringIncomeType;
   createdAt?: string;
   updatedAt?: string;
 };
 
-export type RecurringIncomeListItem = {
+export type RecurringTransactionListItem = {
   id: string;
+  type: RecurringTransactionType;
   title: string;
   amount: number;
   scheduleLabel: string;

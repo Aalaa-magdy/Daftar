@@ -1,10 +1,18 @@
-import type { ApiIncomeType, ApiRepeatType } from './transactions.types';
+import type {
+  ApiFrequency,
+  ApiIncomeType,
+  ApiRepeatType,
+} from './transactions.types';
 
 export type CreateExpenseTransactionRequest = {
   amount: number;
   transactionType: 'expense';
   categoryId: string;
   date: string;
+  repeat: ApiRepeatType;
+  frequency?: ApiFrequency;
+  repeatCount?: number;
+  name?: string;
   notes?: string;
 };
 
@@ -18,6 +26,8 @@ export type CreateIncomeTransactionRequest = {
   date: string;
   payDate: string;
   repeat: ApiRepeatType;
+  frequency?: ApiFrequency;
+  repeatCount?: number;
   notes?: string;
 };
 
@@ -34,5 +44,7 @@ export type TransactionFormPayload = {
   customIncomeType?: string;
   date: Date;
   repeat?: string;
+  repeatCount?: string;
+  name?: string;
   note?: string;
 };

@@ -4,7 +4,6 @@ import { HugeiconsIcon, type IconSvgElement } from '@hugeicons/react-native';
 import {
   StyleSheet,
   TouchableOpacity,
-  View,
 } from "react-native";
 import { Text } from "@/components/ui/AppText";
 
@@ -19,16 +18,16 @@ const ProfileMenuItem = ({ label, icon, onPress, showDivider = true }: Props) =>
   const { chevronIcon } = useDirectionalIcons();
 
   return (
-  <TouchableOpacity
-    style={[styles.row, showDivider && styles.rowDivider]}
-    activeOpacity={0.7}
-    onPress={onPress}
-    accessibilityRole="button"
-  >
-    <HugeiconsIcon icon={icon} size={22} color={colors.textSecondary} />
-    <Text style={styles.label}>{label}</Text>
-    <HugeiconsIcon icon={chevronIcon} size={20} color={colors.textSecondary} />
-  </TouchableOpacity>
+    <TouchableOpacity
+      style={[styles.row, showDivider && styles.rowDivider]}
+      activeOpacity={0.7}
+      onPress={onPress}
+      accessibilityRole="button"
+    >
+      <HugeiconsIcon icon={icon} size={22} color={colors.textSecondary} />
+      <Text style={styles.label}>{label}</Text>
+      <HugeiconsIcon icon={chevronIcon} size={20} color={colors.textSecondary} />
+    </TouchableOpacity>
   );
 };
 

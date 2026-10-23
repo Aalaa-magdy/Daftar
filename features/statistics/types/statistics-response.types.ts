@@ -19,6 +19,33 @@ export type ApiStatisticsTrendPoint = {
   income?: number;
 };
 
+export type DailyStatisticsTransaction = {
+  _id: string;
+  amount: number;
+  transactionType: string;
+  date: string;
+  categoryId: string;
+  categoryName: string;
+  categoryColor: string;
+  categoryBackgroundColor: string;
+  categoryBorderColor: string;
+  categoryIcon: string;
+  percentage: number;
+  balanceBefore: number;
+  balanceAfter: number;
+};
+
+export type DailyStatisticsData = {
+  timeFrame: 'day';
+  periodLabel: string;
+  totalSpent: number;
+  totalIncome: number;
+  netBalance: number;
+  openingBalance: number;
+  closingBalance: number;
+  transactions: DailyStatisticsTransaction[];
+};
+
 /** Normalized statistics payload from GET /statistics. */
 export type StatisticsData = {
   timeFrame?: StatisticsTimeFrame;

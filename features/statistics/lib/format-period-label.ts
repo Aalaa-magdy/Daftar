@@ -45,7 +45,6 @@ export function formatPeriodLabel(
   period: StatisticsPeriod,
   language: string,
 ): string {
-  if (period === 'day') return formatDayLabel(anchor, language);
   if (period === 'week') return formatWeekLabel(anchor, language);
   if (period === 'month') return formatMonthLabel(anchor, language);
   return formatYearLabel(anchor);

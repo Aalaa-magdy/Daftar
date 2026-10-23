@@ -8,7 +8,7 @@ import type { DailyStatisticsData } from '../types/statistics-response.types';
 import { statisticsKeys } from './query-keys';
 
 const EMPTY_DAILY_STATISTICS: DailyStatisticsData = {
-  timeFrame: 'day',
+  timeFrame: 'week',
   periodLabel: '',
   totalSpent: 0,
   totalIncome: 0,
@@ -21,7 +21,7 @@ const EMPTY_DAILY_STATISTICS: DailyStatisticsData = {
 export const useDailyStatistics = (anchorDate: Date, enabled = true) => {
   const { isAuthenticated, isAuthChecking } = useAuthenticatedSession();
   const queryParams = useMemo(
-    () => buildStatisticsQueryParams('day', anchorDate),
+    () => buildStatisticsQueryParams('week', anchorDate),
     [anchorDate],
   );
   const dailyStatisticsQuery = useQuery({

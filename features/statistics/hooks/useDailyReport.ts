@@ -59,7 +59,7 @@ export const useDailyReport = (anchorDate: Date, enabled = true) => {
       transactions: history.data,
       categories,
       currentBalance: balance.data?.totalBalance,
-      dateLabel: formatPeriodLabel(anchorDate, 'day', i18n.language),
+      dateLabel: formatPeriodLabel(anchorDate, 'week', i18n.language),
       isToday,
       fallbackCategoryName: t('statistics.uncategorized'),
     });

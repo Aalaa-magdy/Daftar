@@ -17,39 +17,21 @@ import {
 import { Text } from "@/components/ui/AppText";
 import { SafeAreaView } from 'react-native-safe-area-context';
 import CategoryBreakdown from '../components/CategoryBreakdown';
-import DailyCategoryReport from '../components/DailyCategoryReport';
-import DailyOverviewCards from '../components/DailyOverviewCards';
 import DateNavigator from '../components/DateNavigator';
 import PeriodToggle from '../components/PeriodToggle';
 import SummaryCards from '../components/SummaryCards';
 import TrendBarChart from '../components/TrendBarChart';
-import { useDailyReport } from '../hooks/useDailyReport';
 import { useStatistics } from '../hooks/useStatistics';
 import { formatTrendLabel } from '../lib/format-trend-label';
 import { isCurrentOrFuturePeriod, shiftPeriodAnchor } from '../lib/period-range';
 import type { StatisticsPeriod } from '../types/statistics.types';
 
 const Statistics = () => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const { isAuthenticated, isAuthChecking } = useRequireAuth();
   const [period, setPeriod] = useState<StatisticsPeriod>('month');
   const [anchorDate, setAnchorDate] = useState(() => new Date());
-  const isDayPeriod = period === 'day';
-  const { stats, isLoading: isStatsLoading } = useStatistics(period, anchorDate);
-  const { report, isLoading: isDailyLoading } = useDailyReport(
-    anchorDate,
-    isDayPeriod,
-  );
-  const isLoading = isDayPeriod ? isDailyLoading : isStatsLoading;
-
-  const dailyReportTitle = report.isToday
-    ? t('statistics.todaysReport')
-    : t('statistics.dayReport', {
-        day: anchorDate.toLocaleDateString(
-          i18n.language === 'ar' ? 'ar-EG' : 'en-US',
-          { weekday: 'long' },
-        ),
-      });
+  const { stats, isLoading } = useStatistics(period, anchorDate);
 
   const [fontsLoaded] = useFonts({
     Changa_400Regular,
@@ -100,7 +82,7 @@ const Statistics = () => {
         showsVerticalScrollIndicator={false}
       >
         <DateNavigator
-          label={isDayPeriod ? report.dateLabel : stats.dateLabel}
+          label={stats.dateLabel}
           onPrevious={() =>
             setAnchorDate((current) => shiftPeriodAnchor(current, period, -1))
           }
@@ -112,19 +94,6 @@ const Statistics = () => {
           <View style={styles.loadingWrap}>
             <ActivityIndicator color={colors.primary} />
           </View>
-        ) : isDayPeriod ? (
-          <>
-            <DailyOverviewCards
-              totalSpent={report.totalSpent}
-              topCategoryName={report.topCategoryName}
-            />
-
-            <DailyCategoryReport
-              title={dailyReportTitle}
-              expenseCount={report.expenseCount}
-              categories={report.categories}
-            />
-          </>
         ) : (
           <>
             <SummaryCards

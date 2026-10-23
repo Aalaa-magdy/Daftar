@@ -36,7 +36,7 @@ export type DailyStatisticsTransaction = {
 };
 
 export type DailyStatisticsData = {
-  timeFrame: 'day';
+  timeFrame: 'week';
   periodLabel: string;
   totalSpent: number;
   totalIncome: number;

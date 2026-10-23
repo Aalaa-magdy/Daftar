@@ -14,7 +14,6 @@ interface Props {
 }
 
 const OPTIONS: { id: StatisticsPeriod; labelKey: string }[] = [
-  { id: 'day', labelKey: 'statistics.day' },
   { id: 'week', labelKey: 'statistics.week' },
   { id: 'month', labelKey: 'statistics.month' },
   { id: 'year', labelKey: 'statistics.year' },

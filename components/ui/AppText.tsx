@@ -10,10 +10,16 @@ import {
 } from "react-native";
 import { useTranslation } from "react-i18next";
 
-const mapFamily = (family: string) =>
-  family === "Changa_800ExtraBold"
-    ? "IBMPlexSansArabic_900Bold" // Plex Arabic has no 800 weight
-    : family.replace("Changa_", "IBMPlexSansArabic_");
+// Changa weight -> IBM Plex Sans Arabic weight (Plex goes up to 700 only)
+const ARABIC_FONT_MAP: Record<string, string> = {
+  Changa_200ExtraLight: "IBMPlexSansArabic_500Medium",
+  Changa_300Light: "IBMPlexSansArabic_500Medium",
+  Changa_400Regular: "IBMPlexSansArabic_600SemiBold",
+  Changa_500Medium: "IBMPlexSansArabic_700Bold",
+  Changa_600SemiBold: "IBMPlexSansArabic_700Bold",
+  Changa_700Bold: "IBMPlexSansArabic_700Bold",
+  Changa_800ExtraBold: "IBMPlexSansArabic_700Bold",
+};
 
 const useLocalizedStyle = (style: StyleProp<TextStyle>) => {
   const { i18n } = useTranslation();
@@ -23,13 +29,11 @@ const useLocalizedStyle = (style: StyleProp<TextStyle>) => {
   const flat = StyleSheet.flatten(style) ?? {};
   const override: TextStyle = {};
 
-  if (flat.fontFamily?.startsWith("Changa_")) {
-    override.fontFamily = mapFamily(flat.fontFamily);
-  }
+  const mapped = flat.fontFamily && ARABIC_FONT_MAP[flat.fontFamily];
+  if (mapped) override.fontFamily = mapped;
+
   // Letter spacing breaks the connection between Arabic letters
-  if (flat.letterSpacing) {
-    override.letterSpacing = 0;
-  }
+  if (flat.letterSpacing) override.letterSpacing = 0;
 
   return Object.keys(override).length ? [style, override] : style;
 };

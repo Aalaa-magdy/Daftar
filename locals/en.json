@@ -114,7 +114,7 @@
     "showAmounts": "Show amounts",
     "addExpense": "Add Expense",
     "addIncome": "Add Income",
-    "manageIncome": "Manage Income",
+    "manageRecurringTransactions": "Manage Recurring Transactions",
     "history": "History",
     "viewAll": "View All",
     "noTransactions": "No transactions yet.",

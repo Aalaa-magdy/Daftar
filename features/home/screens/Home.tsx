@@ -93,7 +93,9 @@ const Home = () => {
             size={24}
             color={colors.primary}
           />
-          <Text style={styles.buttonText}>{t('home.manageIncome')}</Text>
+          <Text style={styles.buttonText}>
+            {t('home.manageRecurringTransactions')}
+          </Text>
         </TouchableOpacity>
 
         <View style={styles.intro}>

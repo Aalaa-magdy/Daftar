@@ -4,6 +4,7 @@ import { INCOME_TYPES } from '@/features/transaction/data/form-options';
 import FormField from '@/features/transaction/components/FormField';
 import SelectField from '@/features/transaction/components/SelectField';
 import TransactionHeader from '@/features/transaction/components/TransactionHeader';
+import CategoryGrid from '@/features/categories/components/CategoryGrid';
 import { getApiErrorMessage } from '@/lib/api-error';
 import { colors } from '@/theme/colors';
 import {
@@ -30,14 +31,16 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { useRequireAuth } from '@/features/auth/hooks';
-import DeleteRecurringIncomeDialogue from '../components/DeleteRecurringIncomeDialogue';
+import DeleteRecurringTransactionDialogue from '../components/DeleteRecurringTransactionDialogue';
 import {
   useDeleteRecurringTransaction,
   useRecurringTransaction,
   useUpdateRecurringTransaction,
 } from '../hooks';
 import {
+  buildUpdateRecurringExpensePayload,
   buildUpdateRecurringIncomePayload,
+  mapRecurringExpenseToForm,
   mapRecurringTransactionToForm,
 } from '../lib/recurring-form-mappers';
 import type { RecurringFrequency } from '../types/recurring-transaction.types';
@@ -67,7 +70,7 @@ function parseDayOfMonthInput(text: string): number | null {
   return Math.min(Math.max(Math.trunc(value), 1), 31);
 }
 
-const EditRecurringIncomeScreen = () => {
+const EditRecurringTransactionScreen = () => {
   const router = useRouter();
   const { t } = useTranslation();
   const { isAuthenticated, isAuthChecking } = useRequireAuth();
@@ -75,19 +78,22 @@ const EditRecurringIncomeScreen = () => {
   const id = resolveParam(rawId) ?? '';
 
   const {
-    data: recurringIncome,
+    data: recurringTransaction,
     isLoading,
     isError,
     refetch,
   } = useRecurringTransaction(id || null);
-  const { mutate: updateRecurringIncome, isPending: isUpdating } =
+  const { mutate: updateRecurringTransaction, isPending: isUpdating } =
     useUpdateRecurringTransaction();
-  const { mutate: deleteRecurringIncome, isPending: isDeleting } =
+  const { mutate: deleteRecurringTransaction, isPending: isDeleting } =
     useDeleteRecurringTransaction();
 
   const [incomeType, setIncomeType] = useState('');
+  const [categoryId, setCategoryId] = useState<string | null>(null);
+  const [expenseName, setExpenseName] = useState('');
   const [amount, setAmount] = useState('');
   const [dayOfMonth, setDayOfMonth] = useState('');
+  const [repeatCount, setRepeatCount] = useState('');
   const [note, setNote] = useState('');
   const [activePicker, setActivePicker] = useState<PickerKey>(null);
   const [showDeleteDialogue, setShowDeleteDialogue] = useState(false);
@@ -110,9 +116,9 @@ const EditRecurringIncomeScreen = () => {
   }, [incomeType, incomeTypeLabels]);
 
   const frequencyDisplay = useMemo(() => {
-    if (!recurringIncome) return '';
-    return t(frequencyLabelKey(recurringIncome.frequency));
-  }, [recurringIncome, t]);
+    if (!recurringTransaction) return '';
+    return t(frequencyLabelKey(recurringTransaction.frequency));
+  }, [recurringTransaction, t]);
 
   const parsedDayOfMonth = useMemo(() => parseDayOfMonthInput(dayOfMonth), [dayOfMonth]);
   const hydratedKeyRef = useRef<string | null>(null);
@@ -122,30 +128,73 @@ const EditRecurringIncomeScreen = () => {
   }, [id]);
 
   useEffect(() => {
-    if (!recurringIncome) return;
+    if (!recurringTransaction) return;
 
     const hydrationKey = [
-      recurringIncome.id,
-      recurringIncome.updatedAt ?? '',
-      recurringIncome.dayOfMonth ?? '',
-      recurringIncome.amount,
-      recurringIncome.notes ?? '',
-      recurringIncome.incomeType ?? '',
+      recurringTransaction.id,
+      recurringTransaction.updatedAt ?? '',
+      recurringTransaction.dayOfMonth ?? '',
+      recurringTransaction.amount,
+      recurringTransaction.notes ?? '',
+      recurringTransaction.incomeType ?? '',
+      recurringTransaction.categoryId ?? '',
+      recurringTransaction.name ?? '',
+      recurringTransaction.repeatCount ?? '',
     ].join(':');
 
     if (hydratedKeyRef.current === hydrationKey) return;
 
-    const formValues = mapRecurringTransactionToForm(recurringIncome);
-    setIncomeType(formValues.incomeType);
-    setAmount(formValues.amount);
-    setDayOfMonth(String(formValues.dayOfMonth));
-    setNote(formValues.note);
+    if (recurringTransaction.type === 'income') {
+      const formValues = mapRecurringTransactionToForm(recurringTransaction);
+      setIncomeType(formValues.incomeType);
+      setAmount(formValues.amount);
+      setDayOfMonth(String(formValues.dayOfMonth));
+      setNote(formValues.note);
+      setRepeatCount(formValues.repeatCount);
+    } else {
+      const formValues = mapRecurringExpenseToForm(recurringTransaction);
+      setCategoryId(formValues.categoryId || null);
+      setExpenseName(formValues.name);
+      setAmount(formValues.amount);
+      setDayOfMonth(String(formValues.dayOfMonth));
+      setNote(formValues.note);
+      setRepeatCount(formValues.repeatCount);
+    }
     hydratedKeyRef.current = hydrationKey;
-  }, [recurringIncome]);
+  }, [recurringTransaction]);
 
   const isFormComplete = useMemo(
-    () => Boolean(amount.trim() && incomeType && parsedDayOfMonth != null),
-    [amount, incomeType, parsedDayOfMonth],
+    () => {
+      if (!amount.trim() || parsedDayOfMonth == null || !recurringTransaction) {
+        return false;
+      }
+
+      if (recurringTransaction.type === 'income') {
+        return Boolean(
+          incomeType &&
+            (recurringTransaction.frequency !== 'monthly' ||
+              (Number.isInteger(Number(repeatCount)) &&
+                Number(repeatCount) > 0)),
+        );
+      }
+
+      return Boolean(
+        categoryId &&
+          (recurringTransaction.frequency !== 'monthly' ||
+            (expenseName.trim() &&
+              Number.isInteger(Number(repeatCount)) &&
+              Number(repeatCount) > 0)),
+      );
+    },
+    [
+      amount,
+      categoryId,
+      expenseName,
+      incomeType,
+      parsedDayOfMonth,
+      repeatCount,
+      recurringTransaction,
+    ],
   );
 
   const isSaving = isUpdating || isDeleting;
@@ -164,7 +213,7 @@ const EditRecurringIncomeScreen = () => {
     );
   }
 
-  if (isError || !recurringIncome) {
+  if (isError || !recurringTransaction) {
     return (
       <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
         <View style={styles.loadingWrap}>
@@ -182,14 +231,27 @@ const EditRecurringIncomeScreen = () => {
     if (!isFormComplete || parsedDayOfMonth == null) return;
 
     try {
-      const payload = buildUpdateRecurringIncomePayload({
-        incomeType,
-        amount,
-        dayOfMonth: parsedDayOfMonth,
-        note,
-      });
+      const payload =
+        recurringTransaction.type === 'income'
+          ? buildUpdateRecurringIncomePayload({
+              incomeType,
+              amount,
+              dayOfMonth: parsedDayOfMonth,
+              note,
+              repeatCount,
+              frequency: recurringTransaction.frequency,
+            })
+          : buildUpdateRecurringExpensePayload({
+              categoryId: categoryId ?? '',
+              name: expenseName,
+              amount,
+              dayOfMonth: parsedDayOfMonth,
+              note,
+              frequency: recurringTransaction.frequency,
+              repeatCount,
+            });
 
-      updateRecurringIncome(
+      updateRecurringTransaction(
         { id, data: payload },
         {
           onSuccess: () => router.back(),
@@ -207,7 +269,7 @@ const EditRecurringIncomeScreen = () => {
   };
 
   const handleDelete = () => {
-    deleteRecurringIncome(id, {
+    deleteRecurringTransaction(id, {
       onSuccess: () => {
         setShowDeleteDialogue(false);
         router.back();
@@ -233,25 +295,49 @@ const EditRecurringIncomeScreen = () => {
           extraScrollHeight={120}
         >
           <TransactionHeader
-            title={t('manageIncome.editTitle')}
+            title={t(
+              recurringTransaction.type === 'income'
+                ? 'manageIncome.editTitle'
+                : 'manageIncome.editExpenseTitle',
+            )}
             onBack={() => router.back()}
             onDelete={() => setShowDeleteDialogue(true)}
           />
 
-          <FormField label={t('transaction.incomeType')} required>
-            <SelectField
-              value={incomeTypeDisplay}
-              placeholder={t('transaction.chooseIncomeType')}
-              options={incomeTypeLabels}
-              onSelect={(label) => {
-                const index = incomeTypeLabels.indexOf(label);
-                if (index >= 0) setIncomeType(INCOME_TYPES[index]);
-              }}
-              icon={fieldIcon(ArrowUpLeft01Icon)}
-              open={activePicker === 'incomeType'}
-              onToggle={() => togglePicker('incomeType')}
-            />
-          </FormField>
+          {recurringTransaction.type === 'income' ? (
+            <FormField label={t('transaction.incomeType')} required>
+              <SelectField
+                value={incomeTypeDisplay}
+                placeholder={t('transaction.chooseIncomeType')}
+                options={incomeTypeLabels}
+                onSelect={(label) => {
+                  const index = incomeTypeLabels.indexOf(label);
+                  if (index >= 0) setIncomeType(INCOME_TYPES[index]);
+                }}
+                icon={fieldIcon(ArrowUpLeft01Icon)}
+                open={activePicker === 'incomeType'}
+                onToggle={() => togglePicker('incomeType')}
+              />
+            </FormField>
+          ) : (
+            <>
+              {recurringTransaction.frequency === 'monthly' ? (
+                <FormField label={t('transaction.expenseName')} required>
+                  <Input
+                    placeholder={t('transaction.expenseNamePlaceholder')}
+                    value={expenseName}
+                    onChangeText={setExpenseName}
+                    icon={fieldIcon(ArrowUpLeft01Icon)}
+                    containerStyle={styles.fieldInput}
+                  />
+                </FormField>
+              ) : null}
+              <CategoryGrid
+                selectedId={categoryId}
+                onSelect={setCategoryId}
+              />
+            </>
+          )}
 
           <FormField label={t('transaction.amount')} required>
             <Input
@@ -265,9 +351,17 @@ const EditRecurringIncomeScreen = () => {
           </FormField>
 
           <FormField
-            label={t('transaction.payday')}
+            label={t(
+              recurringTransaction.type === 'income'
+                ? 'transaction.payday'
+                : 'manageIncome.expenseDayLabel',
+            )}
             required
-            helper={t('transaction.paydayHelper')}
+            helper={t(
+              recurringTransaction.type === 'income'
+                ? 'transaction.paydayHelper'
+                : 'manageIncome.expenseDayHelper',
+            )}
           >
             <Input
               placeholder={t('manageIncome.dayOfMonthPlaceholder')}
@@ -307,6 +401,25 @@ const EditRecurringIncomeScreen = () => {
             />
           </FormField>
 
+          {recurringTransaction.frequency === 'monthly' ? (
+            <FormField
+              label={t('transaction.repeatCount')}
+              required
+              helper={t('transaction.repeatCountHelper')}
+            >
+              <Input
+                placeholder={t('transaction.repeatCountPlaceholder')}
+                value={repeatCount}
+                onChangeText={(text) =>
+                  setRepeatCount(text.replace(/\D/g, ''))
+                }
+                keyboardType="number-pad"
+                icon={fieldIcon(RepeatIcon)}
+                containerStyle={styles.fieldInput}
+              />
+            </FormField>
+          ) : null}
+
           <FormField label={t('transaction.note')}>
             <Input
               placeholder={t('common.optional')}
@@ -327,8 +440,9 @@ const EditRecurringIncomeScreen = () => {
         </KeyboardAwareScrollView>
       </TouchableWithoutFeedback>
 
-      <DeleteRecurringIncomeDialogue
+      <DeleteRecurringTransactionDialogue
         visible={showDeleteDialogue}
+        type={recurringTransaction.type}
         onClose={() => setShowDeleteDialogue(false)}
         onConfirm={handleDelete}
       />
@@ -362,4 +476,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default EditRecurringIncomeScreen;
+export default EditRecurringTransactionScreen;

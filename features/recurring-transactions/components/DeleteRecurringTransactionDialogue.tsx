@@ -19,11 +19,17 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 type Props = {
   visible: boolean;
+  type: 'income' | 'expense';
   onClose: () => void;
   onConfirm: () => void;
 };
 
-const DeleteRecurringIncomeDialogue = ({ visible, onClose, onConfirm }: Props) => {
+const DeleteRecurringTransactionDialogue = ({
+  visible,
+  type,
+  onClose,
+  onConfirm,
+}: Props) => {
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const [fontsLoaded] = useFonts({
@@ -51,7 +57,13 @@ const DeleteRecurringIncomeDialogue = ({ visible, onClose, onConfirm }: Props) =
             <HugeiconsIcon icon={Delete02Icon} size={28} color={colors.red} />
           </View>
 
-          <Text style={styles.message}>{t('manageIncome.deleteConfirm')}</Text>
+          <Text style={styles.message}>
+            {t(
+              type === 'income'
+                ? 'manageIncome.deleteConfirm'
+                : 'manageIncome.deleteExpenseConfirm',
+            )}
+          </Text>
 
           <View style={styles.actions}>
             <TouchableOpacity
@@ -155,4 +167,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default DeleteRecurringIncomeDialogue;
+export default DeleteRecurringTransactionDialogue;

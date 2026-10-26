@@ -21,6 +21,7 @@ export type RecurringTransaction = {
   lastGeneratedAt?: string;
   isActive: boolean;
   repeatCount?: number;
+  categoryId?: string;
   name?: string;
   notes?: string;
   incomeType?: RecurringIncomeType;

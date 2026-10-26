@@ -1,3 +1,3 @@
-import EditRecurringIncomeScreen from '@/features/recurring-transactions/screens/EditRecurringIncomeScreen';
+import EditRecurringTransactionScreen from '@/features/recurring-transactions/screens/EditRecurringTransactionScreen';
 
-export default EditRecurringIncomeScreen;
+export default EditRecurringTransactionScreen;

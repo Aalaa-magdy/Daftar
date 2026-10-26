@@ -23,7 +23,7 @@ import {
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
 import RecurringTransactionCard from '../components/RecurringTransactionCard';
-import { editRecurringIncomeHref } from '../lib/recurring-links';
+import { editRecurringTransactionHref } from '../lib/recurring-links';
 import { useRequireAuth } from '@/features/auth/hooks';
 import { useRecurringTransactionList } from '../hooks';
 import TransactionTypeToggle from '@/features/transaction/components/TransactionTypeToggle';
@@ -95,10 +95,8 @@ const ManageIncomeScreen = () => {
               <RecurringTransactionCard
                 key={item.id}
                 item={item}
-                onEdit={
-                  item.type === 'income'
-                    ? () => router.push(editRecurringIncomeHref(item.id))
-                    : undefined
+                onEdit={() =>
+                  router.push(editRecurringTransactionHref(item.id))
                 }
               />
             ))}

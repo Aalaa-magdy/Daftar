@@ -69,6 +69,12 @@ export function normalizeRecurringTransaction(raw: unknown): RecurringTransactio
 
   const startDate = String(record.startDate ?? '');
   const nextRunDate = String(record.nextRunDate ?? '');
+  const rawCategoryId = record.categoryId;
+  const categoryId =
+    rawCategoryId && typeof rawCategoryId === 'object'
+      ? (rawCategoryId as Record<string, unknown>)._id ??
+        (rawCategoryId as Record<string, unknown>).id
+      : rawCategoryId;
 
   return {
     id: String(id),
@@ -86,6 +92,7 @@ export function normalizeRecurringTransaction(raw: unknown): RecurringTransactio
       Number.isInteger(Number(record.repeatCount)) && Number(record.repeatCount) > 0
         ? Number(record.repeatCount)
         : undefined,
+    categoryId: categoryId != null ? String(categoryId) : undefined,
     name: typeof record.name === 'string' ? record.name.trim() : undefined,
     notes: typeof record.notes === 'string' ? record.notes.trim() : undefined,
     incomeType: readIncomeType(record.incomeType),

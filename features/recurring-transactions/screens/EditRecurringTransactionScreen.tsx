@@ -140,7 +140,7 @@ const EditRecurringTransactionScreen = () => {
       recurringTransaction.incomeType ?? '',
       recurringTransaction.categoryId ?? '',
       recurringTransaction.name ?? '',
-      recurringTransaction.repeatCount ?? '',
+      recurringTransaction.repeatMonths ?? '',
     ].join(':');
 
     if (hydratedKeyRef.current === hydrationKey) return;

@@ -32,8 +32,9 @@ export function mergeRecurringTransactionUpdate(
     ...(existing ?? response),
     ...response,
     amount: patch.amount ?? response.amount ?? existing?.amount ?? 0,
-    repeatCount:
-      patch.repeatCount ?? response.repeatCount ?? existing?.repeatCount,
+    repeatMonths:
+      patch.repeatMonths ?? response.repeatMonths ?? existing?.repeatMonths,
+    generatedCount: response.generatedCount ?? existing?.generatedCount,
     categoryId:
       patch.categoryId ?? response.categoryId ?? existing?.categoryId,
     name: patch.name !== undefined ? patch.name : response.name ?? existing?.name,

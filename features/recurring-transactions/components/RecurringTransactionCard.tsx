@@ -1,5 +1,6 @@
 import { colors } from '@/theme/colors';
 import { formatBalanceAmount } from '@/features/transactions/lib/format-balance-amount';
+import ProgressBar from '@/components/ui/ProgressBar';
 import PencilEdit02Icon from '@hugeicons/core-free-icons/PencilEdit02Icon';
 import RepeatIcon from '@hugeicons/core-free-icons/RepeatIcon';
 import { HugeiconsIcon } from '@hugeicons/react-native';
@@ -53,6 +54,19 @@ const RecurringTransactionCard = ({ item, onEdit }: Props) => {
           </TouchableOpacity>
         ) : null}
       </View>
+
+      {item.repeatMonths != null &&
+      item.repeatMonths > 0 &&
+      item.generatedCount != null ? (
+        <View style={styles.progressSection}>
+          <View style={styles.progressLabelRow}>
+            <Text style={styles.progressLabel}>
+              {item.generatedCount}/{item.repeatMonths}
+            </Text>
+          </View>
+          <ProgressBar progress={item.generatedCount / item.repeatMonths} />
+        </View>
+      ) : null}
     </View>
   );
 };
@@ -107,6 +121,19 @@ const styles = StyleSheet.create({
   },
   editButton: {
     padding: 4,
+  },
+  progressSection: {
+    gap: 6,
+  },
+  progressLabelRow: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+  },
+  progressLabel: {
+    fontFamily: 'Changa_400Regular',
+    fontSize: 12,
+    lineHeight: 16,
+    color: colors.textSecondary,
   },
 });
 

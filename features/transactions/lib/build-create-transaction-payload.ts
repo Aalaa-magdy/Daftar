@@ -29,8 +29,7 @@ export function buildCreateTransactionPayload(
       categoryId: form.categoryId,
       date,
       repeat,
-      frequency: repeat === 'monthly' ? 'monthly' : undefined,
-      repeatCount,
+      repeatMonths: repeatCount,
       name: repeat === 'monthly' ? requireExpenseName(form.name) : undefined,
       notes: repeat === 'one-time' ? notes : undefined,
     };
@@ -56,7 +55,7 @@ export function buildCreateTransactionPayload(
     payDate: date,
     repeat,
     frequency: repeat === 'monthly' ? 'monthly' : undefined,
-    repeatCount,
+    repeatMonths: repeatCount,
     notes,
   };
 }

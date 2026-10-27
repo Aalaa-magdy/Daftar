@@ -426,6 +426,17 @@ const TransactionFormScreen = () => {
               </>
             ) : (
               <>
+                {!isEdit && repeat === 'monthly' ? (
+                  <FormField label={t('transaction.expenseName')} required>
+                    <Input
+                      placeholder={t('transaction.expenseNamePlaceholder')}
+                      value={expenseName}
+                      onChangeText={setExpenseName}
+                      containerStyle={styles.fieldInput}
+                    />
+                  </FormField>
+                ) : null}
+
                 <FormField label={t('transaction.amount')} required>
                   <Input
                     placeholder={t('common.amountPlaceholder')}
@@ -489,14 +500,6 @@ const TransactionFormScreen = () => {
                         onChangeText={setRepeatCount}
                         keyboardType="numeric"
                         icon={fieldIcon(RepeatIcon)}
-                        containerStyle={styles.fieldInput}
-                      />
-                    </FormField>
-                    <FormField label={t('transaction.expenseName')} required>
-                      <Input
-                        placeholder={t('transaction.expenseNamePlaceholder')}
-                        value={expenseName}
-                        onChangeText={setExpenseName}
                         containerStyle={styles.fieldInput}
                       />
                     </FormField>

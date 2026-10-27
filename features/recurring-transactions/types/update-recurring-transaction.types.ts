@@ -7,7 +7,7 @@ export type UpdateRecurringTransactionRequest = {
   notes?: string;
   incomeType?: RecurringIncomeType;
   dayOfMonth?: number;
-  repeatCount?: number;
+  repeatMonths?: number;
 };
 
 export type UpdateRecurringTransactionVariables = {

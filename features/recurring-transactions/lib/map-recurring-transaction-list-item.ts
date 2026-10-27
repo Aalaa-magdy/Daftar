@@ -74,6 +74,8 @@ export function mapRecurringTransactionListItem(
     title: resolveTitle(item, t),
     amount: item.amount,
     scheduleLabel: resolveScheduleLabel(item, t, language),
+    repeatMonths: item.repeatMonths,
+    generatedCount: item.generatedCount,
     incomeType: item.incomeType,
     notes: item.notes,
   };

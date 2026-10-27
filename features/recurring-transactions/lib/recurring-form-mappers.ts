@@ -45,7 +45,7 @@ export function mapRecurringTransactionToForm(
     dayOfMonth: resolveDayOfMonth(transaction),
     note: transaction.notes ?? '',
     repeatCount:
-      transaction.repeatCount != null ? String(transaction.repeatCount) : '',
+      transaction.repeatMonths != null ? String(transaction.repeatMonths) : '',
     frequency: transaction.frequency,
   };
 }
@@ -71,7 +71,7 @@ export function buildUpdateRecurringIncomePayload(
     incomeType: mapFormIncomeType(form.incomeType),
     dayOfMonth,
     notes,
-    repeatCount,
+    repeatMonths: repeatCount,
   };
 }
 
@@ -86,7 +86,7 @@ export function mapRecurringExpenseToForm(
     note: transaction.notes ?? '',
     frequency: transaction.frequency,
     repeatCount:
-      transaction.repeatCount != null ? String(transaction.repeatCount) : '',
+      transaction.repeatMonths != null ? String(transaction.repeatMonths) : '',
   };
 }
 
@@ -118,6 +118,6 @@ export function buildUpdateRecurringExpensePayload(
     name: name || undefined,
     dayOfMonth,
     notes,
-    repeatCount,
+    repeatMonths: repeatCount,
   };
 }

@@ -59,6 +59,15 @@ function readDayOfMonth(record: Record<string, unknown>): number | undefined {
   return undefined;
 }
 
+function readGeneratedCount(value: unknown): number | undefined {
+  if (typeof value !== 'number' && typeof value !== 'string') {
+    return undefined;
+  }
+
+  const parsed = Number(value);
+  return Number.isInteger(parsed) && parsed >= 0 ? parsed : undefined;
+}
+
 export function normalizeRecurringTransaction(raw: unknown): RecurringTransaction | null {
   if (!raw || typeof raw !== 'object') return null;
 
@@ -89,7 +98,8 @@ export function normalizeRecurringTransaction(raw: unknown): RecurringTransactio
     lastGeneratedAt:
       record.lastGeneratedAt != null ? String(record.lastGeneratedAt) : undefined,
     isActive: record.isActive !== false,
-    repeatCount: normalizePositiveInteger(record.repeatCount),
+    repeatMonths: normalizePositiveInteger(record.repeatMonths),
+    generatedCount: readGeneratedCount(record.generatedCount),
     categoryId: categoryId != null ? String(categoryId) : undefined,
     name: typeof record.name === 'string' ? record.name.trim() : undefined,
     notes: typeof record.notes === 'string' ? record.notes.trim() : undefined,

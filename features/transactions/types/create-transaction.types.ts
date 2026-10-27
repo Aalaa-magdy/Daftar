@@ -11,7 +11,7 @@ export type CreateExpenseTransactionRequest = {
   date: string;
   repeat: ApiRepeatType;
   frequency?: ApiFrequency;
-  repeatCount?: number;
+  repeatMonths?: number;
   name?: string;
   notes?: string;
 };
@@ -27,7 +27,7 @@ export type CreateIncomeTransactionRequest = {
   payDate: string;
   repeat: ApiRepeatType;
   frequency?: ApiFrequency;
-  repeatCount?: number;
+  repeatMonths?: number;
   notes?: string;
 };
 

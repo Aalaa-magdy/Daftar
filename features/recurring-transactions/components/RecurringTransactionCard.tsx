@@ -5,12 +5,8 @@ import PencilEdit02Icon from '@hugeicons/core-free-icons/PencilEdit02Icon';
 import RepeatIcon from '@hugeicons/core-free-icons/RepeatIcon';
 import { HugeiconsIcon } from '@hugeicons/react-native';
 import { useTranslation } from 'react-i18next';
-import {
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import { Text } from "@/components/ui/AppText";
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Text } from '@/components/ui/AppText';
 import type { RecurringTransactionListItem } from '../types/recurring-transaction.types';
 
 type Props = {
@@ -18,24 +14,74 @@ type Props = {
   onEdit?: () => void;
 };
 
+const EXPENSE_COLOR = '#DC5444';
+
+
+
+
 const RecurringTransactionCard = ({ item, onEdit }: Props) => {
   const { t } = useTranslation();
+  console.log('RecurringTransactionCard item:', item); // Debugging log
+  const isExpense = item.type === 'expense';
+  const hasProgress =
+    item.repeatMonths != null &&
+    item.repeatMonths > 0 &&
+    item.generatedCount != null;
+
+  const progress = hasProgress
+    ? Math.min(Math.max(item.generatedCount! / item.repeatMonths!, 0), 1)
+    : 0;
+
+  const footerLabel = [item.categoryName, item.scheduleLabel]
+    .filter(Boolean)
+    .join(' · ');
 
   return (
     <View style={styles.card}>
+      {/* Row 1: name + amount */}
       <View style={styles.topRow}>
         <Text style={styles.title} numberOfLines={2}>
           {item.title}
         </Text>
-        <Text style={styles.amount}>
+        <Text
+          style={[
+            styles.amount,
+            { color: isExpense ? EXPENSE_COLOR : colors.primary },
+          ]}
+        >
+          {isExpense ? '-' : '+'}
           {formatBalanceAmount(item.amount)} {t('common.egp')}
         </Text>
       </View>
 
+      {/* Row 2: payment count + next run date */}
+      <View style={styles.metaRow}>
+        <Text style={styles.metaText}>
+          {hasProgress
+            ? t('recurring.paymentProgress', {
+                current: item.generatedCount,
+                total: item.repeatMonths,
+                defaultValue: 'Payment {{current}} of {{total}}',
+              })
+            : ''}
+        </Text>
+      
+      </View>
+
+      {/* Progress bar */}
+      {hasProgress ? <ProgressBar progress={progress} /> : null}
+
+      {/* Row 3: category · schedule + edit */}
       <View style={styles.bottomRow}>
         <View style={styles.scheduleRow}>
-          <HugeiconsIcon icon={RepeatIcon} size={18} color={colors.textSecondary} />
-          <Text style={styles.schedule}>{item.scheduleLabel}</Text>
+          <HugeiconsIcon
+            icon={RepeatIcon}
+            size={18}
+            color={colors.textSecondary}
+          />
+          <Text style={styles.schedule} numberOfLines={1}>
+            {footerLabel}
+          </Text>
         </View>
 
         {onEdit ? (
@@ -48,25 +94,12 @@ const RecurringTransactionCard = ({ item, onEdit }: Props) => {
           >
             <HugeiconsIcon
               icon={PencilEdit02Icon}
-              size={20}
-              color={colors.primary}
+              size={22}
+              color={colors.textSecondary}
             />
           </TouchableOpacity>
         ) : null}
       </View>
-
-      {item.repeatMonths != null &&
-      item.repeatMonths > 0 &&
-      item.generatedCount != null ? (
-        <View style={styles.progressSection}>
-          <View style={styles.progressLabelRow}>
-            <Text style={styles.progressLabel}>
-              {item.generatedCount}/{item.repeatMonths}
-            </Text>
-          </View>
-          <ProgressBar progress={item.generatedCount / item.repeatMonths} />
-        </View>
-      ) : null}
     </View>
   );
 };
@@ -78,7 +111,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.border,
     paddingHorizontal: 16,
-    paddingVertical: 14,
+    paddingVertical: 16,
     gap: 12,
   },
   topRow: {
@@ -90,15 +123,26 @@ const styles = StyleSheet.create({
   title: {
     flex: 1,
     fontFamily: 'Changa_500Medium',
-    fontSize: 16,
-    lineHeight: 22,
+    fontSize: 20,
+    lineHeight: 26,
     color: colors.black,
   },
   amount: {
     fontFamily: 'Changa_500Medium',
     fontSize: 16,
-    lineHeight: 22,
-    color: colors.primary,
+    lineHeight: 26,
+  },
+  metaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 12,
+  },
+  metaText: {
+    fontFamily: 'Changa_400Regular',
+    fontSize: 14,
+    lineHeight: 20,
+    color: colors.textSecondary,
   },
   bottomRow: {
     flexDirection: 'row',
@@ -121,19 +165,6 @@ const styles = StyleSheet.create({
   },
   editButton: {
     padding: 4,
-  },
-  progressSection: {
-    gap: 6,
-  },
-  progressLabelRow: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-  },
-  progressLabel: {
-    fontFamily: 'Changa_400Regular',
-    fontSize: 12,
-    lineHeight: 16,
-    color: colors.textSecondary,
   },
 });
 

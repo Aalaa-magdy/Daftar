@@ -36,6 +36,8 @@ export type RecurringTransactionListItem = {
   title: string;
   amount: number;
   scheduleLabel: string;
+  nextRunDate: string;
+  categoryName?: string;
   repeatMonths?: number;
   generatedCount?: number;
   incomeType?: RecurringIncomeType;

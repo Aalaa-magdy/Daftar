@@ -1,20 +1,17 @@
-import { mapFormIncomeType } from '@/features/transactions/lib/transaction-form-mappers';
+import {
+  mapApiIncomeTypeToForm,
+  mapFormIncomeType,
+} from '@/features/transactions/lib/transaction-form-mappers';
+import {
+  parsePositiveAmount,
+  parseRepeatCount,
+} from '@/features/transactions/lib/transaction-form-utils';
 import type { RecurringTransaction } from '../types/recurring-transaction.types';
 import type {
   RecurringExpenseFormValues,
   RecurringIncomeFormValues,
   UpdateRecurringTransactionRequest,
 } from '../types/update-recurring-transaction.types';
-
-const API_TO_FORM_INCOME_TYPE: Record<string, string> = {
-  salary: 'salary',
-  'part-time': 'partTime',
-  freelance: 'freelance',
-  bonus: 'bonus',
-  other: 'other',
-};
-
-export const RECURRING_FREQUENCY_OPTIONS = ['monthly', 'one-time'] as const;
 
 export function readDayOfMonthFromDate(value: string): number {
   const parsed = new Date(value);
@@ -39,18 +36,11 @@ export function resolveDayOfMonth(
   return readDayOfMonthFromDate(transaction.startDate || transaction.nextRunDate);
 }
 
-export function mapRecurringIncomeTypeToForm(
-  value: string | undefined,
-): string {
-  if (!value) return '';
-  return API_TO_FORM_INCOME_TYPE[value] ?? 'other';
-}
-
 export function mapRecurringTransactionToForm(
   transaction: RecurringTransaction,
 ): RecurringIncomeFormValues {
   return {
-    incomeType: mapRecurringIncomeTypeToForm(transaction.incomeType),
+    incomeType: mapApiIncomeTypeToForm(transaction.incomeType),
     amount: String(transaction.amount),
     dayOfMonth: resolveDayOfMonth(transaction),
     note: transaction.notes ?? '',
@@ -63,17 +53,10 @@ export function mapRecurringTransactionToForm(
 export function buildUpdateRecurringIncomePayload(
   form: RecurringIncomeFormValues,
 ): UpdateRecurringTransactionRequest {
-  const amount = Number(form.amount);
+  const amount = parsePositiveAmount(form.amount);
   const notes = form.note.trim() || undefined;
   const dayOfMonth = Math.trunc(form.dayOfMonth);
-  const repeatCount = parseRecurringRepeatCount(
-    form.repeatCount,
-    form.frequency,
-  );
-
-  if (!Number.isFinite(amount) || amount <= 0) {
-    throw new Error('Amount must be greater than zero');
-  }
+  const repeatCount = parseRepeatCount(form.repeatCount, form.frequency);
 
   if (!form.incomeType) {
     throw new Error('Income type is required');
@@ -110,19 +93,12 @@ export function mapRecurringExpenseToForm(
 export function buildUpdateRecurringExpensePayload(
   form: RecurringExpenseFormValues,
 ): UpdateRecurringTransactionRequest {
-  const amount = Number(form.amount);
+  const amount = parsePositiveAmount(form.amount);
   const categoryId = form.categoryId.trim();
   const name = form.name.trim();
   const notes = form.note.trim() || undefined;
   const dayOfMonth = Math.trunc(form.dayOfMonth);
-  const repeatCount = parseRecurringRepeatCount(
-    form.repeatCount,
-    form.frequency,
-  );
-
-  if (!Number.isFinite(amount) || amount <= 0) {
-    throw new Error('Amount must be greater than zero');
-  }
+  const repeatCount = parseRepeatCount(form.repeatCount, form.frequency);
 
   if (!categoryId) {
     throw new Error('Category is required for expense transactions');
@@ -144,18 +120,4 @@ export function buildUpdateRecurringExpensePayload(
     notes,
     repeatCount,
   };
-}
-
-function parseRecurringRepeatCount(
-  value: string,
-  frequency: 'monthly' | 'one-time',
-): number | undefined {
-  if (frequency === 'one-time') return undefined;
-
-  const repeatCount = Number(value);
-  if (!Number.isInteger(repeatCount) || repeatCount < 1) {
-    throw new Error('Monthly occurrence count must be a positive whole number');
-  }
-
-  return repeatCount;
 }

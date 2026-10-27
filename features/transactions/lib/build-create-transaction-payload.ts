@@ -3,20 +3,20 @@ import type {
   TransactionFormPayload,
 } from '../types/create-transaction.types';
 import { formatApiDate } from './format-api-date';
+import {
+  parsePositiveAmount,
+  parseRepeatCount,
+} from './transaction-form-utils';
 import { mapFormIncomeType, mapFormRepeat } from './transaction-form-mappers';
 
 export function buildCreateTransactionPayload(
   form: TransactionFormPayload,
 ): CreateTransactionRequest {
-  const amount = Number(form.amount);
+  const amount = parsePositiveAmount(form.amount);
   const notes = form.note?.trim() || undefined;
   const date = formatApiDate(form.date);
   const repeat = mapFormRepeat(form.repeat);
   const repeatCount = parseRepeatCount(form.repeatCount, repeat);
-
-  if (!Number.isFinite(amount) || amount <= 0) {
-    throw new Error('Amount must be greater than zero');
-  }
 
   if (form.kind === 'expense') {
     if (!form.categoryId) {
@@ -59,20 +59,6 @@ export function buildCreateTransactionPayload(
     repeatCount,
     notes,
   };
-}
-
-function parseRepeatCount(
-  value: string | undefined,
-  repeat: 'monthly' | 'one-time',
-): number | undefined {
-  if (repeat === 'one-time') return undefined;
-
-  const count = Number(value);
-  if (!Number.isInteger(count) || count < 1) {
-    throw new Error('Monthly occurrence count must be a positive whole number');
-  }
-
-  return count;
 }
 
 function requireExpenseName(value: string | undefined): string {

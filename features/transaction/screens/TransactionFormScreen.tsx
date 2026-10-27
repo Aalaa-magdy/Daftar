@@ -53,6 +53,7 @@ import TransactionTypeToggle from '../components/TransactionTypeToggle';
 import { INCOME_TYPES, REPEAT_OPTIONS } from '../data/form-options';
 import { useTransactionFormMode } from '../hooks/useTransactionFormMode';
 import { formatDisplayDate } from '../lib/format-date';
+import { isPositiveInteger } from '@/features/transactions/lib/transaction-form-utils';
 import type { TransactionKind } from '../types';
 
 type PickerKey = 'incomeType' | 'repeat' | null;
@@ -149,8 +150,7 @@ const TransactionFormScreen = () => {
   }, [isEdit, existingTransaction]);
 
   const dateDisplay = date ? formatDisplayDate(date) : '';
-  const hasValidRepeatCount =
-    Number.isInteger(Number(repeatCount)) && Number(repeatCount) > 0;
+  const hasValidRepeatCount = isPositiveInteger(repeatCount);
 
   const isFormComplete = useMemo(() => {
     if (!amount.trim() || !date) return false;

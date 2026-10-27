@@ -2,6 +2,7 @@ import type { TransactionFormPayload } from '../types/create-transaction.types';
 import type { UpdateTransactionRequest } from '../types/update-transaction.types';
 import type { ApiIncomeType, ApiRepeatType, Transaction } from '../types/transactions.types';
 import { formatApiDate } from './format-api-date';
+import { parsePositiveAmount } from './transaction-form-utils';
 
 const FORM_TO_API_INCOME_TYPE: Record<string, ApiIncomeType> = {
   salary: 'salary',
@@ -61,13 +62,9 @@ export function mapTransactionToForm(
 export function buildUpdateTransactionPayload(
   form: TransactionFormPayload,
 ): UpdateTransactionRequest {
-  const amount = Number(form.amount);
+  const amount = parsePositiveAmount(form.amount);
   const notes = form.note?.trim() || undefined;
   const date = formatApiDate(form.date);
-
-  if (!Number.isFinite(amount) || amount <= 0) {
-    throw new Error('Amount must be greater than zero');
-  }
 
   if (form.kind === 'expense') {
     if (!form.categoryId) {

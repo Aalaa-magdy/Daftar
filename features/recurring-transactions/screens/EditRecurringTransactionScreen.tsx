@@ -6,6 +6,7 @@ import SelectField from '@/features/transaction/components/SelectField';
 import TransactionHeader from '@/features/transaction/components/TransactionHeader';
 import CategoryGrid from '@/features/categories/components/CategoryGrid';
 import { getApiErrorMessage } from '@/lib/api-error';
+import { isPositiveInteger } from '@/features/transactions/lib/transaction-form-utils';
 import { colors } from '@/theme/colors';
 import {
   Changa_400Regular,
@@ -173,8 +174,7 @@ const EditRecurringTransactionScreen = () => {
         return Boolean(
           incomeType &&
             (recurringTransaction.frequency !== 'monthly' ||
-              (Number.isInteger(Number(repeatCount)) &&
-                Number(repeatCount) > 0)),
+              isPositiveInteger(repeatCount)),
         );
       }
 
@@ -182,8 +182,7 @@ const EditRecurringTransactionScreen = () => {
         categoryId &&
           (recurringTransaction.frequency !== 'monthly' ||
             (expenseName.trim() &&
-              Number.isInteger(Number(repeatCount)) &&
-              Number(repeatCount) > 0)),
+              isPositiveInteger(repeatCount))),
       );
     },
     [

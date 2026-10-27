@@ -4,6 +4,7 @@ import type {
   ApiRepeatType,
   Transaction,
 } from '../types/transactions.types';
+import { normalizePositiveInteger } from './transaction-form-utils';
 
 export function unwrapTransaction(data: unknown): Transaction {
   if (data && typeof data === 'object' && 'data' in data) {
@@ -82,10 +83,7 @@ export function normalizeTransaction(raw: unknown): Transaction | null {
         : undefined,
     repeat: normalizeRepeat(record.repeat) ?? frequency,
     frequency,
-    repeatCount:
-      Number.isInteger(Number(record.repeatCount)) && Number(record.repeatCount) > 0
-        ? Number(record.repeatCount)
-        : undefined,
+    repeatCount: normalizePositiveInteger(record.repeatCount),
     name: record.name != null ? String(record.name).trim() : undefined,
     createdAt:
       record.createdAt != null ? String(record.createdAt) : undefined,

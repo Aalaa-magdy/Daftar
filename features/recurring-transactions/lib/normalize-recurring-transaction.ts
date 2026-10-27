@@ -4,6 +4,7 @@ import type {
   RecurringTransaction,
   RecurringTransactionType,
 } from '../types/recurring-transaction.types';
+import { normalizePositiveInteger } from '@/features/transactions/lib/transaction-form-utils';
 
 function pickList(raw: unknown): unknown[] {
   if (Array.isArray(raw)) return raw;
@@ -88,10 +89,7 @@ export function normalizeRecurringTransaction(raw: unknown): RecurringTransactio
     lastGeneratedAt:
       record.lastGeneratedAt != null ? String(record.lastGeneratedAt) : undefined,
     isActive: record.isActive !== false,
-    repeatCount:
-      Number.isInteger(Number(record.repeatCount)) && Number(record.repeatCount) > 0
-        ? Number(record.repeatCount)
-        : undefined,
+    repeatCount: normalizePositiveInteger(record.repeatCount),
     categoryId: categoryId != null ? String(categoryId) : undefined,
     name: typeof record.name === 'string' ? record.name.trim() : undefined,
     notes: typeof record.notes === 'string' ? record.notes.trim() : undefined,
